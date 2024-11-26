@@ -4,7 +4,6 @@ st.set_page_config(
     page_icon="logo2.png",  
     layout="wide"
 )
-
 LOGO_PATH = "logo.png"
 st.image(LOGO_PATH, width = 300) 
 

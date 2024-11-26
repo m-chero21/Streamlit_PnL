@@ -64,7 +64,6 @@ selected_value_chain = st.sidebar.selectbox(
     label="Value Chain",
     options=value_chains,
 )
-
 # Sliders
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
 biotech_2024 = st.sidebar.slider("2024 Biotech %", 0, 100, 0)
