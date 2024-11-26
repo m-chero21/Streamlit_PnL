@@ -1,15 +1,12 @@
 import streamlit as st
 import pandas as pd
 st.set_page_config(
-    page_title="Seed Requirement Calculator",  # Set your custom page title
-    page_icon="logo2.png",  # Optional: Add a page icon (emoji or image)
-    layout="wide"  # Optional: Choose layout style
+    page_title="Seed Requirement Calculator",  
+    page_icon="logo2.png",  
+    layout="wide"
 )
 
-# Logo file path
-LOGO_PATH = "logo.png"  # Replace with the path to your logo
-
-# Display logo in the sidebar and main section
+LOGO_PATH = "logo.png"  
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
 
@@ -68,7 +65,7 @@ selected_value_chain = st.sidebar.selectbox(
     options=value_chains,
 )
 
-
+# Sliders
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
 biotech_2024 = st.sidebar.slider("2024 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
