@@ -137,8 +137,6 @@ ax.set_title("Cost and Revenue Distribution")
 ax.set_ylabel("KES")
 st.pyplot(fig)  # Pass the figure object explicitly
 
-
-
 # Break-Even Analysis
 st.subheader("Break-Even Analysis")
 
