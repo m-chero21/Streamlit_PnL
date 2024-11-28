@@ -10,7 +10,6 @@ st.set_page_config(
 LOGO_PATH = "logo.png"  
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
-
 # Define Kenyan counties
 kenyan_counties = [
     "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu",
@@ -59,13 +58,11 @@ df = pd.DataFrame(data)
 # Sidebar Inputs
 st.sidebar.header("Global Inputs")
 st.sidebar.markdown("---")
-# Sidebar Dropdown for Value Chain Selection
 value_chains = ["Maize", "Potatoes", "Coffee", "Rice"]
 selected_value_chain = st.sidebar.selectbox(
     label="Value Chain",
     options=value_chains,
 )
-# Sliders
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
 biotech_2024 = st.sidebar.slider("2024 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
@@ -80,7 +77,6 @@ def adjust_percentages(biotech, opv_base, hybrid_base):
 opv_2024, hybrid_2024 = adjust_percentages(biotech_2024, 30, 70)
 opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, 30, 70)
 
-# Update DataFrame globally
 df["2024 % of OPV"] = [opv_2024] * len(df)
 df["2024 % of Hybrid"] = [hybrid_2024] * len(df)
 df["2024 % of Biotech"] = [biotech_2024] * len(df)
@@ -110,7 +106,6 @@ df["Production Volume 2028"] = (
 # Sidebar Summary Widgets
 st.sidebar.header("Summary Metrics")
 
-# Perform calculations
 total_hectares = df["Hectares 2024"].sum()
 total_biotech_hectares_2028 = df["Biotech Hectares 2028"].sum()
 percent_national_hectares = (
@@ -118,7 +113,6 @@ percent_national_hectares = (
 )
 commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
 
-# Create a summary DataFrame
 summary_data = {
     "Metric": [
         "Total Hectares (2024)",
@@ -134,19 +128,16 @@ summary_data = {
     ],
 }
 summary_df = pd.DataFrame(summary_data)
-
 st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 # Display the full DataFrame with all columns
 st.title("Seed Requirement Calculator")
 st.markdown("---")
 
-# Display selected value chain in the main section
-st.dataframe(df, use_container_width=True, height=200)
+st.dataframe(df, use_container_width=True, height=250)
 
 # Scenario Testing Section
 st.header("Scenario Testing")
-st.markdown("#### The scenario testing is adjusted by the 2028 Biotech Percentage.")
 
 # Inputs for Scenario Testing
 selected_county = st.selectbox("County:", options=kenyan_counties)
@@ -155,7 +146,6 @@ update_button = st.button("Update")
 
 # Update logic
 if update_button:
-    # Update the selected county
     df.loc[df["State"] == selected_county, "2028 % of Biotech"] = new_biotech_percentage
 
     # Dynamically adjust OPV and Hybrid percentages
@@ -187,12 +177,5 @@ if update_button:
         df.loc[df["State"] == selected_county, "2028 % of Hybrid"] / 100
     )
 
-    # Display a concise summary of the updates
-    st.write(f"**Updated {selected_county} with:**")
-    st.write(f"  - 2028 % of Biotech: {new_biotech_percentage}%")
-    st.write(f"  - 2028 % of OPV: {opv}%")
-    st.write(f"  - 2028 % of Hybrid: {hybrid}%")
 
-# Display the updated dataset in a large, scrollable table
-st.subheader("Scenario Testing Dataset")
-st.dataframe(df, use_container_width=True, height=600)
+
