@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+
 st.set_page_config(
     page_title="Seed Requirement Calculator",  
     page_icon="logo2.png",  
@@ -109,30 +110,39 @@ df["Production Volume 2028"] = (
 # Sidebar Summary Widgets
 st.sidebar.header("Summary Metrics")
 
-# Calculate Total Hectares
+# Perform calculations
 total_hectares = df["Hectares 2024"].sum()
-st.sidebar.write(f"**Total Hectares (2024):** {total_hectares:,.0f}")
-
-# Calculate Biotech Hectares for 2028
 total_biotech_hectares_2028 = df["Biotech Hectares 2028"].sum()
-st.sidebar.write(f"**Biotech Hectares (2028):** {total_biotech_hectares_2028:,.0f}")
-
-# Calculate Percentage of National Hectares for Biotech
 percent_national_hectares = (
     (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
 )
-st.sidebar.write(f"**% of National Hectares:** {percent_national_hectares:.1f}%")
-
-# Calculate Commercial Seed (2028)
 commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
-st.sidebar.write(f"**Commercial Seed (2028):** {commercial_seed_2028:,.0f}")
+
+# Create a summary DataFrame
+summary_data = {
+    "Metric": [
+        "Total Hectares (2024)",
+        "Biotech Hectares (2028)",
+        "% of National Hectares (2028)",
+        "Commercial Seed (2028)",
+    ],
+    "Value": [
+        f"{total_hectares:,.0f}",
+        f"{total_biotech_hectares_2028:,.0f}",
+        f"{percent_national_hectares:.1f}%",
+        f"{commercial_seed_2028:,.0f}",
+    ],
+}
+summary_df = pd.DataFrame(summary_data)
+
+st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 # Display the full DataFrame with all columns
 st.title("Seed Requirement Calculator")
 st.markdown("---")
 
 # Display selected value chain in the main section
-st.dataframe(df, use_container_width=True, height=600)
+st.dataframe(df, use_container_width=True, height=200)
 
 # Scenario Testing Section
 st.header("Scenario Testing")
