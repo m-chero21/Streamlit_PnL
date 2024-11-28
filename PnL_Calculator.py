@@ -24,7 +24,7 @@ kenyan_counties = [
 
 # Initial data
 data = {
-    "State": kenyan_counties,
+    "County": kenyan_counties,
     "Hectares 2024": [
         42501, 27250, 92847, 44097, 43133, 34500, 142, 78795, 256, 33241, 87532, 40643,
         30537, 95674, 38467, 66221, 62195, 83618, 60518, 29596, 45800, 138830, 136912,
@@ -134,48 +134,88 @@ st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 st.title("Seed Requirement Calculator")
 st.markdown("---")
 
-st.dataframe(df, use_container_width=True, height=250)
+# st.dataframe(df.reset_index(drop=True), use_container_width=True, height=250)
+# Define the desired column order (based on your screenshot)
+column_order = [
+    "County", "Hectares 2024", "G% Hectares (2024-2028)", "Hectares 2028",
+    "2024 % of OPV", "2024 % of Hybrid", "2024 % of Biotech",
+    "2028 % of OPV", "2028 % of Hybrid", "2028 % of Biotech",
+    "2024 kg seed OPV", "2024 kg seed Hybrid", "2024 kg seed Biotech",
+    "2028 kg seed OPV", "2028 kg seed Hybrid", "2028 kg seed Biotech",
+    "Avg Yield OPV", "Avg Yield Hybrid", "Avg Yield Biotech",
+    "Production Volume 2024", "Production Volume 2028"
+]
+
+# Reorder the DataFrame columns
+df = df[column_order]
+#___________________________________________
+
+# Sort the DataFrame by index
+df_sorted = df.sort_index()
+
+# Display the sorted DataFrame in Streamlit
+# st.dataframe(df_sorted, use_container_width=True, height=250)
+
+#____________________________________________________________________________________
+
+# Initialize the DataFrame in session state if not already set
+if "df" not in st.session_state:
+    st.session_state.df = df.copy()
+
+# Display the main table in Streamlit
+# Use a placeholder for the table to dynamically update it later
+table_placeholder = st.empty()
+table_placeholder.dataframe(st.session_state.df, use_container_width=True, height=250)
 
 # Scenario Testing Section
 st.header("Scenario Testing")
 
 # Inputs for Scenario Testing
 selected_county = st.selectbox("County:", options=kenyan_counties)
-new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
+new_biotech_percentage = st.number_input(
+    "2028 Biotech %:", min_value=0, max_value=100, value=0, key="biotech_input"
+)
 update_button = st.button("Update")
 
 # Update logic
 if update_button:
-    df.loc[df["State"] == selected_county, "2028 % of Biotech"] = new_biotech_percentage
+    # Retrieve the DataFrame from session state
+    df = st.session_state.df
+
+    # Update Biotech percentage for the selected county
+    df.loc[df["County"] == selected_county, "2028 % of Biotech"] = new_biotech_percentage
 
     # Dynamically adjust OPV and Hybrid percentages
     remaining_percentage = 100 - new_biotech_percentage
     opv = round(30 / (30 + 70) * remaining_percentage)
     hybrid = 100 - new_biotech_percentage - opv
 
-    df.loc[df["State"] == selected_county, "2028 % of OPV"] = opv
-    df.loc[df["State"] == selected_county, "2028 % of Hybrid"] = hybrid
+    df.loc[df["County"] == selected_county, "2028 % of OPV"] = opv
+    df.loc[df["County"] == selected_county, "2028 % of Hybrid"] = hybrid
 
     # Recalculate relevant columns for the updated county
-    df.loc[df["State"] == selected_county, "Hectares 2028"] = (
-        df.loc[df["State"] == selected_county, "Hectares 2024"] *
-        (1 + df.loc[df["State"] == selected_county, "G% Hectares (2024-2028)"] / 100)
+    df.loc[df["County"] == selected_county, "Hectares 2028"] = (
+        df.loc[df["County"] == selected_county, "Hectares 2024"] *
+        (1 + df.loc[df["County"] == selected_county, "G% Hectares (2024-2028)"] / 100)
     )
-    df.loc[df["State"] == selected_county, "Biotech Hectares 2028"] = (
-        df.loc[df["State"] == selected_county, "Hectares 2028"] *
-        df.loc[df["State"] == selected_county, "2028 % of Biotech"] / 100
+    df.loc[df["County"] == selected_county, "Biotech Hectares 2028"] = (
+        df.loc[df["County"] == selected_county, "Hectares 2028"] *
+        df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100
     )
-    df.loc[df["State"] == selected_county, "2028 kg seed Biotech"] = (
-        df.loc[df["State"] == selected_county, "Biotech Hectares 2028"] * seed_rate
+    df.loc[df["County"] == selected_county, "2028 kg seed Biotech"] = (
+        df.loc[df["County"] == selected_county, "Biotech Hectares 2028"] * seed_rate
     )
-    df.loc[df["State"] == selected_county, "Production Volume 2028"] = (
-        df.loc[df["State"] == selected_county, "Avg Yield OPV"] *
-        df.loc[df["State"] == selected_county, "Hectares 2028"] *
-        df.loc[df["State"] == selected_county, "2028 % of OPV"] / 100 +
-        df.loc[df["State"] == selected_county, "Avg Yield Hybrid"] *
-        df.loc[df["State"] == selected_county, "Hectares 2028"] *
-        df.loc[df["State"] == selected_county, "2028 % of Hybrid"] / 100
+    df.loc[df["County"] == selected_county, "Production Volume 2028"] = (
+        df.loc[df["County"] == selected_county, "Avg Yield OPV"] *
+        df.loc[df["County"] == selected_county, "Hectares 2028"] *
+        df.loc[df["County"] == selected_county, "2028 % of OPV"] / 100 +
+        df.loc[df["County"] == selected_county, "Avg Yield Hybrid"] *
+        df.loc[df["County"] == selected_county, "Hectares 2028"] *
+        df.loc[df["County"] == selected_county, "2028 % of Hybrid"] / 100
     )
 
+    # Save the updated DataFrame back to session state
+    st.session_state.df = df
 
-
+    # Update the main table dynamically
+    table_placeholder.dataframe(st.session_state.df, use_container_width=True, height=250)
