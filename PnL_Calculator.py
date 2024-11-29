@@ -164,4 +164,4 @@ if update_button:
     st.write(f"Updated {selected_county} with 2028 Biotech %: {new_biotech_percentage}")
 st.header("Seed Requirement Calculator")
 # Display the main DataFrame
-st.dataframe(df, use_container_width=True)
+st.dataframe(df, use_container_width=True, height = 250)
