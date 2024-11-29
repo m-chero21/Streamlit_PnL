@@ -1,19 +1,18 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import pandas as pd 
-from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode
-
-st.set_page_config(
-    page_title="Gross Margin Calculator",  
-    page_icon="logo2.png",  
-    layout="wide"
-)
-LOGO_PATH = "logo.png"
-st.image(LOGO_PATH, width = 300) 
-import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode
+
+# Configure Streamlit Page
+st.set_page_config(
+    page_title="Gross Margin Calculator",
+    page_icon="logo2.png",
+    layout="wide"
+)
+
+# Display Logo
+LOGO_PATH = "logo.png"
+st.image(LOGO_PATH, width=300)
 
 # Define the calculate_yield function
 def calculate_yield(production_value, production_unit, area_value, area_unit):
@@ -46,17 +45,31 @@ if "cost_items" not in st.session_state:
     st.session_state.cost_items = pd.DataFrame({
         "Item": ["Labour", "Seed Cost", "Fertilizer", "Gunny Bags", "Pesticide Cost", "Land Lease", "Crop Insurance", "Miscellaneous"],
         "Category": ["Variable Cost", "Variable Cost", "Variable Cost", "Variable Cost", "Variable Cost", "Fixed Cost", "Fixed Cost", "Other Cost"],
-        "Quantity": [10, 20, 50, 100, 5, 1, 1, 1],
+        "Quantity": [0, 0, 0, 0, 0, 0, 0, 0],
         "Cost/Unit (KES)": [300, 50, 100, 20, 200, 5000, 3000, 1000],
+        "Total Cost (KES)": [0] * 8
     })
 
 # Editable Table with st_aggrid
 st.header("Cost Parameters")
 
+# Recalculate Total Cost dynamically before displaying the editable grid
+st.session_state.cost_items["Total Cost (KES)"] = (
+    st.session_state.cost_items["Quantity"] * st.session_state.cost_items["Cost/Unit (KES)"]
+)
+
+# Configure editable table with dropdown for Category
 gb = GridOptionsBuilder.from_dataframe(st.session_state.cost_items)
-gb.configure_default_column(editable=True, groupable=True)
+gb.configure_columns(["Quantity", "Cost/Unit (KES)"], editable=True)  # Editable Quantity and Cost/Unit columns
+gb.configure_column(
+    "Category",
+    editable=True,
+    cellEditor="agSelectCellEditor",
+    cellEditorParams={"values": ["Variable Cost", "Fixed Cost", "Other Cost"]}  # Dropdown for Category
+)
 grid_options = gb.build()
 
+# Display the editable table with recalculated Total Cost
 grid_response = AgGrid(
     st.session_state.cost_items,
     gridOptions=grid_options,
@@ -67,11 +80,15 @@ grid_response = AgGrid(
     theme="streamlit",
 )
 
-st.session_state.cost_items = grid_response['data']
+# Update session state with edited data and recalculate Total Cost dynamically
+if grid_response['data'] is not None:
+    st.session_state.cost_items = pd.DataFrame(grid_response['data'])
+    st.session_state.cost_items["Total Cost (KES)"] = (
+        st.session_state.cost_items["Quantity"] * st.session_state.cost_items["Cost/Unit (KES)"]
+    )
 
 # Add New Parameters
 st.subheader("Add New Parameter")
-
 new_item_name = st.text_input("Item Name")
 new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"], key="new_category")
 new_quantity = st.number_input("Quantity", min_value=0.0, value=0.0, step=1.0, key="new_quantity")
@@ -79,9 +96,13 @@ new_cost = st.number_input("Cost per Unit (KES)", min_value=0.0, value=0.0, step
 
 if st.button("Add Item"):
     if new_item_name:
-        new_row = pd.DataFrame(
-            {"Item": [new_item_name], "Category": [new_category], "Quantity": [new_quantity], "Cost/Unit (KES)": [new_cost]}
-        )
+        new_row = pd.DataFrame({
+            "Item": [new_item_name],
+            "Category": [new_category],
+            "Quantity": [new_quantity],
+            "Cost/Unit (KES)": [new_cost],
+            "Total Cost (KES)": [new_quantity * new_cost]
+        })
         st.session_state.cost_items = pd.concat([st.session_state.cost_items, new_row], ignore_index=True)
         st.success(f"Added '{new_item_name}' successfully!")
     else:
@@ -98,7 +119,6 @@ def calculate_gross_margin(yield_kg, bag_weight, farmgate_price, loss_percentage
     net_output_quantity = gross_output_quantity + post_harvest_loss_quantity + own_consumption_quantity
     net_output_value_kes = net_output_quantity * gross_output_cost_per_unit
 
-    cost_items["Total Cost (KES)"] = cost_items["Quantity"] * cost_items["Cost/Unit (KES)"]
     total_variable_costs = cost_items[cost_items["Category"] == "Variable Cost"]["Total Cost (KES)"].sum()
     total_fixed_costs = cost_items[cost_items["Category"] == "Fixed Cost"]["Total Cost (KES)"].sum()
     total_other_costs = cost_items[cost_items["Category"] == "Other Cost"]["Total Cost (KES)"].sum()
@@ -135,7 +155,7 @@ for i, value in enumerate(cost_df["Cost (KES)"]):
     ax.text(i, value, f"{value:,.2f} KES", ha='center', va='bottom')
 ax.set_title("Cost and Revenue Distribution")
 ax.set_ylabel("KES")
-st.pyplot(fig)  # Pass the figure object explicitly
+st.pyplot(fig)
 
 # Break-Even Analysis
 st.subheader("Break-Even Analysis")
@@ -155,11 +175,10 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit,
     ax.set_ylabel("KES")
     ax.legend()
     ax.grid()
-    st.pyplot(fig)  # Pass the figure object explicitly
+    st.pyplot(fig)
 
 # Call Break-Even Plot Function
 fixed_costs = total_fixed_costs
 variable_cost_per_unit = farmgate_price * 0.75  # Example for variable cost per unit
 selling_price_per_unit = farmgate_price
 plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
-
