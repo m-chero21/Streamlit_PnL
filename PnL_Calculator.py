@@ -7,6 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
+
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
