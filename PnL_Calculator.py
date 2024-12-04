@@ -3,11 +3,11 @@ import pandas as pd
 
 st.set_page_config(
     page_title="Seed Requirement Calculator",
-    page_icon= r"C:\Users\mkiprono\Desktop\SAFIC\PnL Calculator\logo2.png",
+    page_icon= "logo2.png",
     layout="wide"
 )
 
-nav_logo = r"C:\Users\mkiprono\Desktop\SAFIC\PnL Calculator\logo2.png"
+nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
