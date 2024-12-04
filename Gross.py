@@ -202,16 +202,16 @@ if "items" not in st.session_state:
 # Function to display items
 def display_items():
     st.markdown("""
-        <div style='display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; padding: 40px; text-align: center; margin-bottom: 10px;'>
-            <b>Item</b><b>Quantity</b><b>Cost/Unit (KES)</b><b>Category</b><b>Remove</b>
-        </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 10px; padding-top: 40px; margin-bottom: 10px;">
+        <b>Item</b><b>Quantity</b><b>Cost/Unit (KES)</b><b>Category</b><b>Remove</b>
+    </div>
     """, unsafe_allow_html=True)
 
     for idx, item in enumerate(st.session_state["items"]):
         # Generate unique key for each item based on its index and name
         unique_key = f"{idx}_{item['name']}"
 
-        cols = st.columns([2, 1, 1, 1, 1])
+        cols = st.columns([1, 1, 1, 1, 1])
         with cols[0]:
             st.write(item["name"])
         with cols[1]:
