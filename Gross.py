@@ -100,8 +100,8 @@ st.markdown(
     """
     <div class="navbar">
                 <div class="navbar-links">
-            <a href="https://seed-requirement-calculator.streamlit.app/" class="navbar-link">Seed Requirement Calculator </a>
-            <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-button">Gross Margin Calculator</a>
+            <a href="https://seed-requirement-calculator.streamlit.app/" class="navbar-link" target="_self">Seed Requirement Calculator </a>
+            <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-button" target="_self">Gross Margin Calculator</a>
         </div>
     </div>
     """,
