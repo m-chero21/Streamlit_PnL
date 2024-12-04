@@ -216,9 +216,11 @@ def display_items():
             st.write(item["name"])
         with cols[1]:
             st.session_state["item_data"][unique_key]["quantity"] = st.number_input(
-                "",
-                value=st.session_state["item_data"][unique_key]["quantity"],
-                key=f"quantity_{unique_key}"  # Use unique key
+            "",
+            value=int(st.session_state["item_data"][unique_key]["quantity"]),  # Ensure value is an integer
+            step=1,  # Step is an integer
+            format="%d",  # Display as an integer
+            key=f"quantity_{unique_key}"  # Use unique key
             )
         with cols[2]:
             st.session_state["item_data"][unique_key]["cost"] = st.number_input(
