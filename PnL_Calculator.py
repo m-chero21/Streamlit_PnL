@@ -95,14 +95,9 @@ st.markdown(
     """
     <div class="navbar">
                 <div class="navbar-links">
-            <a href="https://seed-requirement-calculator.streamlit.app/" class="navbar-button" target="_self">Seed Requirement Calculator </a>
-            <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-link" target="_self">Gross Margin Calculator</a>
-            <script>
-                const links = document.querySelectorAll('a');
-                links.forEach(link => {
-                    link.target = '_self'; // Force the link to open in the same tab
-                });
-            </script>
+            <a href="https://seed-requirement-calculator.streamlit.app/" class="navbar-button">Seed Requirement Calculator </a>
+            <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-link">Gross Margin Calculator</a>
+         
         </div>
     </div>
     """,
