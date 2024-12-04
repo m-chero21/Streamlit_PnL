@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 #___________________________________________________________________________________________________________
-nav_logo = r"C:\Users\mkiprono\Desktop\SAFIC\PnL Calculator\logo2.png"
+nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
@@ -111,7 +111,7 @@ st.markdown(
 
 #___________________________________________________________________________________________________________
 
-df = pd. read_excel(r"C:\Users\mkiprono\Desktop\SAFIC\PnL Calculator\aggregate_farm_data_template.xlsx")
+df = pd. read_excel("aggregate_farm_data_template.xlsx")
 
 # Sidebar title
 st.sidebar.header("Global Parameters")
@@ -305,7 +305,7 @@ def plot_cost_distribution(gross_margin_df, currency="KES", exchange_rate=1):
 
     # Create a bar plot for the categories
     fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(categories, values, color=["#4b7bec", "#45aaf2", "#a5b1c2", "#f7b731", "#fed330"])
+    bars = ax.bar(categories, values, color=["#007278", "#6A1E55", "#EB5B00", "#f7b731", "#a4343a"])
 
     # Annotate the bars with the values
     for bar, value in zip(bars, values):
@@ -467,10 +467,10 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit,
 
     # Plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(units, total_costs, label="Total Costs", color="red")
+    ax.plot(units, total_costs, label="Total Costs", color="#a4343a")
     ax.plot(units, total_revenue, label="Total Revenue", color="green")
-    ax.axvline(x=break_even_quantity, color="blue", linestyle="--", label=f"Break-Even Point: {break_even_quantity:.2f} units")
-    ax.axhline(y=break_even_revenue, color="blue", linestyle="--", alpha=0.5)
+    ax.axvline(x=break_even_quantity, color="#007278", linestyle="--", label=f"Break-Even Point: {break_even_quantity:.2f} units")
+    ax.axhline(y=break_even_revenue, color="#007278", linestyle="--", alpha=0.5)
     ax.set_title("Break-Even Analysis", fontsize=14)
     ax.set_xlabel("Units Produced/Sold")
     ax.set_ylabel(f"Cost/Revenue ({currency})")
