@@ -103,6 +103,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+primary_clr = st.get_option("theme.primaryColor")
+txt_clr = st.get_option("theme.textColor")
+theme = st.get_option("theme.font")
+mode = st.get_option("theme.base")
+
 #___________________________________________________________________________________________________________
 # Define Kenyan counties
 kenyan_counties = [

@@ -11,6 +11,12 @@ st.set_page_config(
     layout="wide"
 )
 
+primary_clr = st.get_option("theme.primaryColor")
+txt_clr = st.get_option("theme.textColor")
+theme = st.get_option("theme.font")
+mode = st.get_option("theme.base")
+
+
 #___________________________________________________________________________________________________________
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
