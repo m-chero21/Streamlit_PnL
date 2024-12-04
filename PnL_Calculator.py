@@ -3,14 +3,107 @@ import pandas as pd
 
 st.set_page_config(
     page_title="Seed Requirement Calculator",
-    page_icon="logo2.png",
+    page_icon= r"C:\Users\mkiprono\Desktop\SAFIC\PnL Calculator\logo2.png",
     layout="wide"
 )
 
-
+nav_logo = r"C:\Users\mkiprono\Desktop\SAFIC\PnL Calculator\logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
+# Add custom CSS to center the title
+st.markdown(
+    """
+    <style>
+    .centered-title {
+        text-align: center; /* Center the title */
+        font-size: 36px; /* Adjust font size if needed */
+        font-weight: bold;
+        color: black; /* Optional: Change title color */
+        margin-top: 20px; /* Adjust spacing above the title */
+        margin-bottom: 20px; /* Adjust spacing below the title */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Add the centered title
+st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
+
+# Add custom CSS for the navigation bar
+st.markdown(
+    """
+    <style>
+    .navbar {
+        background-color: #F4F6FF; /* Set background color */
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+        color: white !important;
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    .navbar-logo img{
+        height: 40px; /* Adjust size */
+        margin-right: 10px;
+    }
+    .navbar-links {
+        display: flex;
+        margin-left: auto; /* Push navigation items to the right */
+        gap: 20px; /* Space between navigation items */
+    }
+    .navbar-link {
+        color: black !important; /* Change font color to white */
+        font-size: 18px;
+        text-decoration: none;
+        font-weight: normal;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .navbar-link:hover {
+        background-color: #a4343a; /* Darker background on hover */
+        color: white !important; 
+    }
+    .navbar-button {
+        background-color: #007278; /* Button color */
+        color: white !important; /* Change button text color to white */
+        font-size: 18px;
+        padding: 5px 15px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+    .navbar-button:hover {
+        background-color: #a4343a /* Darker button on hover */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Add the navigation bar
+st.markdown(
+    """
+    <div class="navbar">
+                <div class="navbar-links">
+            <a href="seed-requirement-calculator.streamlit.app" class="navbar-button">Seed Requirement Calculator </a>
+            <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-link">Gross Margin Calculator</a>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+#___________________________________________________________________________________________________________
 # Define Kenyan counties
 kenyan_counties = [
     "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu",
@@ -58,7 +151,7 @@ data = {
 df = pd.DataFrame(data)
 
 # Sidebar Inputs
-st.sidebar.header("Global Inputs")
+st.sidebar.subheader("Global Inputs")
 st.sidebar.markdown("---")
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
 biotech_2024 = st.sidebar.slider("2024 Biotech %", 0, 100, 0)
@@ -122,46 +215,127 @@ def update_summary_metrics():
             f"{commercial_seed_2028:,.0f}",
         ],
     }
+    st.sidebar.subheader("Summary")
     summary_df = pd.DataFrame(summary_data)
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 update_summary_metrics()
 
 # Scenario Testing Section
-st.header("Scenario Testing")
-selected_county = st.selectbox("County:", options=kenyan_counties)
+# st.subheader("Scenario Testing")
+# selected_county = st.selectbox("County:", options=kenyan_counties)
+# new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
+# update_button = st.button("Update")
+#_______________________________________________________________________________________________________________________
+# st.subheader("Scenario Testing")
+
+# # Use multiselect instead of selectbox
+# selected_counties = st.multiselect("Counties:", options=kenyan_counties)
+
+# new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
+
+# update_button = st.button("Update")
+
+# # Example output or logic based on multiple selected counties
+# if update_button:
+#     st.write("Selected counties:", selected_counties)
+#     st.write("New biotech percentage:", new_biotech_percentage)
+# #__________________________________________________________________________________
+
+# if update_button:
+#     # Update selected county
+#     df.loc[df["County"] == selected_county, "2028 % of Biotech"] = new_biotech_percentage
+#     remaining_percentage = 100 - new_biotech_percentage
+#     df.loc[df["County"] == selected_county, "2028 % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
+#     df.loc[df["County"] == selected_county, "2028 % of Hybrid"] = 100 - new_biotech_percentage - df.loc[df["County"] == selected_county, "2028 % of OPV"]
+
+#     # Update dependent fields
+#     df.loc[df["County"] == selected_county, "2028 kg seed Biotech"] = (
+#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
+#         df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100 * seed_rate
+#     )
+#     df.loc[df["County"] == selected_county, "Production Volume 2028"] = (
+#         df.loc[df["County"] == selected_county, "Avg Yield OPV"] *
+#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
+#         df.loc[df["County"] == selected_county, "2028 % of OPV"] / 100 +
+#         df.loc[df["County"] == selected_county, "Avg Yield Hybrid"] *
+#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
+#         df.loc[df["County"] == selected_county, "2028 % of Hybrid"] / 100 +
+#         df.loc[df["County"] == selected_county, "Avg Yield Biotech"] *
+#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
+#         df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100
+#     )
+
+#     # Update summary metrics
+#     update_summary_metrics()
+
+#     # Display update message
+#     st.write(f"Updated {selected_county} with 2028 Biotech %: {new_biotech_percentage}")
+# st.subheader("Seed Requirement Calculator")
+# # Display the main DataFrame
+# st.dataframe(df, use_container_width=True, height = 250)
+#___________________________________________________________________________________________________
+
+st.subheader("Scenario Testing")
+
+# Use multiselect to select multiple counties
+selected_counties = st.multiselect("Counties:", options=kenyan_counties)
+
 new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
+
 update_button = st.button("Update")
 
+# Example logic to handle updates
 if update_button:
-    # Update selected county
-    df.loc[df["County"] == selected_county, "2028 % of Biotech"] = new_biotech_percentage
-    remaining_percentage = 100 - new_biotech_percentage
-    df.loc[df["County"] == selected_county, "2028 % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
-    df.loc[df["County"] == selected_county, "2028 % of Hybrid"] = 100 - new_biotech_percentage - df.loc[df["County"] == selected_county, "2028 % of OPV"]
-
-    # Update dependent fields
-    df.loc[df["County"] == selected_county, "2028 kg seed Biotech"] = (
-        df.loc[df["County"] == selected_county, "Hectares 2028"] *
-        df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100 * seed_rate
-    )
-    df.loc[df["County"] == selected_county, "Production Volume 2028"] = (
-        df.loc[df["County"] == selected_county, "Avg Yield OPV"] *
-        df.loc[df["County"] == selected_county, "Hectares 2028"] *
-        df.loc[df["County"] == selected_county, "2028 % of OPV"] / 100 +
-        df.loc[df["County"] == selected_county, "Avg Yield Hybrid"] *
-        df.loc[df["County"] == selected_county, "Hectares 2028"] *
-        df.loc[df["County"] == selected_county, "2028 % of Hybrid"] / 100 +
-        df.loc[df["County"] == selected_county, "Avg Yield Biotech"] *
-        df.loc[df["County"] == selected_county, "Hectares 2028"] *
-        df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100
-    )
-
-    # Update summary metrics
+    for county in selected_counties:
+        # Update Biotech %
+        df.loc[df["County"] == county, "2028 % of Biotech"] = new_biotech_percentage
+        
+        # Calculate remaining percentage
+        remaining_percentage = 100 - new_biotech_percentage
+        
+        # Update OPV and Hybrid percentages
+        df.loc[df["County"] == county, "2028 % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
+        df.loc[df["County"] == county, "2028 % of Hybrid"] = (
+            100 - new_biotech_percentage - df.loc[df["County"] == county, "2028 % of OPV"]
+        )
+        
+        # Update seed requirements
+        df.loc[df["County"] == county, "2028 kg seed Biotech"] = (
+            df.loc[df["County"] == county, "Hectares 2028"] *
+            df.loc[df["County"] == county, "2028 % of Biotech"] / 100 * seed_rate
+        )
+        
+        # Update production volume
+        df.loc[df["County"] == county, "Production Volume 2028"] = (
+            df.loc[df["County"] == county, "Avg Yield OPV"] *
+            df.loc[df["County"] == county, "Hectares 2028"] *
+            df.loc[df["County"] == county, "2028 % of OPV"] / 100 +
+            df.loc[df["County"] == county, "Avg Yield Hybrid"] *
+            df.loc[df["County"] == county, "Hectares 2028"] *
+            df.loc[df["County"] == county, "2028 % of Hybrid"] / 100 +
+            df.loc[df["County"] == county, "Avg Yield Biotech"] *
+            df.loc[df["County"] == county, "Hectares 2028"] *
+            df.loc[df["County"] == county, "2028 % of Biotech"] / 100
+        )
+    
+    # Update summary metrics (assume this function updates summary data based on the DataFrame)
     update_summary_metrics()
-
+    
     # Display update message
-    st.write(f"Updated {selected_county} with 2028 Biotech %: {new_biotech_percentage}")
-st.header("Seed Requirement Calculator")
-# Display the main DataFrame
-st.dataframe(df, use_container_width=True, height = 250)
+    st.markdown(f"""
+    <div style="text-align: center; background-color: #a4343a; color: white; padding: 10px; border-radius: 5px;">
+        <b>Updated {', '.join(selected_counties)} the 2028 Biotech  for the selected counties is now: {new_biotech_percentage} %</b>
+    </div>
+""", unsafe_allow_html=True)
+
+
+
+# Display the updated DataFrame
+st.subheader("Calculator")
+st.dataframe(df, use_container_width=True, height=250)
+
+
+#______________________________________________________________________________________________________________
+
+# ADD THE MAP HERE
