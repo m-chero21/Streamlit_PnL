@@ -226,61 +226,6 @@ def update_summary_metrics():
 
 update_summary_metrics()
 
-# Scenario Testing Section
-# st.subheader("Scenario Testing")
-# selected_county = st.selectbox("County:", options=kenyan_counties)
-# new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
-# update_button = st.button("Update")
-#_______________________________________________________________________________________________________________________
-# st.subheader("Scenario Testing")
-
-# # Use multiselect instead of selectbox
-# selected_counties = st.multiselect("Counties:", options=kenyan_counties)
-
-# new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
-
-# update_button = st.button("Update")
-
-# # Example output or logic based on multiple selected counties
-# if update_button:
-#     st.write("Selected counties:", selected_counties)
-#     st.write("New biotech percentage:", new_biotech_percentage)
-# #__________________________________________________________________________________
-
-# if update_button:
-#     # Update selected county
-#     df.loc[df["County"] == selected_county, "2028 % of Biotech"] = new_biotech_percentage
-#     remaining_percentage = 100 - new_biotech_percentage
-#     df.loc[df["County"] == selected_county, "2028 % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
-#     df.loc[df["County"] == selected_county, "2028 % of Hybrid"] = 100 - new_biotech_percentage - df.loc[df["County"] == selected_county, "2028 % of OPV"]
-
-#     # Update dependent fields
-#     df.loc[df["County"] == selected_county, "2028 kg seed Biotech"] = (
-#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
-#         df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100 * seed_rate
-#     )
-#     df.loc[df["County"] == selected_county, "Production Volume 2028"] = (
-#         df.loc[df["County"] == selected_county, "Avg Yield OPV"] *
-#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
-#         df.loc[df["County"] == selected_county, "2028 % of OPV"] / 100 +
-#         df.loc[df["County"] == selected_county, "Avg Yield Hybrid"] *
-#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
-#         df.loc[df["County"] == selected_county, "2028 % of Hybrid"] / 100 +
-#         df.loc[df["County"] == selected_county, "Avg Yield Biotech"] *
-#         df.loc[df["County"] == selected_county, "Hectares 2028"] *
-#         df.loc[df["County"] == selected_county, "2028 % of Biotech"] / 100
-#     )
-
-#     # Update summary metrics
-#     update_summary_metrics()
-
-#     # Display update message
-#     st.write(f"Updated {selected_county} with 2028 Biotech %: {new_biotech_percentage}")
-# st.subheader("Seed Requirement Calculator")
-# # Display the main DataFrame
-# st.dataframe(df, use_container_width=True, height = 250)
-#___________________________________________________________________________________________________
-
 st.subheader("Scenario Testing")
 
 # Use multiselect to select multiple counties

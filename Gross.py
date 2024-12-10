@@ -118,6 +118,14 @@ st.markdown(
 #___________________________________________________________________________________________________________
 
 df = pd. read_excel("aggregate_farm_data_template.xlsx")
+cost = pd.read_excel("cost.xlsx")
+
+# Validating required columns in the Cost Breakdown DataFrame
+required_columns = [
+    "Scale of Production", "Fertilizer Subsidy", "Seed Cost (KES)", "Fertilizer Cost (KES)",
+    "Pesticides Cost", "Herbicides Cost (KES)", "Machinery Cost (KES)", "Labour Cost (KES)",
+    "Landrent Cost (KES)", "Other Costs (KES)"
+]
 
 # Sidebar title
 st.sidebar.header("Global Parameters")
@@ -209,7 +217,7 @@ if "items" not in st.session_state:
 def display_items():
     st.markdown("""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 10px; padding-top: 40px; margin-bottom: 10px;">
-        <b>Item</b><b>Quantity</b><b>Cost/Unit (KES)</b><b>Category</b><b>Remove</b>
+        <b>Item</b><b>Quantity</b><b>Cost/Unit (KES)</b><b>Category</b>
     </div>
     """, unsafe_allow_html=True)
 
@@ -242,16 +250,16 @@ def display_items():
                     st.session_state["item_data"][unique_key]["category"]),
                 key=f"category_{unique_key}"  # Use unique key
             )
-        with cols[4]:
-            if st.button("Remove", key=f"remove_{unique_key}"):
-                remove_item(idx)
+#         with cols[4]:
+#             if st.button("Remove", key=f"remove_{unique_key}"):
+#                 remove_item(idx)
 
-# Function to remove an item
-def remove_item(index):
-    item = st.session_state["items"][index]
-    unique_key = f"{index}_{item['name']}"
-    del st.session_state["item_data"][unique_key]
-    del st.session_state["items"][index]
+# # Function to remove an item
+# def remove_item(index):
+#     item = st.session_state["items"][index]
+#     unique_key = f"{index}_{item['name']}"
+#     del st.session_state["item_data"][unique_key]
+#     del st.session_state["items"][index]
 
 # Function to add a new parameter
 def add_new_parameter(name, quantity, cost, category):
@@ -498,7 +506,7 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit,
     st.pyplot(fig)
 
 # Implement Break-Even Analysis in the Streamlit App
-if st.button("Perform Break-Even Analysis"):
+if st.button("Break-Even Analysis"):
     # Calculate fixed and variable costs
     fixed_costs = sum(
         [widget["cost"] * widget["quantity"] for widget in st.session_state["item_data"].values() if widget["category"] == "Fixed Cost"]
