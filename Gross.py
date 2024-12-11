@@ -50,6 +50,7 @@ st.markdown(
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 20px;
     }
     .navbar-logo {
         display: flex;
@@ -212,7 +213,14 @@ for col, category in category_mapping.items():
 cost_df = pd.DataFrame(cost_parameters)
 
 # Add New Item
-st.markdown("### Add New Item")
+st.markdown(
+    """
+    <div style="background-color:#007278;padding:2px;border-radius:5px">
+        <h3 style="color:white;text-align:center;">Add New Item</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 new_item = st.text_input("Item Name", "New Item")
 new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
 new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
@@ -237,7 +245,14 @@ if st.button("Add Item"):
     st.success(f"Item '{new_item}' added successfully!")
 
 # Display Updated Cost Breakdown Table
-st.markdown("## Cost Breakdown")
+st.markdown(
+    """
+    <div style="background-color:#007278;padding:2px;border-radius:5px">
+        <h3 style="color:white;text-align:center;">Cost Breakdown</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 st.dataframe(cost_df)
 
 # Gross Margin Calculation
@@ -256,7 +271,14 @@ gross_output, net_output, gross_margin = calculate_gross_margin(
     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
 )
 
-st.markdown("### Summary")
+st.markdown(
+    """
+    <div style="background-color:#007278;padding:2px;border-radius:5px">
+        <h4 style="color:white;text-align:center;">Summary</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 # Display the selected county
 if selected_county == "All":
     st.markdown("**Selected County:** All Counties")
@@ -286,7 +308,14 @@ if break_even_quantity is not None:
     st.markdown(f"**Break-Even Revenue:** {break_even_revenue:,.2f} {currency}")
 
 # Break-Even Plot
-st.markdown("### Break-Even Analysis")
+st.markdown(
+    """
+    <div style="background-color:#007278;padding:2px;border-radius:5px">
+        <h3 style="color:white;text-align:center;">Break-Even Analysis</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
     units = np.arange(0, 2000, 10)  # Change range if needed
     total_costs = fixed_costs + variable_cost_per_unit * units
@@ -306,7 +335,14 @@ if break_even_quantity is not None:
     plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
 # Cost and Revenue Distribution Plot
-st.markdown("### Cost and Revenue Distribution")
+st.markdown(
+    """
+    <div style="background-color:#007278;padding:2px;border-radius:5px">
+        <h3 style="color:white;text-align:center;">Cost and Revenue Distribution</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
 values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
 plt.rcParams["font.family"] = "serif"
