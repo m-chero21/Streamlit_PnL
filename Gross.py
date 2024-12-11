@@ -11,6 +11,10 @@ st.set_page_config(
     page_icon= "logo2.png",
     layout="wide"
 )
+primary_clr = st.get_option("theme.primaryColor")
+txt_clr = st.get_option("theme.textColor")
+theme = st.get_option("theme.font")
+mode = st.get_option("theme.base")
 
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
@@ -288,6 +292,7 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
     total_costs = fixed_costs + variable_cost_per_unit * units
     total_revenue = selling_price_per_unit * units
     plt.rcParams["font.family"] = "serif"
+    plt.rcParams["font.size"] = 10 
     plt.figure(figsize=(10, 6))
     plt.plot(units, total_costs, label="Total Costs", color="#a4343a")
     plt.plot(units, total_revenue, label="Total Revenue", color="#37B7C3")
@@ -305,7 +310,9 @@ st.markdown("### Cost and Revenue Distribution")
 categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
 values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
 plt.rcParams["font.family"] = "serif"
+plt.rcParams["font.size"] = 8
 fig, ax = plt.subplots()
+plt.figure(figsize=(10, 6))
 bars = ax.bar(categories, values, color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])
 ax.set_ylabel(f"Value ({currency})")
 # Add labels on the bars
@@ -318,7 +325,7 @@ for bar, value in zip(bars, values):
         va="bottom",  # Align to bottom of text
         fontsize= 7  # Adjust font size as needed
     )
-    
+
 
 st.pyplot(fig)
 
