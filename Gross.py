@@ -318,6 +318,7 @@ for bar, value in zip(bars, values):
         va="bottom",  # Align to bottom of text
         fontsize= 7  # Adjust font size as needed
     )
+    
 
 st.pyplot(fig)
 
