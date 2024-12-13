@@ -222,9 +222,9 @@ def update_summary_metrics():
     summary_data = {
         "Indicator": [
             "Area Under Maize (Ha)",
-            "Biotech Hectares (2028) (Ha)",
-            "% of National Hectares (2028)",
-            "Commercial Seed (2028) (Kg)",
+            "Area under Biotech Seed (Ha)",
+            "National Area under Biotech Seed (%)",
+            "Maize Commercial Seed (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
@@ -250,9 +250,9 @@ def update_summary2_metrics():
     summary_data = {
         "Indicator": [
             "Area Under Maize (Ha)",
-            "Biotech Hectares (2028) (Ha)",
-            "% of National Hectares (2028)",
-            "Commercial Seed (2028) (Kg)",
+            "Area under Biotech Seed (Ha)",
+            "National Area under Biotech Seed (%)",
+            "Maize Commercial Seed (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
