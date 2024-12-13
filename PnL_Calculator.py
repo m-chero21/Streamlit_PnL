@@ -223,7 +223,7 @@ def update_summary_metrics():
             f"{commercial_seed_2028:,.0f}",
         ],
     }
-    st.sidebar.subheader("National Summary")
+    st.sidebar.subheader("Summary (National)")
     summary_df = pd.DataFrame(summary_data)
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
