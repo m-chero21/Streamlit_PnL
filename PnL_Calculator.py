@@ -221,10 +221,10 @@ def update_summary_metrics():
 
     summary_data = {
         "Indicator": [
-            "Area Under Maize (Ha)",
-            "Area under Biotech Seed (Ha)",
-            "National Area under Biotech Seed (%)",
-            "Biotech Seed Requirement 2028 (Kg)",
+            "Area under maize (Ha)",
+            "Area under biotech seed (Ha)",
+            "National area under biotech seed (%)",
+            "Biotech seed requirement 2028 (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
@@ -233,7 +233,6 @@ def update_summary_metrics():
             f"{commercial_seed_2028:,.0f}",
         ],
     }
-    st.sidebar.subheader("Summary (National)")
     summary_df = pd.DataFrame(summary_data)
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
@@ -246,14 +245,14 @@ def update_summary2_metrics():
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
     )
     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
-    
+
 
     summary_data = {
         "Indicator": [
-            "Area Under Maize (Ha)",
-            "Area under Biotech Seed (Ha)",
-            "National Area under Biotech Seed (%)",
-            "Biotech Seed Requirement 2028 (Kg)",
+            "Area under maize (Ha)",
+            "Area under biotech seed (Ha)",
+            "National area under biotech Seed (%)",
+            "Biotech seed requirement 2028 (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
