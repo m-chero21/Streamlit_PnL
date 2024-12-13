@@ -6,5 +6,5 @@ streamlit-aggrid
 geopandas
 plotly
 openpyxl
-
+pyplot
 

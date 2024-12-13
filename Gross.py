@@ -34,8 +34,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Add the centered title
-st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
+
 
 # Add custom CSS for the navigation bar
 st.markdown(
@@ -109,6 +108,9 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# Add the centered title
+st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
 
 primary_clr = st.get_option("theme.primaryColor")
 txt_clr = st.get_option("theme.textColor")
@@ -370,7 +372,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-    units = np.arange(0, 2000, 10)  # Change range if needed
+    units = np.arange(0, 2000, 10) 
     total_costs = fixed_costs + variable_cost_per_unit * units
     total_revenue = selling_price_per_unit * units
     plt.rcParams["font.family"] = "serif"
@@ -424,87 +426,3 @@ for bar, value in zip(bars, values):
 
 
 st.pyplot(fig)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

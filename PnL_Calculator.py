@@ -28,8 +28,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Add the centered title
-st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
 
 # Add custom CSS for the navigation bar
 st.markdown(
@@ -102,6 +100,9 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# Add the centered title
+st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
 
 primary_clr = st.get_option("theme.primaryColor")
 txt_clr = st.get_option("theme.textColor")
