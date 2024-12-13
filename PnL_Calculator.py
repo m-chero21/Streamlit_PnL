@@ -210,7 +210,7 @@ def update_summary_metrics():
     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
 
     summary_data = {
-        "Metric": [
+        "Indicator": [
             "Total Hectares (2024)",
             "Biotech Hectares (2028)",
             "% of National Hectares (2028)",
@@ -238,7 +238,7 @@ def update_summary2_metrics():
     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
 
     summary_data = {
-        "Metric": [
+        "Indicator": [
             "Total Hectares (2024)",
             "Biotech Hectares (2028)",
             "% of National Hectares (2028)",
