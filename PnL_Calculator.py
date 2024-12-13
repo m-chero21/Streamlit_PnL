@@ -127,16 +127,16 @@ kenyan_counties = [
 # Initial data
 data = {
     "County": kenyan_counties,
-    "Hectares 2024": [
+    "Hectares 2023": [
         42501, 27250, 92847, 44097, 43133, 34500, 142, 78795, 256, 33241, 87532, 40643,
         30537, 95674, 38467, 66221, 62195, 83618, 60518, 29596, 45800, 138830, 136912,
         3209, 142379, 78567, 2184, 876, 68399, 758, 71470, 67429, 132396, 48175, 20716,
         31317, 6448, 77550, 13596, 5734, 26617, 125065, 1750, 117923, 24921, 132, 49097
     ],
-    "G% Hectares (2024-2028)": [0] * len(kenyan_counties),
-    "2024 % of OPV": [30] * len(kenyan_counties),
-    "2024 % of Hybrid": [70] * len(kenyan_counties),
-    "2024 % of Biotech": [0] * len(kenyan_counties),
+    "G% Hectares (2023-2028)": [0] * len(kenyan_counties),
+    "2023 % of OPV": [30] * len(kenyan_counties),
+    "2023 % of Hybrid": [70] * len(kenyan_counties),
+    "2023 % of Biotech": [0] * len(kenyan_counties),
     "2028 % of OPV": [30] * len(kenyan_counties),
     "2028 % of Hybrid": [70] * len(kenyan_counties),
     "2028 % of Biotech": [0] * len(kenyan_counties),
@@ -162,7 +162,7 @@ df = pd.DataFrame(data)
 st.sidebar.subheader("Global Inputs")
 st.sidebar.markdown("---")
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
-biotech_2024 = st.sidebar.slider("2024 Biotech %", 0, 100, 0)
+biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
 # Function to adjust percentages
@@ -172,27 +172,27 @@ def adjust_percentages(biotech, opv_base, hybrid_base):
     hybrid = 100 - biotech - opv
     return opv, hybrid
 
-opv_2024, hybrid_2024 = adjust_percentages(biotech_2024, 30, 70)
+opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, 30, 70)
 opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, 30, 70)
 
-df["2024 % of OPV"] = [opv_2024] * len(df)
-df["2024 % of Hybrid"] = [hybrid_2024] * len(df)
-df["2024 % of Biotech"] = [biotech_2024] * len(df)
+df["2023 % of OPV"] = [opv_2023] * len(df)
+df["2023 % of Hybrid"] = [hybrid_2023] * len(df)
+df["2023 % of Biotech"] = [biotech_2023] * len(df)
 df["2028 % of OPV"] = [opv_2028] * len(df)
 df["2028 % of Hybrid"] = [hybrid_2028] * len(df)
 df["2028 % of Biotech"] = [biotech_2028] * len(df)
 
 # Add calculated columns
-df["Hectares 2028"] = df["Hectares 2024"] * (1 + df["G% Hectares (2024-2028)"] / 100)
-df["2024 kg seed OPV"] = df["Hectares 2024"] * df["2024 % of OPV"] / 100 * seed_rate
-df["2024 kg seed Hybrid"] = df["Hectares 2024"] * df["2024 % of Hybrid"] / 100 * seed_rate
-df["2024 kg seed Biotech"] = df["Hectares 2024"] * df["2024 % of Biotech"] / 100 * seed_rate
+df["Hectares 2028"] = df["Hectares 2023"] * (1 + df["G% Hectares (2023-2028)"] / 100)
+df["2023 kg seed OPV"] = df["Hectares 2023"] * df["2023 % of OPV"] / 100 * seed_rate
+df["2023 kg seed Hybrid"] = df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 * seed_rate
+df["2023 kg seed Biotech"] = df["Hectares 2023"] * df["2023 % of Biotech"] / 100 * seed_rate
 df["2028 kg seed OPV"] = df["Hectares 2028"] * df["2028 % of OPV"] / 100 * seed_rate
 df["2028 kg seed Hybrid"] = df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 * seed_rate
 df["2028 kg seed Biotech"] = df["Hectares 2028"] * df["2028 % of Biotech"] / 100 * seed_rate
-df["Production Volume 2024"] = (
-    df["Avg Yield OPV"] * df["Hectares 2024"] * df["2024 % of OPV"] / 100 +
-    df["Avg Yield Hybrid"] * df["Hectares 2024"] * df["2024 % of Hybrid"] / 100
+df["Production Volume 2023"] = (
+    df["Avg Yield OPV"] * df["Hectares 2023"] * df["2023 % of OPV"] / 100 +
+    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100
 )
 df["Production Volume 2028"] = (
     df["Avg Yield OPV"] * df["Hectares 2028"] * df["2028 % of OPV"] / 100 +
@@ -202,7 +202,7 @@ df["Production Volume 2028"] = (
 
 # Sidebar Summary Metrics
 def update_summary_metrics():
-    total_hectares = df["Hectares 2024"].sum()
+    total_hectares = df["Hectares 2023"].sum()
     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     percent_national_hectares = (
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
@@ -211,7 +211,7 @@ def update_summary_metrics():
 
     summary_data = {
         "Indicator": [
-            "Total Hectares (2024)",
+            "Total Hectares (2023)",
             "Biotech Hectares (2028)",
             "% of National Hectares (2028)",
             "Commercial Seed (2028)",
@@ -230,7 +230,7 @@ def update_summary_metrics():
 update_summary_metrics()
 
 def update_summary2_metrics():
-    total_hectares = df["Hectares 2024"].sum()
+    total_hectares = df["Hectares 2023"].sum()
     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     percent_national_hectares = (
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
@@ -239,7 +239,7 @@ def update_summary2_metrics():
 
     summary_data = {
         "Indicator": [
-            "Total Hectares (2024)",
+            "Total Hectares (2023)",
             "Biotech Hectares (2028)",
             "% of National Hectares (2028)",
             "Commercial Seed (2028)",
