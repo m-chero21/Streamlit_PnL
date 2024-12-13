@@ -190,6 +190,7 @@ category_mapping = {
     "Other Costs (KES)": "Other Cost"
 }
 
+# Prepare Cost Parameters and Adjust for Exchange Rate
 cost_parameters = []
 for col, category in category_mapping.items():
     if col in filtered_costs.columns:
@@ -207,14 +208,17 @@ for col, category in category_mapping.items():
             "Cost Per Unit": value,
             "Confidence Interval": f"[{lower_bound}, {upper_bound}]",
         })
-
+        
 # Convert to DataFrame for Display
 cost_df = pd.DataFrame(cost_parameters)
+# Convert to DataFrame for Display
+if "cost_df" not in st.session_state:
+    st.session_state.cost_df = pd.DataFrame(cost_parameters)
+else:
+    # Ensure the table dynamically updates based on changes in exchange rate or other parameters
+    st.session_state.cost_df = pd.DataFrame(cost_parameters)
 
-# Debugging: Check if exchange rate is applied correctly
-st.write("Cost DataFrame (after applying exchange rate):", cost_df)
-
-
+# Display Cost Breakdown Section
 st.markdown(
     """
     <style>
@@ -231,11 +235,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# Initialize session state variables if not already present
-if "cost_df" not in st.session_state:
-    st.session_state.cost_df = cost_df
-
+# Add or Edit Items Dynamically in the Table
 if "add_item_expanded" not in st.session_state:
     st.session_state.add_item_expanded = False
 
@@ -272,8 +272,9 @@ if st.session_state.add_item_expanded:
 
             st.success(f"Item '{new_item}' added successfully!")
 
-# Display the updated cost breakdown table
+# Display the Updated Cost Breakdown Table
 st.dataframe(st.session_state.cost_df, use_container_width=True)
+
 
 
 # Gross Margin Calculation
