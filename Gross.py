@@ -8,6 +8,16 @@ st.set_page_config(
     page_icon= "logo2.png",
     layout="wide"
 )
+st.markdown(
+    """
+    <style>
+    /* Hide Streamlit header, including GitHub icons */
+    header {visibility: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 primary_clr = st.get_option("theme.primaryColor")
 txt_clr = st.get_option("theme.textColor")
 theme = st.get_option("theme.font")

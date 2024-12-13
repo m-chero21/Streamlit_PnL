@@ -7,6 +7,16 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown(
+    """
+    <style>
+    /* Hide Streamlit header, including GitHub icons */
+    header {visibility: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
