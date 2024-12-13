@@ -192,7 +192,9 @@ category_mapping = {
 cost_parameters = []
 for col, category in category_mapping.items():
     if col in filtered_costs.columns:
-        value = round(float(filtered_costs[col].iloc[0]) * exchange_rate)
+        value = float(filtered_costs[col].iloc[0])
+        value_in_selected_currency = round(value * exchange_rate)
+
         std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])
         lower_bound = round(value - 1.96 * std_dev)
         upper_bound = round(value + 1.96 * std_dev)
@@ -270,16 +272,17 @@ st.dataframe(st.session_state.cost_df, use_container_width=True)
 
 
 # Gross Margin Calculation
-def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
-    gross_output = yield_kg * farmgate_price
+def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage, exchange_rate):
+    gross_output = yield_kg * farmgate_price * exchange_rate
     post_harvest_loss = gross_output * (loss_percentage / 100)
     own_consumption = gross_output * (own_consumption_percentage / 100)
     net_output = gross_output - (post_harvest_loss + own_consumption)
     
-    total_costs = cost_df["Cost Per Unit"].sum()
+    total_costs = cost_df["Cost Per Unit"].sum() * exchange_rate
     gross_margin = net_output - total_costs
     
     return gross_output, net_output, gross_margin
+
 
 gross_output, net_output, gross_margin = calculate_gross_margin(
     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
@@ -291,12 +294,15 @@ best_case_gross_margin = gross_margin + 1.96 * std_dev
 worst_case_gross_margin = gross_margin - 1.96 * std_dev
 
 # Break-Even Analysis
-def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
+def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, exchange_rate):
+    fixed_costs *= exchange_rate
+    variable_cost_per_unit *= exchange_rate
+    selling_price_per_unit *= exchange_rate
+
     if selling_price_per_unit > variable_cost_per_unit:
         break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit)
         break_even_revenue = break_even_quantity * selling_price_per_unit
 
-        # Calculate variability for worst and best case scenarios
         break_even_quantity_std_dev = break_even_quantity * (0.01 * fluctuation_levels[selected_fluctuation])
         worst_case_quantity = break_even_quantity - 1.96 * break_even_quantity_std_dev
         best_case_quantity = break_even_quantity + 1.96 * break_even_quantity_std_dev
@@ -304,8 +310,8 @@ def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_
         return break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
     return None, None, None, None
 
-fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum()
-variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum()
+fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum() * exchange_rate
+variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum() * exchange_rate
 variable_cost_per_unit = variable_costs / yield_kg if yield_kg > 0 else 0
 
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
