@@ -39,6 +39,7 @@ st.markdown(
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 20px;
     }
     .navbar-logo {
         display: flex;
@@ -48,7 +49,7 @@ st.markdown(
         font-weight: bold;
         text-decoration: none;
     }
-    .navbar-logo img{
+    .navbar-logo img {
         height: 40px; /* Adjust size */
         margin-right: 10px;
     }
@@ -58,9 +59,9 @@ st.markdown(
         gap: 20px; /* Space between navigation items */
     }
     .navbar-link {
-        color: black !important; /* Change font color to white */
+        color: black !important; /* Set font color */
         font-size: 18px;
-        text-decoration: none;
+        text-decoration: none; /* Remove underline */
         font-weight: normal;
         padding: 5px 10px;
         border-radius: 5px;
@@ -74,19 +75,20 @@ st.markdown(
         background-color: #007278; /* Button color */
         color: white !important; /* Change button text color to white */
         font-size: 18px;
+        text-decoration: none; /* Remove underline */
         padding: 5px 15px;
-        text-decoration: none;
         border-radius: 5px;
         font-weight: bold;
         transition: background-color 0.3s;
     }
     .navbar-button:hover {
-        background-color: #a4343a /* Darker button on hover */
+        background-color: #a4343a; /* Darker button on hover */
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
+
 
 # Add the navigation bar
 st.markdown(
@@ -289,4 +291,4 @@ st.dataframe(df, use_container_width=True, height=250)
 
 #______________________________________________________________________________________________________________
 
-# ADD THE MAP HERE
+# REMEMBER TO ADD THE MAP HERE

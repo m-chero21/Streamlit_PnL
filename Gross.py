@@ -56,7 +56,7 @@ st.markdown(
         font-weight: bold;
         text-decoration: none;
     }
-    .navbar-logo img{
+    .navbar-logo img {
         height: 40px; /* Adjust size */
         margin-right: 10px;
     }
@@ -66,9 +66,9 @@ st.markdown(
         gap: 20px; /* Space between navigation items */
     }
     .navbar-link {
-        color: black !important; /* Change font color to white */
+        color: black !important; /* Set font color */
         font-size: 18px;
-        text-decoration: none;
+        text-decoration: none; /* Remove underline */
         font-weight: normal;
         padding: 5px 10px;
         border-radius: 5px;
@@ -82,14 +82,14 @@ st.markdown(
         background-color: #007278; /* Button color */
         color: white !important; /* Change button text color to white */
         font-size: 18px;
+        text-decoration: none; /* Remove underline */
         padding: 5px 15px;
-        text-decoration: none;
         border-radius: 5px;
         font-weight: bold;
         transition: background-color 0.3s;
     }
     .navbar-button:hover {
-        background-color: #a4343a /* Darker button on hover */
+        background-color: #a4343a; /* Darker button on hover */
     }
     </style>
     """,
@@ -153,7 +153,7 @@ exchange_rate = st.sidebar.number_input(
 )
 
 bag_weight = st.sidebar.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
-farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=65.0, step=1.0)
+farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value= 28.62, step=1.0)
 loss_percentage = st.sidebar.slider("Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Consumption %:", 0, 50, 10)
 
@@ -426,3 +426,4 @@ for bar, value in zip(bars, values):
 
 
 st.pyplot(fig)
+
