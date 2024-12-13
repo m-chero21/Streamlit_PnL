@@ -224,7 +224,7 @@ def update_summary_metrics():
             "Area Under Maize (Ha)",
             "Area under Biotech Seed (Ha)",
             "National Area under Biotech Seed (%)",
-            "Maize Commercial Seed (Kg)",
+            "Biotech Seed Requirement 2028 (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
@@ -246,13 +246,14 @@ def update_summary2_metrics():
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
     )
     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
+    
 
     summary_data = {
         "Indicator": [
             "Area Under Maize (Ha)",
             "Area under Biotech Seed (Ha)",
             "National Area under Biotech Seed (%)",
-            "Maize Commercial Seed (Kg)",
+            "Biotech Seed Requirement 2028 (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
