@@ -193,21 +193,27 @@ category_mapping = {
 cost_parameters = []
 for col, category in category_mapping.items():
     if col in filtered_costs.columns:
-        value = round(float(filtered_costs[col].iloc[0]) * exchange_rate)
-        std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])
-        lower_bound = round(value - 1.96 * std_dev)
-        upper_bound = round(value + 1.96 * std_dev)
+        # Apply the exchange rate dynamically
+        raw_value = float(filtered_costs[col].iloc[0])  # Original value from the filtered costs
+        value = round(raw_value * exchange_rate)  # Adjusted for exchange rate
+        std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])  # Calculate standard deviation
+        lower_bound = round(value - 1.96 * std_dev)  # Confidence interval lower bound
+        upper_bound = round(value + 1.96 * std_dev)  # Confidence interval upper bound
 
         cost_parameters.append({
             "Item": col.replace(" (KES)", ""),
             "Category": category,
-            "Quantity": int(filtered_costs["Quantity"].iloc[0]),
+            "Quantity": int(filtered_costs["Quantity"].iloc[0]) if "Quantity" in filtered_costs else 1,
             "Cost Per Unit": value,
             "Confidence Interval": f"[{lower_bound}, {upper_bound}]",
         })
 
 # Convert to DataFrame for Display
 cost_df = pd.DataFrame(cost_parameters)
+
+# Debugging: Check if exchange rate is applied correctly
+st.write("Cost DataFrame (after applying exchange rate):", cost_df)
+
 
 st.markdown(
     """
