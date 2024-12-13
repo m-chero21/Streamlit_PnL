@@ -3,9 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-import streamlit as st
-import pandas as pd
-
 st.set_page_config(
     page_title="Gross Margin Calculator",
     page_icon= "logo2.png",
@@ -37,8 +34,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Add the centered title
-st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
+
 
 # Add custom CSS for the navigation bar
 st.markdown(
@@ -60,7 +56,7 @@ st.markdown(
         font-weight: bold;
         text-decoration: none;
     }
-    .navbar-logo img{
+    .navbar-logo img {
         height: 40px; /* Adjust size */
         margin-right: 10px;
     }
@@ -70,9 +66,9 @@ st.markdown(
         gap: 20px; /* Space between navigation items */
     }
     .navbar-link {
-        color: black !important; /* Change font color to white */
+        color: black !important; /* Set font color */
         font-size: 18px;
-        text-decoration: none;
+        text-decoration: none; /* Remove underline */
         font-weight: normal;
         padding: 5px 10px;
         border-radius: 5px;
@@ -86,14 +82,14 @@ st.markdown(
         background-color: #007278; /* Button color */
         color: white !important; /* Change button text color to white */
         font-size: 18px;
+        text-decoration: none; /* Remove underline */
         padding: 5px 15px;
-        text-decoration: none;
         border-radius: 5px;
         font-weight: bold;
         transition: background-color 0.3s;
     }
     .navbar-button:hover {
-        background-color: #a4343a /* Darker button on hover */
+        background-color: #a4343a; /* Darker button on hover */
     }
     </style>
     """,
@@ -112,6 +108,9 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# Add the centered title
+st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
 
 primary_clr = st.get_option("theme.primaryColor")
 txt_clr = st.get_option("theme.textColor")
@@ -145,16 +144,13 @@ selected_subsidy = st.sidebar.selectbox("Fertilizer Subsidy:", subsidy_options)
 fluctuation_levels = {"Low": 1, "Moderate": 2, "High": 3}
 selected_fluctuation = st.sidebar.selectbox("Fluctuation Level:", list(fluctuation_levels.keys()))
 
-currency = st.sidebar.selectbox("Currency:", ["KES", "USD", "Euro"])
-exchange_rate = st.sidebar.number_input(
-    "Exchange Rate:",
-    value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
-    step=0.001,
-    format="%.3f"
-)
+currency = st.sidebar.selectbox("Currency", ["KES", "USD", "Euro"])
+exchange_rate = 1
+if currency != "KES":
+    exchange_rate = st.sidebar.number_input(f"Exchange Rate (1 {currency} = KES)", min_value=0.0001, value=0.008 if currency == "USD" else 0.007)
 
 bag_weight = st.sidebar.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
-farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=65.0, step=1.0)
+farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value= 28.62, step=1.0)
 loss_percentage = st.sidebar.slider("Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Consumption %:", 0, 50, 10)
 
@@ -212,48 +208,66 @@ for col, category in category_mapping.items():
 # Convert to DataFrame for Display
 cost_df = pd.DataFrame(cost_parameters)
 
-# Add New Item
 st.markdown(
     """
-    <div style="background-color:#007278;padding:2px;border-radius:5px">
-        <h3 style="color:white;text-align:center;">Add New Item</h2>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-new_item = st.text_input("Item Name", "New Item")
-new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
-new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
-new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
-
-# Calculate Confidence Interval for New Item
-std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
-new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
-new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
-new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
-
-if st.button("Add Item"):
-    new_row = {
-        "Item": new_item,
-        "Category": new_category,
-        "Quantity": new_quantity,
-        "Cost Per Unit": new_cost_per_unit,
-        "Confidence Interval": new_confidence_interval,
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
     }
-    # Append the new row to the DataFrame
-    cost_df = pd.concat([cost_df, pd.DataFrame([new_row])], ignore_index=True)
-    st.success(f"Item '{new_item}' added successfully!")
-
-# Display Updated Cost Breakdown Table
-st.markdown(
-    """
-    <div style="background-color:#007278;padding:2px;border-radius:5px">
-        <h3 style="color:white;text-align:center;">Cost Breakdown</h2>
-    </div>
+    </style>
+    <div class="cost-breakdown-title">Cost Breakdown</div>
     """,
     unsafe_allow_html=True
 )
-st.dataframe(cost_df)
+
+
+# Initialize session state variables if not already present
+if "cost_df" not in st.session_state:
+    st.session_state.cost_df = cost_df
+
+if "add_item_expanded" not in st.session_state:
+    st.session_state.add_item_expanded = False
+
+# Button to expand or collapse the Add Item section
+if st.button("Insert New Cost"):
+    st.session_state.add_item_expanded = not st.session_state.add_item_expanded
+
+if st.session_state.add_item_expanded:
+    with st.expander("Add a new cost item", expanded=True):
+        new_item = st.text_input("Cost Name", "Cost Item")
+        new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
+        new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
+        new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
+
+        std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
+        new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
+        new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
+        new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
+
+        if st.button("Update", key="confirm_add_item"):
+            # Create a new row with the entered data
+            new_row = {
+                "Item": new_item,
+                "Category": new_category,
+                "Quantity": new_quantity,
+                "Cost Per Unit": new_cost_per_unit,
+                "Confidence Interval": new_confidence_interval,
+            }
+
+            # Update the session state DataFrame
+            st.session_state.cost_df = pd.concat(
+                [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
+            )
+
+            st.success(f"Item '{new_item}' added successfully!")
+
+# Display the updated cost breakdown table
+st.dataframe(st.session_state.cost_df, use_container_width=True)
+
 
 # Gross Margin Calculation
 def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
@@ -271,58 +285,96 @@ gross_output, net_output, gross_margin = calculate_gross_margin(
     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
 )
 
-st.markdown(
-    """
-    <div style="background-color:#007278;padding:2px;border-radius:5px">
-        <h4 style="color:white;text-align:center;">Summary</h2>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-# Display the selected county
-if selected_county == "All":
-    st.markdown("**Selected County:** All Counties")
-else:
-    st.markdown(f"**Selected County:** {selected_county} County")
-
-st.markdown(f"**Gross Output:** {gross_output:,.2f} {currency}")
-st.markdown(f"**Net Output:** {net_output:,.2f} {currency}")
-st.markdown(f"**Gross Margin:** {gross_margin:,.2f} {currency}")
+# Calculate Best and Worst Case Scenarios
+std_dev = gross_margin * (0.01 * fluctuation_levels[selected_fluctuation])
+best_case_gross_margin = gross_margin + 1.96 * std_dev
+worst_case_gross_margin = gross_margin - 1.96 * std_dev
 
 # Break-Even Analysis
 def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
     if selling_price_per_unit > variable_cost_per_unit:
         break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit)
         break_even_revenue = break_even_quantity * selling_price_per_unit
-        return break_even_quantity, break_even_revenue
-    return None, None
+
+        # Calculate variability for worst and best case scenarios
+        break_even_quantity_std_dev = break_even_quantity * (0.01 * fluctuation_levels[selected_fluctuation])
+        worst_case_quantity = break_even_quantity - 1.96 * break_even_quantity_std_dev
+        best_case_quantity = break_even_quantity + 1.96 * break_even_quantity_std_dev
+
+        return break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
+    return None, None, None, None
 
 fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum()
 variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum()
 variable_cost_per_unit = variable_costs / yield_kg if yield_kg > 0 else 0
 
-break_even_quantity, break_even_revenue = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
+break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
-if break_even_quantity is not None:
-    st.markdown(f"**Break-Even Quantity (Kg):** {break_even_quantity:,.2f}")
-    st.markdown(f"**Break-Even Revenue:** {break_even_revenue:,.2f} {currency}")
+# Required Price to Break Even
+required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg if yield_kg > 0 else None
+
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Results Summary</div>
+    """,
+    unsafe_allow_html=True
+)
+
+summary_data = [
+    {"Metric": "Farmgate Price", "Value": f"{farmgate_price:,.2f} {currency}"},
+    {"Metric": "Break-Even Quantity (Bags)", "Value": f"{break_even_quantity / bag_weight:,.2f}" if break_even_quantity is not None else "N/A"},
+    {"Metric": "Break-Even Quantity (Kg)", "Value": f"{break_even_quantity:,.2f}" if break_even_quantity is not None else "N/A"},
+    {"Metric": "Worst-Case Break-Even Quantity (Kg)", "Value": f"{worst_case_quantity:,.2f}" if worst_case_quantity is not None else "N/A"},
+    {"Metric": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
+    {"Metric": "Required Farmgate Price to Break Even", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
+    {"Metric": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
+    {"Metric": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
+]
+
+summary_df = pd.DataFrame(summary_data)
+
+st.markdown(
+    summary_df.style
+    .set_table_styles([
+        {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
+        {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]}])
+    .hide(axis="index")
+    .to_html(),
+    unsafe_allow_html=True,
+)
 
 # Break-Even Plot
 st.markdown(
     """
-    <div style="background-color:#007278;padding:2px;border-radius:5px">
-        <h3 style="color:white;text-align:center;">Break-Even Analysis</h2>
-    </div>
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Break-Even Analysis</div>
     """,
     unsafe_allow_html=True
 )
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-    units = np.arange(0, 2000, 10)  # Change range if needed
+    units = np.arange(0, 2000, 10) 
     total_costs = fixed_costs + variable_cost_per_unit * units
     total_revenue = selling_price_per_unit * units
     plt.rcParams["font.family"] = "serif"
     plt.rcParams["font.size"] = 10 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(6, 4))
     plt.plot(units, total_costs, label="Total Costs", color="#a4343a")
     plt.plot(units, total_revenue, label="Total Revenue", color="#37B7C3")
     plt.axvline(break_even_quantity, color="#000000", linestyle="--", label="Break-Even Point")
@@ -337,9 +389,16 @@ if break_even_quantity is not None:
 # Cost and Revenue Distribution Plot
 st.markdown(
     """
-    <div style="background-color:#007278;padding:2px;border-radius:5px">
-        <h3 style="color:white;text-align:center;">Cost and Revenue Distribution</h2>
-    </div>
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Cost and Revenue Distribution</div>
     """,
     unsafe_allow_html=True
 )
@@ -348,7 +407,7 @@ values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin
 plt.rcParams["font.family"] = "serif"
 plt.rcParams["font.size"] = 8
 fig, ax = plt.subplots()
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(6, 4))
 bars = ax.bar(categories, values, color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])
 ax.set_ylabel(f"Value ({currency})")
 # Add labels on the bars
@@ -364,3 +423,4 @@ for bar, value in zip(bars, values):
 
 
 st.pyplot(fig)
+
