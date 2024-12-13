@@ -114,6 +114,37 @@ primary_clr = st.get_option("theme.primaryColor")
 txt_clr = st.get_option("theme.textColor")
 theme = st.get_option("theme.font")
 mode = st.get_option("theme.base")
+
+
+# Global CSS for Styling and Aligning Buttons
+st.markdown(
+    """
+    <style>
+    div.stButton > button {
+        float: right; /* Move the button to the right */
+        background-color: #007278; /* Button color */
+        color: white !important; /* White text color */
+        font-size: 16px; /* Font size */
+        font-weight: bold; /* Font weight */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        padding: 10px 20px; /* Padding inside button */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s ease; /* Smooth hover effect */
+        margin: 10px; /* Add some space around the button */
+    }
+    div.stButton > button:hover {
+        background-color: #a4343a; /* Hover color */
+        color: white !important; /* Keep text color white on hover */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+
 #_____________________________________________________________________________________________
 
 # Load Data
@@ -244,7 +275,7 @@ if st.button("Insert New Cost"):
     st.session_state.add_item_expanded = not st.session_state.add_item_expanded
 
 if st.session_state.add_item_expanded:
-    with st.expander("Add a new cost item", expanded=True):
+    with st.expander("", expanded=True):
         new_item = st.text_input("Cost Name", "Cost Item")
         new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
         new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
@@ -346,9 +377,8 @@ summary_data = [
     {"Metric": "Gross Margin", "Value": f"{gross_margin:,.2f}" if best_case_quantity is not None else "N/A"},
     {"Metric": "Required Farmgate Price to Break Even", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
     {"Metric": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
-    {"Metric": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"}, 
+    {"Metric": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
 ]
-
 
 summary_df = pd.DataFrame(summary_data)
 
@@ -378,25 +408,65 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+import plotly.graph_objects as go
+
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-    units = np.arange(0, 2000, 10) 
+    units = np.arange(0, 2000, 10)
     total_costs = fixed_costs + variable_cost_per_unit * units
     total_revenue = selling_price_per_unit * units
-    plt.rcParams["font.family"] = "serif"
-    plt.rcParams["font.size"] = 10 
-    plt.figure(figsize=(6, 4))
-    plt.plot(units, total_costs, label="Total Costs", color="#a4343a")
-    plt.plot(units, total_revenue, label="Total Revenue", color="#37B7C3")
-    plt.axvline(break_even_quantity, color="#000000", linestyle="--", label="Break-Even Point")
-    plt.xlabel("Units Produced/Sold")
-    plt.ylabel("Cost/Revenue")
-    plt.legend()
-    st.pyplot(plt)
+
+    # Create interactive Plotly figure
+    fig = go.Figure()
+
+    # Add Total Costs line
+    fig.add_trace(
+        go.Scatter(
+            x=units,
+            y=total_costs,
+            mode='lines',
+            name='Total Costs',
+            line=dict(color='#a4343a', width=2)
+        )
+    )
+
+    # Add Total Revenue line
+    fig.add_trace(
+        go.Scatter(
+            x=units,
+            y=total_revenue,
+            mode='lines',
+            name='Total Revenue',
+            line=dict(color='#37B7C3', width=2)
+        )
+    )
+
+    # Add Break-Even Point line
+    fig.add_trace(
+        go.Scatter(
+            x=[break_even_quantity, break_even_quantity],
+            y=[0, max(total_costs.max(), total_revenue.max())],
+            mode='lines',
+            name='Break-Even Point',
+            line=dict(color='#000000', dash='dash')
+        )
+    )
+
+    # Layout and labels
+    fig.update_layout(
+         xaxis_title='Units Produced/Sold',
+        yaxis_title='Cost/Revenue',
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        template="seaborn"
+    )
+
+    # Render in Streamlit
+    st.plotly_chart(fig, use_container_width=True)
 
 if break_even_quantity is not None:
     plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
-# Cost and Revenue Distribution Plot
+
 st.markdown(
     """
     <style>
@@ -412,108 +482,36 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
-values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["font.size"] = 8
-fig, ax = plt.subplots()
-plt.figure(figsize=(6, 4))
-bars = ax.bar(categories, values, color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])
-ax.set_ylabel(f"Value ({currency})")
-# Add labels on the bars
-for bar, value in zip(bars, values):
-    ax.text(
-        bar.get_x() + bar.get_width() / 2,  # Center of the bar
-        bar.get_height() + 0.01 * max(values),  # Slightly above the bar
-        f"{value:,.2f}",  # Format the value
-        ha="center",  # Center horizontally
-        va="bottom",  # Align to bottom of text
-        fontsize= 7  # Adjust font size as needed
+
+def plot_cost_and_revenue_distribution(categories, values, currency):
+    # Create Plotly bar chart
+    fig = go.Figure(
+        data=[
+            go.Bar(
+                x=categories,
+                y=values,
+                text=[f"{value:,.2f}" for value in values],  # Add formatted values as text
+                textposition='auto',
+                marker=dict(color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])  # Set bar colors
+            )
+        ]
     )
 
-
-st.pyplot(fig)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # Layout and labels
+    fig.update_layout(
+        xaxis_title='Category',
+        yaxis_title=f'Value ({currency})',
+        template="seaborn",
+        bargap=0.2
+    )
+
+    # Render in Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
+# Define categories and values
+categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
+values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
+
+# Call the function
+plot_cost_and_revenue_distribution(categories, values, currency)
 
