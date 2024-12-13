@@ -378,14 +378,14 @@ st.markdown(
 )
 
 summary_data = [
-    {"Indicator": "Farmgate Price (KES)", "Value": f"{farmgate_price*exchange_rate:,.2f} {currency}"},
+    {"Indicator": "Farmgate Price {currency}", "Value": f"{farmgate_price*exchange_rate:,.2f} {currency}"},
     {"Indicator": "Break-Even Quantity (Bags)", "Value": f"{break_even_quantity / bag_weight:,.2f}" if break_even_quantity is not None else "N/A"},
     {"Indicator": "Break-Even Quantity (Kg)", "Value": f"{break_even_quantity:,.2f}" if break_even_quantity is not None else "N/A"},
     # {"Indicator": "Worst-Case Break-Even Quantity (Kg)", "Value": f"{worst_case_quantity:,.2f}" if worst_case_quantity is not None else "N/A"},
     # {"Indicator": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
     
-    {"Indicator": "Break-Even Price (KES)", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
-    {"Indicator": "Gross Margin", "Value": f"{gross_margin:,.2f}" if best_case_quantity is not None else "N/A"},
+    {"Indicator": "Break-Even Price {currency}", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
+    {"Indicator": "Gross Margin {currency}", "Value": f"{gross_margin:,.2f}" if best_case_quantity is not None else "N/A"},
     # {"Indicator": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
     # {"Indicator": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
 ]
