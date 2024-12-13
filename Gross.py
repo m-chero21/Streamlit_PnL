@@ -534,3 +534,134 @@ with col2:
 )
     # Cost and Revenue Distribution Plot
     st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False)
+
+
+
+
+
+#_____________________________________________________________________________
+
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Farmer P&L</div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Create a DataFrame for the dynamic table
+table_data = {
+    "Item": [
+        "Gross Output", "Post-Harvest Losses", "Own Consumption", "Net Output",
+        "Seed Cost", "Fertilizer Cost", "Pesticides Cost", "Herbicides Cost", "Labour Cost",
+        "Machinery Cost", "Landrent Cost", "Other Costs", "Gross Margin"
+    ],
+    "Unit": [
+        "Bags", "Bags", "Bags", "Bags",
+        "Unit", "Unit", "Unit", "Unit", "Unit",
+        "Unit", "Unit", "Unit", ""
+    ],
+    "Quantity": [
+        f"{gross_output / bag_weight:,.2f}",  # Quantity for Gross Output in Bags
+        f"-{(gross_output * (loss_percentage / 100)) / bag_weight:,.2f}",  # Losses in Bags
+        f"-{(gross_output * (own_consumption_percentage / 100)) / bag_weight:,.2f}",  # Own Consumption in Bags
+        f"{(net_output) / bag_weight:,.2f}",  # Net Output in Bags
+        f"{cost_df.loc[cost_df['Item'] == 'Seed Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Fertilizer Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Pesticides Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Herbicides Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Labour Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Machinery Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Landrent Cost', 'Quantity'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Other Costs', 'Quantity'].sum():,.2f}",
+        ""
+    ],
+    "Cost/Unit": [
+        f"{farmgate_price * exchange_rate:,.2f}",
+        f"{farmgate_price * exchange_rate:,.2f}",
+        f"{farmgate_price * exchange_rate:,.2f}",
+        f"{farmgate_price * exchange_rate:,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Seed Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Fertilizer Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Pesticides Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Herbicides Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Labour Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Machinery Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Landrent Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Other Costs', 'Cost Per Unit'].sum():,.2f}",
+        ""
+    ],
+    "Value": [
+        f"{gross_output:,.2f}",
+        f"-{gross_output * (loss_percentage / 100):,.2f}",
+        f"-{gross_output * (own_consumption_percentage / 100):,.2f}",
+        f"{net_output:,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Seed Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Fertilizer Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Pesticides Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Herbicides Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Labour Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Machinery Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Landrent Cost', 'Cost Per Unit'].sum():,.2f}",
+        f"{cost_df.loc[cost_df['Item'] == 'Other Costs', 'Cost Per Unit'].sum():,.2f}",
+        f"{gross_margin:,.2f}"
+    ]
+}
+
+# Convert to DataFrame
+table_df = pd.DataFrame(table_data)
+
+# Render the styled table using `st.table` or custom CSS
+st.markdown(
+    """
+    <style>
+    .styled-table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .styled-table td, .styled-table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    .styled-table tr:nth-child(even){background-color: #f2f2f2;}
+    .styled-table tr:hover {background-color: #ddd;}
+    .styled-table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #007278;
+        color: white;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Render the table in HTML
+st.markdown(
+    "<table class='styled-table'>"
+    + "<thead>"
+    + "<tr>"
+    + "".join(f"<th>{col}</th>" for col in table_df.columns)
+    + "</tr>"
+    + "</thead>"
+    + "<tbody>"
+    + "".join(
+        "<tr>" +
+        "".join(f"<td>{row[col]}</td>" for col in table_df.columns) +
+        "</tr>"
+        for _, row in table_df.iterrows()
+    )
+    + "</tbody></table>",
+    unsafe_allow_html=True
+)
+
