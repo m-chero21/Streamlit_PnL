@@ -211,16 +211,16 @@ def update_summary_metrics():
 
     summary_data = {
         "Indicator": [
-            "Total Hectares (2023)",
-            "Biotech Hectares (2028)",
+            "Total Hectares (2023) (Ha)",
+            "Biotech Hectares (2028) (Ha)",
             "% of National Hectares (2028)",
-            "Commercial Seed (2028)",
+            "Commercial Seed (2028) (Kg)",
         ],
         "Value": [
-            f"{total_hectares:,.0f} Ha",
-            f"{total_biotech_hectares_2028:,.0f} Ha",
+            f"{total_hectares:,.0f}",
+            f"{total_biotech_hectares_2028:,.0f}",
             f"{percent_national_hectares:.1f}%",
-            f"{commercial_seed_2028:,.0f} Kg",
+            f"{commercial_seed_2028:,.0f}",
         ],
     }
     st.sidebar.subheader("Summary (National)")
@@ -239,16 +239,16 @@ def update_summary2_metrics():
 
     summary_data = {
         "Indicator": [
-            "Total Hectares (2023)",
-            "Biotech Hectares (2028)",
+            "Total Hectares (2023) (Ha)",
+            "Biotech Hectares (2028) (Ha)",
             "% of National Hectares (2028)",
-            "Commercial Seed (2028)",
+            "Commercial Seed (2028) (Kg)",
         ],
         "Value": [
-            f"{total_hectares:,.0f} Ha",
-            f"{total_biotech_hectares_2028:,.0f} Ha",
+            f"{total_hectares:,.0f}",
+            f"{total_biotech_hectares_2028:,.0f}",
             f"{percent_national_hectares:.1f}%",
-            f"{commercial_seed_2028:,.0f} Kg",
+            f"{commercial_seed_2028:,.0f}",
         ],
     }
     st.sidebar.subheader("Summary (Sub-National)")
