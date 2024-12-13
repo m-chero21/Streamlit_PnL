@@ -217,10 +217,10 @@ def update_summary_metrics():
             "Commercial Seed (2028)",
         ],
         "Value": [
-            f"{total_hectares:,.0f}",
-            f"{total_biotech_hectares_2028:,.0f}",
+            f"{total_hectares:,.0f} Ha",
+            f"{total_biotech_hectares_2028:,.0f} Ha",
             f"{percent_national_hectares:.1f}%",
-            f"{commercial_seed_2028:,.0f}",
+            f"{commercial_seed_2028:,.0f} Kg",
         ],
     }
     st.sidebar.subheader("Summary (National)")
@@ -245,10 +245,10 @@ def update_summary2_metrics():
             "Commercial Seed (2028)",
         ],
         "Value": [
-            f"{total_hectares:,.0f}",
-            f"{total_biotech_hectares_2028:,.0f}",
+            f"{total_hectares:,.0f} Ha",
+            f"{total_biotech_hectares_2028:,.0f} Ha",
             f"{percent_national_hectares:.1f}%",
-            f"{commercial_seed_2028:,.0f}",
+            f"{commercial_seed_2028:,.0f} Kg",
         ],
     }
     st.sidebar.subheader("Summary (Sub-National)")
