@@ -208,7 +208,7 @@ for col, category in category_mapping.items():
             "Cost Per Unit": value,
             "Confidence Interval": f"[{lower_bound}, {upper_bound}]",
         })
-        
+
 # Convert to DataFrame for Display
 cost_df = pd.DataFrame(cost_parameters)
 # Convert to DataFrame for Display
@@ -343,6 +343,7 @@ summary_data = [
     {"Metric": "Break-Even Quantity (Kg)", "Value": f"{break_even_quantity:,.2f}" if break_even_quantity is not None else "N/A"},
     {"Metric": "Worst-Case Break-Even Quantity (Kg)", "Value": f"{worst_case_quantity:,.2f}" if worst_case_quantity is not None else "N/A"},
     {"Metric": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
+    {"Metric": "Gross Margin", "Value": f"{gross_margin:,.2f}" if best_case_quantity is not None else "N/A"},
     {"Metric": "Required Farmgate Price to Break Even", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
     {"Metric": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
     {"Metric": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
