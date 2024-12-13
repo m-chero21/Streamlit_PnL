@@ -223,11 +223,39 @@ def update_summary_metrics():
             f"{commercial_seed_2028:,.0f}",
         ],
     }
-    st.sidebar.subheader("Summary")
+    st.sidebar.subheader("National Summary")
     summary_df = pd.DataFrame(summary_data)
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 update_summary_metrics()
+
+def update_summary2_metrics():
+    total_hectares = df["Hectares 2024"].sum()
+    total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
+    percent_national_hectares = (
+        (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
+    )
+    commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
+
+    summary_data = {
+        "Metric": [
+            "Total Hectares (2024)",
+            "Biotech Hectares (2028)",
+            "% of National Hectares (2028)",
+            "Commercial Seed (2028)",
+        ],
+        "Value": [
+            f"{total_hectares:,.0f}",
+            f"{total_biotech_hectares_2028:,.0f}",
+            f"{percent_national_hectares:.1f}%",
+            f"{commercial_seed_2028:,.0f}",
+        ],
+    }
+    st.sidebar.subheader("Summary (Sub-National)")
+    summary_df = pd.DataFrame(summary_data)
+    st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
+
+
 
 st.subheader("Scenario Testing")
 
@@ -271,9 +299,12 @@ if update_button:
             df.loc[df["County"] == county, "Hectares 2028"] *
             df.loc[df["County"] == county, "2028 % of Biotech"] / 100
         )
+
+
+
     
     # Update summary metrics (assume this function updates summary data based on the DataFrame)
-    update_summary_metrics()
+    update_summary2_metrics()
     
     # Display update message
     st.markdown(f"""
@@ -281,6 +312,8 @@ if update_button:
         <b>Updated {', '.join(selected_counties)} the 2028 Biotech  for the selected counties is now: {new_biotech_percentage} %</b>
     </div>
 """, unsafe_allow_html=True)
+    
+
 
 
 
@@ -288,7 +321,3 @@ if update_button:
 st.subheader("Calculator")
 st.dataframe(df, use_container_width=True, height=250)
 
-
-#______________________________________________________________________________________________________________
-
-# REMEMBER TO ADD THE MAP HERE
