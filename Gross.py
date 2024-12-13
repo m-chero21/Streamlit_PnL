@@ -346,8 +346,9 @@ summary_data = [
     {"Metric": "Gross Margin", "Value": f"{gross_margin:,.2f}" if best_case_quantity is not None else "N/A"},
     {"Metric": "Required Farmgate Price to Break Even", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
     {"Metric": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
-    {"Metric": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
+    {"Metric": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"}, 
 ]
+
 
 summary_df = pd.DataFrame(summary_data)
 
