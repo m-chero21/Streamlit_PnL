@@ -35,7 +35,7 @@ st.markdown(
 )
 
 # Add the centered title
-st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
+
 
 # Add custom CSS for the navigation bar
 st.markdown(
@@ -109,6 +109,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
 
 primary_clr = st.get_option("theme.primaryColor")
 txt_clr = st.get_option("theme.textColor")
@@ -198,10 +199,18 @@ total_production = filtered_df["Production (Tonnes)"].sum()
 total_area = filtered_df["Area (Ha)"].sum()
 yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
 
-# Display Sidebar Metrics
-st.sidebar.markdown(f"**Production (Tonnes):** {total_production:,.2f}")
-st.sidebar.markdown(f"**Area (Ha):** {total_area:,.2f}")
-st.sidebar.markdown(f"**Yield (Kg/Ha):** {yield_kg:,.2f}")
+# Create a DataFrame to organize the metrics
+metrics_data = {
+    "Metric": ["Production (Tonnes)", "Area (Ha)", "Yield (Kg/Ha)"],
+    "Value": [f"{total_production:,.2f}", f"{total_area:,.2f}", f"{yield_kg:,.2f}"],
+}
+
+# Convert to a DataFrame
+metrics_df = pd.DataFrame(metrics_data)
+
+# Display as a table in the sidebar
+st.sidebar.table(metrics_df)
+
 
 # Filter Cost Data
 filtered_costs = cost[
@@ -392,25 +401,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Break-Even Plot
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Break-Even Analysis</div>
-    """,
-    unsafe_allow_html=True
-)
+
 
 import plotly.graph_objects as go
 
+# Break-Even Plot Function
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
     units = np.arange(0, 2000, 10)
     total_costs = fixed_costs + variable_cost_per_unit * units
@@ -454,35 +449,17 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
 
     # Layout and labels
     fig.update_layout(
-         xaxis_title='Units Produced/Sold',
+        xaxis_title='Units Produced/Sold',
         yaxis_title='Cost/Revenue',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        template="seaborn"
+        template="seaborn",
+        width=700,  # Set plot width
+        height=700   # Set plot height
     )
 
-    # Render in Streamlit
-    st.plotly_chart(fig, use_container_width=True)
+    return fig
 
-if break_even_quantity is not None:
-    plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
-
-
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Cost and Revenue Distribution</div>
-    """,
-    unsafe_allow_html=True
-)
-
+# Cost and Revenue Distribution Plot Function
 def plot_cost_and_revenue_distribution(categories, values, currency):
     # Create Plotly bar chart
     fig = go.Figure(
@@ -502,16 +479,58 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
         xaxis_title='Category',
         yaxis_title=f'Value ({currency})',
         template="seaborn",
-        bargap=0.2
+        bargap=0.2,
+        width=700,  # Set plot width
+        height=700   # Set plot height
     )
 
-    # Render in Streamlit
-    st.plotly_chart(fig, use_container_width=True)
+    return fig
 
 # Define categories and values
 categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
 values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
 
-# Call the function
-plot_cost_and_revenue_distribution(categories, values, currency)
+# Use Streamlit Columns to Place Plots Side by Side
+col1, col2 = st.columns(2)  # Create two columns
 
+with col1:
+    # Title for Break-Even Plot
+    st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Break-Even Analysis</div>
+    """,
+    unsafe_allow_html=True
+)
+    # Break-Even Plot
+    if break_even_quantity is not None:
+        st.plotly_chart(plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price), use_container_width=False)
+
+with col2:
+    # Title for Cost and Revenue Distribution Plot
+    st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        padding: 10px;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Cost and Revenue Distribution</div>
+    """,
+    unsafe_allow_html=True
+)
+    # Cost and Revenue Distribution Plot
+    st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False)
