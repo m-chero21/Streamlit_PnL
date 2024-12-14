@@ -211,7 +211,7 @@ yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
 
 # Create a DataFrame to organize the metrics
 metrics_data = {
-    "Metric": ["Production (Tonnes)", "Area (Ha)", "Yield (Kg/Ha)"],
+    "Indicator": ["Production (Tonnes)", "Area (Ha)", "Yield (Kg/Ha)"],
     "Value": [f"{total_production:,.2f}", f"{total_area:,.2f}", f"{yield_kg:,.2f}"],
 }
 
