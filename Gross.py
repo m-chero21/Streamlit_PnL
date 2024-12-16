@@ -204,15 +204,56 @@ if selected_county != "All":
 if selected_value_chain != "All":
     filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
 
+# Sidebar - Area Unit Conversion
+area_unit = st.sidebar.radio(
+    "Select Area Unit:",
+    options=["Hectares (Ha)", "Acres"],
+    index=0  # Default to Hectares
+)
+
+def convert_area_and_yield(area, production, current_unit):
+    """
+    Convert area between hectares and acres, and adjust yield accordingly.
+
+    :param area: Current area value.
+    :param production: Total production in tonnes.
+    :param current_unit: Current unit of area ("Hectares (ha)" or "Acres").
+    :return: Converted area, updated yield per unit area, and yield label.
+    """
+    if current_unit == "Acres":
+        converted_area = round(area * 2.47105, 2)  # Convert ha to acres
+        yield_per_unit_area = round((production * 1000) / converted_area, 2) if converted_area > 0 else 0
+        yield_label = "Yield (Kg/Acre)"
+    else:
+        converted_area = round(area / 2.47105, 2)  # Convert acres to ha
+        yield_per_unit_area = round((production * 1000) / converted_area, 2) if converted_area > 0 else 0
+        yield_label = "Yield (Kg/Ha)"
+
+    return converted_area, yield_per_unit_area, yield_label
+
 # Aggregate Metrics
 total_production = filtered_df["Production (Tonnes)"].sum()
 total_area = filtered_df["Area (Ha)"].sum()
-yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
+
+# Apply Area Conversion
+converted_area, converted_yield, yield_label = convert_area_and_yield(total_area, total_production, area_unit)
+
+# Display yield_kg based on user selection
+yield_kg = converted_yield
+
 
 # Create a DataFrame to organize the metrics
 metrics_data = {
-    "Indicator": ["Production (Tonnes)", "Area (Ha)", "Yield (Kg/Ha)"],
-    "Value": [f"{total_production:,.2f}", f"{total_area:,.2f}", f"{yield_kg:,.2f}"],
+    "Indicator": [
+        "Production (Tonnes)",
+        f"Area ({area_unit.split()[0]})",  # Adjust the area unit dynamically
+        yield_label
+    ],
+    "Value": [
+        f"{total_production:,.2f}",
+        f"{converted_area:,.2f}",
+        f"{converted_yield:,.2f}"
+    ],
 }
 
 # Convert to a DataFrame
@@ -220,7 +261,6 @@ metrics_df = pd.DataFrame(metrics_data)
 
 # Display as a table in the sidebar
 st.sidebar.table(metrics_df)
-
 
 # Filter Cost Data
 filtered_costs = cost[
@@ -464,7 +504,7 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         yaxis_title='Cost/Revenue',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="seaborn",
-        width=700,  # Set plot width
+        width=600,  # Set plot width
         height=600   # Set plot height
     )
 
@@ -491,7 +531,7 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
         yaxis_title=f'Value ({currency})',
         template="seaborn",
         bargap=0.2,
-        width=700,  # Set plot width
+        width=600,  # Set plot width
         height=600   # Set plot height
     )
 
