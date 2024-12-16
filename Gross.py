@@ -197,6 +197,7 @@ farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=28.62, s
 loss_percentage = st.sidebar.slider("Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Consumption %:", 0, 50, 10)
 
+
 # Filter Data
 filtered_df = df.copy()
 if selected_county != "All":
