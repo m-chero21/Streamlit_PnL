@@ -285,7 +285,10 @@ for col, category in category_mapping.items():
     if col in filtered_costs.columns:
         # Apply raw value adjustment for Hectares
         raw_value = float(filtered_costs[col].iloc[0])  # Original value from the filtered costs
-     
+        if area_unit == "Hectares":
+            raw_value *= acre_to_hectare
+        else:
+            raw_value *= 1  # Keep original value
 
         # Apply the exchange rate dynamically
         value = round(raw_value * exchange_rate)  # Adjusted for exchange rate
@@ -301,12 +304,13 @@ for col, category in category_mapping.items():
             "Confidence Interval": f"[{lower_bound}, {upper_bound}]",
         })
 
-# Initialize Session State or Use Updated DataFrame
+cost_df = pd.DataFrame(cost_parameters)
+# # Initialize Session State or Use Updated DataFrame
 if "cost_df" not in st.session_state:
     st.session_state.cost_df = pd.DataFrame(cost_parameters)  # Initialize with the original data
 
 # Set cost_df as the updated session state DataFrame
-cost_df = st.session_state.cost_df
+# cost_df = st.session_state.cost_df
 
 # Display Cost Breakdown Section
 st.markdown(
@@ -371,7 +375,6 @@ st.dataframe(cost_df, use_container_width=True)
 
 
 
-# 
 # Gross Margin Calculation
 def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
     gross_output = yield_kg * farmgate_price * exchange_rate
@@ -379,7 +382,7 @@ def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, o
     own_consumption = gross_output * (own_consumption_percentage / 100)
     net_output = gross_output - (post_harvest_loss + own_consumption)
     
-    total_costs = cost_df["Cost Per Unit"].sum()
+    total_costs = cost_df["Cost Per Unit"].sum() * exchange_rate
     gross_margin = net_output - total_costs
     
     return gross_output, net_output, gross_margin
@@ -407,9 +410,9 @@ def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_
         return break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
     return None, None, None, None
 
-fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum()
-variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum()
-variable_cost_per_unit = variable_costs / yield_kg
+fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum() 
+variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum() 
+variable_cost_per_unit = (variable_costs / yield_kg) 
 
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
@@ -463,8 +466,8 @@ import plotly.graph_objects as go
 # Break-Even Plot Function
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
     units = np.arange(0, 2000, 10)
-    total_costs = fixed_costs + variable_cost_per_unit * units
-    total_revenue = selling_price_per_unit * units
+    total_costs = exchange_rate*fixed_costs + variable_cost_per_unit * units 
+    total_revenue = selling_price_per_unit * units * exchange_rate
 
     # Create interactive Plotly figure
     fig = go.Figure()
