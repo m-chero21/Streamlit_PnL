@@ -168,6 +168,34 @@ data = {
 # Create DataFrame
 df = pd.DataFrame(data)
 
+st.markdown("""
+    <style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th {
+        background-color: #007278;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+    }
+    td {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Sidebar Inputs
 st.sidebar.subheader("Global Inputs")
 st.sidebar.markdown("---")
@@ -241,6 +269,7 @@ def update_summary_metrics():
             f"{commercial_seed_2028:,.0f}",
         ],
     }
+    st.sidebar.subheader("Summary (National)")
     summary_df = pd.DataFrame(summary_data)
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
@@ -339,5 +368,5 @@ if update_button:
 
 # Display the updated DataFrame
 st.subheader("Calculator")
-st.dataframe(df, use_container_width=True, height=250)
+st.markdown(df.to_html(index=False), unsafe_allow_html=True)
 
