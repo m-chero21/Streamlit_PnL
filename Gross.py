@@ -162,7 +162,24 @@ st.markdown(
 @st.cache_data
 def load_data():
     df = pd.read_excel("aggregate_farm_data_template.xlsx")
-    cost = pd.read_excel("cost.xlsx")
+    cost_data = [
+    ["Large-scale", "With Subsidy", 23, 2400, 9600, 1800, 1000, 9750, 6125, 15000, 2557, 48232, 2144, 1],
+    ["Large-scale", "Without Subsidy", 23, 2400, 14250, 1800, 1000, 9750, 6125, 15000, 2962, 53287, 2368, 1],
+    ["Small-scale", "With Subsidy", 18, 2400, 7100, 1500, 0, 7050, 12000, 10000, 2379, 42429, 2357, 1],
+    ["Small-scale", "Without Subsidy", 18, 2400, 11500, 1500, 0, 7050, 12000, 10000, 2628, 47078, 2615, 1],
+]
+
+# Define column names
+    columns = [
+    "Scale of Production", "Fertilizer Subsidy", "Average Yield (90kg bags/acre)",
+    "Seed Cost (KES)", "Fertilizer Cost (KES)", "Pesticides Cost",
+    "Herbicides Cost (KES)", "Machinery Cost (KES)", "Labour Cost (KES)",
+    "Landrent Cost (KES)", "Other Costs (KES)", "Total Cost/Acre (KES)",
+    "Total Cost/Bag (KES)", "Quantity"
+]
+
+# Create the DataFrame
+    cost = pd.DataFrame(cost_data, columns=columns)
     return df, cost
 
 df, cost = load_data()
@@ -172,7 +189,7 @@ st.sidebar.header("Global Parameters")
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
-value_chains = ["Maize", "Potatoes", "Rice", "Coffee"]
+value_chains = ["Maize"]
 selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
 
 scale_options = ["Small-scale", "Large-scale"]
@@ -216,15 +233,15 @@ acre_to_hectare = 2.47105  # 1 Hectare = 2.47105 Acres
 # Aggregate Metrics
 total_production = filtered_df["Production (Tonnes)"].sum()
 total_area = filtered_df["Area (Ha)"].sum()
-yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
+yield_kg = (total_production * 1000) / total_area 
 
 # Adjust Area Based on Selected Unit
 if area_unit == "Acres":
     total_area = total_area * acre_to_hectare  # Convert Hectares to Acres
-    yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
+    yield_kg = (total_production * 1000) / total_area 
 else:
     total_area = total_area  # Use Hectares
-    yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
+    yield_kg = (total_production * 1000) / total_area 
 
 
 # Create a DataFrame to organize the metrics
@@ -260,12 +277,19 @@ category_mapping = {
     "Other Costs (KES)": "Other Cost"
 }
 
+
+
+
 # Prepare Cost Parameters and Adjust for Exchange Rate
 cost_parameters = []
 for col, category in category_mapping.items():
     if col in filtered_costs.columns:
-        # Apply the exchange rate dynamically
+        # Apply raw value adjustment for Hectares
         raw_value = float(filtered_costs[col].iloc[0])  # Original value from the filtered costs
+        if area_unit == "Hectares":
+            raw_value /= acre_to_hectare  
+
+        # Apply the exchange rate dynamically
         value = round(raw_value * exchange_rate)  # Adjusted for exchange rate
         std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])  # Calculate standard deviation
         lower_bound = round(value - 1.96 * std_dev)  # Confidence interval lower bound
@@ -279,14 +303,12 @@ for col, category in category_mapping.items():
             "Confidence Interval": f"[{lower_bound}, {upper_bound}]",
         })
 
-# Convert to DataFrame for Display
-cost_df = pd.DataFrame(cost_parameters)
-# Convert to DataFrame for Display
+# Initialize Session State or Use Updated DataFrame
 if "cost_df" not in st.session_state:
-    st.session_state.cost_df = pd.DataFrame(cost_parameters)
-else:
-    # Ensure the table dynamically updates based on changes in exchange rate or other parameters
-    st.session_state.cost_df = pd.DataFrame(cost_parameters)
+    st.session_state.cost_df = pd.DataFrame(cost_parameters)  # Initialize with the original data
+
+# Set cost_df as the updated session state DataFrame
+cost_df = st.session_state.cost_df
 
 # Display Cost Breakdown Section
 st.markdown(
@@ -313,20 +335,23 @@ if "add_item_expanded" not in st.session_state:
 if st.button("Insert New Cost"):
     st.session_state.add_item_expanded = not st.session_state.add_item_expanded
 
+# Add Item Section
 if st.session_state.add_item_expanded:
-    with st.expander("", expanded=True):
+    with st.expander("Add New Cost", expanded=True):
         new_item = st.text_input("Cost Name", "Cost Item")
         new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
         new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
         new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
 
+        # Calculate Confidence Interval for New Item
         std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
         new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
         new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
         new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
 
-        if st.button("Update", key="confirm_add_item"):
-            # Create a new row with the entered data
+        # Button to confirm and append new item
+        if st.button("Add Item", key="confirm_add_item"):
+            # Append new row to session_state cost_df
             new_row = {
                 "Item": new_item,
                 "Category": new_category,
@@ -334,16 +359,17 @@ if st.session_state.add_item_expanded:
                 "Cost Per Unit": new_cost_per_unit,
                 "Confidence Interval": new_confidence_interval,
             }
-
-            # Update the session state DataFrame
             st.session_state.cost_df = pd.concat(
                 [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
             )
 
+            # Update cost_df to reflect the new "original"
+            cost_df = st.session_state.cost_df
             st.success(f"Item '{new_item}' added successfully!")
 
 # Display the Updated Cost Breakdown Table
-st.dataframe(st.session_state.cost_df, use_container_width=True)
+st.dataframe(cost_df, use_container_width=True)
+
 
 
 
@@ -384,13 +410,12 @@ def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_
 
 fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum()
 variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum()
-variable_cost_per_unit = variable_costs / yield_kg if yield_kg > 0 else 0
+variable_cost_per_unit = variable_costs / yield_kg
 
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
 # Required Price to Break Even
-required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg if yield_kg > 0 else None
-
+required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg 
 st.markdown(
     """
     <style>
