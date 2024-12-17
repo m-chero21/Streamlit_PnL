@@ -232,10 +232,10 @@ if selected_value_chain != "All":
     filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
 
 
-# Sidebar - Unit Selection for Area
+# Sidebar Area Selector
 area_unit = st.sidebar.selectbox("Area Unit:", ["Hectares", "Acres"], index=0)
-# Conversion Factor
-acre_to_hectare = 2.47105  # 1 Hectare = 2.47105 Acres
+# Acre conversion
+acre_to_hectare = 2.47105  
 
 
 
@@ -244,24 +244,22 @@ total_production = filtered_df["Production (Tonnes)"].sum()
 total_area = filtered_df["Area (Ha)"].sum()
 yield_kg = (total_production * 1000) / total_area 
 
-# Adjust Area Based on Selected Unit
+# Adjust Area Based on Selected Area Unit
 if area_unit == "Acres":
-    total_area = total_area * acre_to_hectare  # Convert Hectares to Acres
+    total_area = total_area * acre_to_hectare  
     yield_kg = (total_production * 1000) / total_area 
 else:
-    total_area = total_area  # Use Hectares
+    total_area = total_area  
     yield_kg = (total_production * 1000) / total_area 
 
 
-# Create a DataFrame to organize the metrics
+# Create a DataFrame for the Indicators
 metrics_data = {
     "Indicator": ["Production (Tonnes)", "Area (Ha)", "Yield (MT/Ha)"],
     "Value": [f"{total_production:,.2f}", f"{total_area:,.2f}", f"{yield_kg:,.2f}"],
 }
 
 
-
-# Convert to a DataFrame
 metrics_df = pd.DataFrame(metrics_data)
 
 # Display as a table in the sidebar
@@ -292,18 +290,18 @@ category_mapping = {
 cost_parameters = []
 for col, category in category_mapping.items():
     if col in filtered_costs.columns:
-        # Apply raw value adjustment for Hectares
-        raw_value = float(filtered_costs[col].iloc[0])  # Original value from the filtered costs
+       
+        raw_value = float(filtered_costs[col].iloc[0]) 
         if area_unit == "Hectares":
             raw_value *= acre_to_hectare
         else:
             raw_value = raw_value
 
-        # Apply the exchange rate dynamically
-        value = round(raw_value * exchange_rate)  # Adjusted for exchange rate
-        std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])  # Calculate standard deviation
-        lower_bound = round(value - 1.96 * std_dev)  # Confidence interval lower bound
-        upper_bound = round(value + 1.96 * std_dev)  # Confidence interval upper bound
+       
+        value = round(raw_value * exchange_rate) 
+        std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])
+        lower_bound = round(value - 1.96 * std_dev) 
+        upper_bound = round(value + 1.96 * std_dev)  
 
         cost_parameters.append({
             "Item": col.replace(" (KES)", ""),
@@ -314,14 +312,10 @@ for col, category in category_mapping.items():
         })
 
 cost_df = pd.DataFrame(cost_parameters)
-# # Initialize Session State or Use Updated DataFrame
+
 if "cost_df" not in st.session_state:
-    st.session_state.cost_df = pd.DataFrame(cost_parameters)  # Initialize with the original data
+    st.session_state.cost_df = pd.DataFrame(cost_parameters) 
 
-# Set cost_df as the updated session state DataFrame
-# cost_df = st.session_state.cost_df
-
-# Display Cost Breakdown Section
 st.markdown(
     """
     <style>
@@ -338,7 +332,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Add or Edit Items Dynamically in the Table
+
 if "add_item_expanded" not in st.session_state:
     st.session_state.add_item_expanded = False
 
@@ -354,15 +348,15 @@ if st.session_state.add_item_expanded:
         new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
         new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
 
-        # Calculate Confidence Interval for New Item
+        
         std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
         new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
         new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
         new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
 
-        # Button to confirm and append new item
+        
         if st.button("Add Item", key="confirm_add_item"):
-            # Append new row to session_state cost_df
+            
             new_row = {
                 "Item": new_item,
                 "Category": new_category,
@@ -375,7 +369,7 @@ if st.session_state.add_item_expanded:
             )
 
 
-            # Update cost_df to reflect the new "original"
+            
             cost_df = st.session_state.cost_df
             st.success(f"Item '{new_item}' added successfully!")
 
@@ -411,7 +405,7 @@ def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_
         break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit)
         break_even_revenue = break_even_quantity * selling_price_per_unit
 
-        # Calculate variability for worst and best case scenarios
+        
         break_even_quantity_std_dev = break_even_quantity * (0.01 * fluctuation_levels[selected_fluctuation])
         worst_case_quantity = break_even_quantity - 1.96 * break_even_quantity_std_dev
         best_case_quantity = break_even_quantity + 1.96 * break_even_quantity_std_dev
@@ -425,7 +419,6 @@ variable_cost_per_unit = (variable_costs / yield_kg)
 
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
-# Required Price to Break Even
 required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg 
 
 
@@ -562,11 +555,10 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
 
 
 
-# Define categories and values
 categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
 values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
 
-# Use Streamlit Columns to Place Plots Side by Side
+
 col1, col2 = st.columns(2) 
 
 with col1:
