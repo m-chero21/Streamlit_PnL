@@ -231,7 +231,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Sidebar Inputs
-st.sidebar.subheader("Global Inputs")
+st.sidebar.header("Global Inputs")
 st.sidebar.markdown("---")
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
 
