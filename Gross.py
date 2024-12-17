@@ -288,7 +288,7 @@ for col, category in category_mapping.items():
         if area_unit == "Hectares":
             raw_value *= acre_to_hectare
         else:
-            raw_value *= 1  # Keep original value
+            raw_value = raw_value
 
         # Apply the exchange rate dynamically
         value = round(raw_value * exchange_rate)  # Adjusted for exchange rate
