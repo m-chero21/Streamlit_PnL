@@ -205,16 +205,35 @@ if selected_county != "All":
 if selected_value_chain != "All":
     filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
 
+
+# Sidebar - Unit Selection for Area
+area_unit = st.sidebar.selectbox("Area Unit:", ["Hectares", "Acres"], index=0)
+# Conversion Factor
+acre_to_hectare = 2.47105  # 1 Hectare = 2.47105 Acres
+
+
+
 # Aggregate Metrics
 total_production = filtered_df["Production (Tonnes)"].sum()
 total_area = filtered_df["Area (Ha)"].sum()
 yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
 
+# Adjust Area Based on Selected Unit
+if area_unit == "Acres":
+    total_area = total_area * acre_to_hectare  # Convert Hectares to Acres
+    yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
+else:
+    total_area = total_area  # Use Hectares
+    yield_kg = (total_production * 1000) / total_area if total_area > 0 else 0
+
+
 # Create a DataFrame to organize the metrics
 metrics_data = {
-    "Indicator": ["Production (Tonnes)", "Area (Ha)", "Yield (Kg/Ha)"],
+    "Indicator": ["Production (Tonnes)", "Area (Ha)", "Yield (MT/Ha)"],
     "Value": [f"{total_production:,.2f}", f"{total_area:,.2f}", f"{yield_kg:,.2f}"],
 }
+
+
 
 # Convert to a DataFrame
 metrics_df = pd.DataFrame(metrics_data)
