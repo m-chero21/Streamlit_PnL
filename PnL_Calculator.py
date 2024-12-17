@@ -18,6 +18,20 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.markdown(
+    """
+    <style>
+    html, body, [class*="st-"] {
+        font-family: serif; /* Apply generic serif font globally */
+    }
+     h1, h2, h3, h4, h5, h6 {
+        font-family: serif; /* Ensure headers are also serif */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
@@ -324,7 +338,21 @@ def update_summary2_metrics():
 
 
 
-st.subheader("Scenario Testing")
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Scenario Testing</div>
+    """,
+    unsafe_allow_html=True
+)
 
 
 
@@ -380,6 +408,20 @@ if update_button:
 """, unsafe_allow_html=True)
     
 
-st.subheader("Calculator")
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Calculator</div>
+    """,
+    unsafe_allow_html=True
+)
 st.markdown(df.to_html(index=False), unsafe_allow_html=True)
 

@@ -23,6 +23,20 @@ txt_clr = st.get_option("theme.textColor")
 theme = st.get_option("theme.font")
 mode = st.get_option("theme.base")
 
+st.markdown(
+    """
+    <style>
+    html, body, [class*="st-"] {
+        font-family: serif; /* Apply generic serif font globally */
+    }
+     h1, h2, h3, h4, h5, h6 {
+        font-family: serif; /* Ensure headers are also serif */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
