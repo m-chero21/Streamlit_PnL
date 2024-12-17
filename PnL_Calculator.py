@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
 
 st.set_page_config(
     page_title="Seed Requirement Calculator",
@@ -21,17 +22,22 @@ nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
 
-# Add custom CSS to center the title
 st.markdown(
     """
     <style>
     .centered-title {
+        position: sticky; /* Make the title sticky */
+        top: 0; /* Stick to the top of the page */
+        z-index: 1000; /* Ensure it stays above other elements */
         text-align: center; /* Center the title */
         font-size: 36px; /* Adjust font size if needed */
         font-weight: bold;
         color: black; /* Optional: Change title color */
-        margin-top: 20px; /* Adjust spacing above the title */
-        margin-bottom: 20px; /* Adjust spacing below the title */
+        background-color: white; /* Background to prevent content overlap */
+        margin-top: 0; /* Remove extra spacing above */
+        padding-top: 10px; /* Add padding for better appearance */
+        padding-bottom: 10px; /* Add padding below the title */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
     }
     </style>
     """,
@@ -39,29 +45,19 @@ st.markdown(
 )
 
 
-# Add custom CSS for the navigation bar
 st.markdown(
     """
     <style>
     .navbar {
+        position: sticky; /* Make the navbar sticky */
+        top: 0; /* Stick to the top of the page */
+        z-index: 1000; /* Ensure it stays above other elements */
         background-color: #F4F6FF; /* Set background color */
         padding: 10px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-    }
-    .navbar-logo {
-        display: flex;
-        align-items: center;
-        color: white !important;
-        font-size: 24px;
-        font-weight: bold;
-        text-decoration: none;
-    }
-    .navbar-logo img {
-        height: 40px; /* Adjust size */
-        margin-right: 10px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
     }
     .navbar-links {
         display: flex;
@@ -79,13 +75,13 @@ st.markdown(
     }
     .navbar-link:hover {
         background-color: #a4343a; /* Darker background on hover */
-        color: white !important; 
+        color: white !important;
     }
     .navbar-button {
         background-color: #007278; /* Button color */
-        color: white !important; /* Change button text color to white */
+        color: white !important;
         font-size: 18px;
-        text-decoration: none; /* Remove underline */
+        text-decoration: none;
         padding: 5px 15px;
         border-radius: 5px;
         font-weight: bold;
@@ -99,13 +95,12 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
-# Add the navigation bar
+# Render the sticky navigation bar
 st.markdown(
     """
     <div class="navbar">
-                <div class="navbar-links">
-            <a href="https://integrated-seed-and-gross-margin-calculator.streamlit.app/" class="navbar-button">Seed Requirement Calculator </a>
+        <div class="navbar-links">
+            <a href="https://integrated-seed-and-gross-margin-calculator.streamlit.app/" class="navbar-button">Seed Requirement Calculator</a>
             <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-link">Gross Margin Calculator</a>
         </div>
     </div>
@@ -113,7 +108,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Add the centered title
+
 st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
 
 primary_clr = st.get_option("theme.primaryColor")
@@ -134,7 +129,6 @@ kenyan_counties = [
     "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
 ]
 
-# Initial data
 data = {
     "County": kenyan_counties,
     "Hectares 2023": [
@@ -165,7 +159,6 @@ data = {
     "Avg Yield Biotech": [0] * len(kenyan_counties),
 }
 
-# Create DataFrame
 df = pd.DataFrame(data)
 
 st.markdown("""
@@ -216,7 +209,7 @@ def adjust_percentages(biotech, opv_base, hybrid_base):
     hybrid = 100 - biotech - opv
     return opv, hybrid
 
-# Use custom defaults from text inputs
+
 opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023, default_hybrid_2023)
 opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028, default_hybrid_2028)
 
@@ -308,35 +301,34 @@ st.subheader("Scenario Testing")
 
 
 
-# Use multiselect to select multiple counties
+# Use multi-select to select multiple counties
 selected_counties = st.multiselect("Counties:", options=kenyan_counties)
 
 new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
 
 update_button = st.button("Update")
 
-# Example logic to handle updates
+# The logic to handle updates
 if update_button:
     for county in selected_counties:
-        # Update Biotech %
+        
         df.loc[df["County"] == county, "2028 % of Biotech"] = new_biotech_percentage
         
-        # Calculate remaining percentage
         remaining_percentage = 100 - new_biotech_percentage
         
-        # Update OPV and Hybrid percentages
+   
         df.loc[df["County"] == county, "2028 % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
         df.loc[df["County"] == county, "2028 % of Hybrid"] = (
             100 - new_biotech_percentage - df.loc[df["County"] == county, "2028 % of OPV"]
         )
         
-        # Update seed requirements
+        
         df.loc[df["County"] == county, "2028 kg seed Biotech"] = (
             df.loc[df["County"] == county, "Hectares 2028"] *
             df.loc[df["County"] == county, "2028 % of Biotech"] / 100 * seed_rate
         )
         
-        # Update production volume
+        
         df.loc[df["County"] == county, "Production Volume 2028"] = (
             df.loc[df["County"] == county, "Avg Yield OPV"] *
             df.loc[df["County"] == county, "Hectares 2028"] *
@@ -350,12 +342,10 @@ if update_button:
         )
 
 
-
     
-    # Update summary metrics (assume this function updates summary data based on the DataFrame)
     update_summary2_metrics()
     
-    # Display update message
+    
     st.markdown(f"""
     <div style="text-align: center; background-color: #a4343a; color: white; padding: 10px; border-radius: 5px;">
         <b>Updated {', '.join(selected_counties)} the 2028 Biotech  for the selected counties is now: {new_biotech_percentage} %</b>
@@ -363,10 +353,6 @@ if update_button:
 """, unsafe_allow_html=True)
     
 
-
-
-
-# Display the updated DataFrame
 st.subheader("Calculator")
 st.markdown(df.to_html(index=False), unsafe_allow_html=True)
 

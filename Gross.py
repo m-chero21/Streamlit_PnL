@@ -25,51 +25,66 @@ mode = st.get_option("theme.base")
 
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
-st.sidebar.image(LOGO_PATH, use_container_width=True)
+# Custom CSS to make the logo sticky in the sidebar
+st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        position: relative; /* Ensure sidebar relative positioning */
+    }
+    .sticky-logo {
+        position: sticky;
+        top: 0; /* Stick to the top when scrolling */
+        background-color: white; /* Optional: Set background to avoid overlap issues */
+        padding-bottom: 10px;
+        z-index: 10; /* Ensure it stays above other elements */
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Add custom CSS to center the title
+# Sticky logo inside the sidebar
+st.sidebar.markdown(
+    f'<div class="sticky-logo"><img src="{LOGO_PATH}" style="width: 100%;"></div>',
+    unsafe_allow_html=True
+)
+
+
+
 st.markdown(
     """
     <style>
     .centered-title {
+        position: sticky; /* Make the title sticky */
+        top: 0; /* Stick to the top of the page */
+        z-index: 1000; /* Ensure it stays above other elements */
         text-align: center; /* Center the title */
         font-size: 36px; /* Adjust font size if needed */
         font-weight: bold;
         color: black; /* Optional: Change title color */
-        margin-top: 20px; /* Adjust spacing above the title */
-        margin-bottom: 20px; /* Adjust spacing below the title */
+        background-color: white; /* Background to prevent content overlap */
+        margin-top: 0; /* Remove extra spacing above */
+        padding-top: 10px; /* Add padding for better appearance */
+        padding-bottom: 10px; /* Add padding below the title */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# Add the centered title
 
-
-# Add custom CSS for the navigation bar
 st.markdown(
     """
     <style>
     .navbar {
+        position: sticky; /* Make the navbar sticky */
+        top: 0; /* Stick to the top of the page */
+        z-index: 1000; /* Ensure it stays above other elements */
         background-color: #F4F6FF; /* Set background color */
         padding: 10px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-    }
-    .navbar-logo {
-        display: flex;
-        align-items: center;
-        color: white !important;
-        font-size: 24px;
-        font-weight: bold;
-        text-decoration: none;
-    }
-    .navbar-logo img{
-        height: 40px; /* Adjust size */
-        margin-right: 10px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
     }
     .navbar-links {
         display: flex;
@@ -77,9 +92,9 @@ st.markdown(
         gap: 20px; /* Space between navigation items */
     }
     .navbar-link {
-        color: black !important; /* Change font color to white */
+        color: black !important; /* Set font color */
         font-size: 18px;
-        text-decoration: none;
+        text-decoration: none; /* Remove underline */
         font-weight: normal;
         padding: 5px 10px;
         border-radius: 5px;
@@ -87,20 +102,20 @@ st.markdown(
     }
     .navbar-link:hover {
         background-color: #a4343a; /* Darker background on hover */
-        color: white !important; 
+        color: white !important;
     }
     .navbar-button {
         background-color: #007278; /* Button color */
-        color: white !important; /* Change button text color to white */
+        color: white !important;
         font-size: 18px;
-        padding: 5px 15px;
         text-decoration: none;
+        padding: 5px 15px;
         border-radius: 5px;
         font-weight: bold;
         transition: background-color 0.3s;
     }
     .navbar-button:hover {
-        background-color: #a4343a /* Darker button on hover */
+        background-color: #a4343a; /* Darker button on hover */
     }
     </style>
     """,
