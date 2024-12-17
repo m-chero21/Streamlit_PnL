@@ -363,6 +363,7 @@ if st.session_state.add_item_expanded:
                 [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
             )
 
+
             # Update cost_df to reflect the new "original"
             cost_df = st.session_state.cost_df
             st.success(f"Item '{new_item}' added successfully!")
@@ -372,7 +373,7 @@ st.dataframe(cost_df, use_container_width=True)
 
 
 
-
+# 
 # Gross Margin Calculation
 def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
     gross_output = yield_kg * farmgate_price * exchange_rate
