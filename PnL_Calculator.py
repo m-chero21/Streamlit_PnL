@@ -172,18 +172,26 @@ df = pd.DataFrame(data)
 st.sidebar.subheader("Global Inputs")
 st.sidebar.markdown("---")
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
+
+default_opv_2023 = st.sidebar.number_input("2023 OPV Default %", min_value=0, max_value=100, value=30, step=1)
+default_hybrid_2023 = st.sidebar.number_input("2023 Hybrid Default %", min_value=0, max_value=100, value=70, step=1)
+
+default_opv_2028 = st.sidebar.number_input("2028 OPV Default %", min_value=0, max_value=100, value=30, step=1)
+default_hybrid_2028 = st.sidebar.number_input("2028 Hybrid Default %", min_value=0, max_value=100, value=70, step=1)
 biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
-# Function to adjust percentages
+# Function to dynamically adjust percentages
 def adjust_percentages(biotech, opv_base, hybrid_base):
     remaining = 100 - biotech
     opv = round(opv_base / (opv_base + hybrid_base) * remaining)
     hybrid = 100 - biotech - opv
     return opv, hybrid
 
-opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, 30, 70)
-opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, 30, 70)
+# Use custom defaults from text inputs
+opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023, default_hybrid_2023)
+opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028, default_hybrid_2028)
+
 
 df["2023 % of OPV"] = [opv_2023] * len(df)
 df["2023 % of Hybrid"] = [hybrid_2023] * len(df)
@@ -268,6 +276,8 @@ def update_summary2_metrics():
 
 
 st.subheader("Scenario Testing")
+
+
 
 # Use multiselect to select multiple counties
 selected_counties = st.multiselect("Counties:", options=kenyan_counties)
