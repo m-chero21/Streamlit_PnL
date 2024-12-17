@@ -287,7 +287,7 @@ for col, category in category_mapping.items():
         # Apply raw value adjustment for Hectares
         raw_value = float(filtered_costs[col].iloc[0])  # Original value from the filtered costs
         if area_unit == "Hectares":
-            raw_value /= acre_to_hectare  # Convert to Hectares
+            raw_value *= acre_to_hectare  # Convert to Hectares
         else:
             raw_value *= 1  # No conversion for other units
 
