@@ -116,6 +116,33 @@ txt_clr = st.get_option("theme.textColor")
 theme = st.get_option("theme.font")
 mode = st.get_option("theme.base")
 
+
+# Global CSS for Styling and Aligning Buttons
+st.markdown(
+    """
+    <style>
+    div.stButton > button {
+        float: right; /* Move the button to the right */
+        background-color: #007278; /* Button color */
+        color: white !important; /* White text color */
+        font-size: 16px; /* Font size */
+        font-weight: bold; /* Font weight */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        padding: 10px 20px; /* Padding inside button */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s ease; /* Smooth hover effect */
+        margin: 10px; /* Add some space around the button */
+    }
+    div.stButton > button:hover {
+        background-color: #a4343a; /* Hover color */
+        color: white !important; /* Keep text color white on hover */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 #___________________________________________________________________________________________________________
 # Define Kenyan counties
 kenyan_counties = [

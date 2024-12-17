@@ -25,27 +25,7 @@ mode = st.get_option("theme.base")
 
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
-# Custom CSS to make the logo sticky in the sidebar
-st.markdown("""
-    <style>
-    [data-testid="stSidebar"] {
-        position: relative; /* Ensure sidebar relative positioning */
-    }
-    .sticky-logo {
-        position: sticky;
-        top: 0; /* Stick to the top when scrolling */
-        background-color: white; /* Optional: Set background to avoid overlap issues */
-        padding-bottom: 10px;
-        z-index: 10; /* Ensure it stays above other elements */
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# Sticky logo inside the sidebar
-st.sidebar.markdown(
-    f'<div class="sticky-logo"><img src="{LOGO_PATH}" style="width: 100%;"></div>',
-    unsafe_allow_html=True
-)
+st.sidebar.image(LOGO_PATH, use_container_width=True)
 
 
 
