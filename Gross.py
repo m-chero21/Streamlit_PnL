@@ -287,7 +287,7 @@ for col, category in category_mapping.items():
         # Apply raw value adjustment for Hectares
         raw_value = float(filtered_costs[col].iloc[0])  # Original value from the filtered costs
         if area_unit == "Hectares":
-            raw_value /= acre_to_hectare  
+            raw_value *= acre_to_hectare  
 
         # Apply the exchange rate dynamically
         value = round(raw_value * exchange_rate)  # Adjusted for exchange rate
