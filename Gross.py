@@ -469,10 +469,10 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
     total_costs = exchange_rate*fixed_costs + variable_cost_per_unit * units 
     total_revenue = selling_price_per_unit * units * exchange_rate
 
-    # Create interactive Plotly figure
+    
     fig = go.Figure()
 
-    # Add Total Costs line
+
     fig.add_trace(
         go.Scatter(
             x=units,
@@ -483,7 +483,7 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         )
     )
 
-    # Add Total Revenue line
+    
     fig.add_trace(
         go.Scatter(
             x=units,
@@ -494,7 +494,7 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         )
     )
 
-    # Add Break-Even Point line
+  
     fig.add_trace(
         go.Scatter(
             x=[break_even_quantity, break_even_quantity],
@@ -505,41 +505,41 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         )
     )
 
-    # Layout and labels
+
     fig.update_layout(
         xaxis_title='Units Produced/Sold',
         yaxis_title='Cost/Revenue',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="seaborn",
-        width=700,  # Set plot width
-        height=600   # Set plot height
+        width=700,  
+        height=600   # 
     )
 
     return fig
 
 # Cost and Revenue Distribution Plot Function
 def plot_cost_and_revenue_distribution(categories, values, currency):
-    # Create Plotly bar chart
+   
     fig = go.Figure(
         data=[
             go.Bar(
                 x=categories,
                 y=values,
-                text=[f"{value:,.2f}" for value in values],  # Add formatted values as text
+                text=[f"{value:,.2f}" for value in values],  
                 textposition='auto',
-                marker=dict(color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])  # Set bar colors
+                marker=dict(color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])  
             )
         ]
     )
 
-    # Layout and labels
+ 
     fig.update_layout(
         xaxis_title='Category',
         yaxis_title=f'Value ({currency})',
         template="seaborn",
         bargap=0.2,
-        width=700,  # Set plot width
-        height=600   # Set plot height
+        width=700,   
+        height=600   
     )
 
     return fig
@@ -549,10 +549,10 @@ categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
 values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
 
 # Use Streamlit Columns to Place Plots Side by Side
-col1, col2 = st.columns(2)  # Create two columns
+col1, col2 = st.columns(2) 
 
 with col1:
-    # Title for Break-Even Plot
+ 
     st.markdown(
     """
     <style>
@@ -568,12 +568,11 @@ with col1:
     """,
     unsafe_allow_html=True
 )
-    # Break-Even Plot
-    if break_even_quantity is not None:
-        st.plotly_chart(plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price), use_container_width=False)
+    
+    st.plotly_chart(plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price), use_container_width=False)
 
 with col2:
-    # Title for Cost and Revenue Distribution Plot
+   
     st.markdown(
     """
     <style>
@@ -590,5 +589,5 @@ with col2:
     """,
     unsafe_allow_html=True
 )
-    # Cost and Revenue Distribution Plot
+    
     st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False)
