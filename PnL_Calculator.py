@@ -295,6 +295,7 @@ df["2028 % of Biotech"] = [biotech_2028] * len(df)
 
 # Add calculated columns
 df["Hectares 2028"] = df["Hectares 2023"] * (1 + df["G% Hectares (2023-2028)"] / 100)
+
 df["2023 kg seed OPV"] = df["Hectares 2023"] * df["2023 % of OPV"] / 100 * seed_rate
 df["2023 kg seed Hybrid"] = df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 * seed_rate
 df["2023 kg seed Biotech"] = df["Hectares 2023"] * df["2023 % of Biotech"] / 100 * seed_rate
@@ -311,6 +312,19 @@ df["Production Volume 2028"] = (
     df["Avg Yield Biotech"] * df["Hectares 2028"] * df["2028 % of Biotech"] / 100
 )
 
+# Reorder columns to place "Hectares 2028" after "G% Hectares (2023-2028)"
+column_order = [
+    "County", "Hectares 2023", "G% Hectares (2023-2028)", "Hectares 2028",
+    "2023 % of OPV", "2023 % of Hybrid", "2023 % of Biotech",
+    "2028 % of OPV", "2028 % of Hybrid", "2028 % of Biotech",
+    "2023 kg seed OPV", "2023 kg seed Hybrid", "2023 kg seed Biotech",
+    "2028 kg seed OPV", "2028 kg seed Hybrid", "2028 kg seed Biotech",
+    "Avg Yield OPV", "Avg Yield Hybrid", "Avg Yield Biotech",
+    "Production Volume 2023", "Production Volume 2028"
+]
+
+# Reorder DataFrame columns
+df = df[column_order]
 
 # Sidebar Summary Metrics
 def update_summary_metrics():
@@ -480,6 +494,12 @@ table_style = """
     }}
     .custom-table-container table {{
         width: 100%; /* Make table responsive */
+        font-size: 12px; /* Decrease overall text size */
+    }}
+    .custom-table-container table th, 
+    .custom-table-container table td {{
+        font-size: 12px; /* Decrease header and cell text size */
+        padding: 4px; /* Reduce padding for a compact look */
     }}
 </style>
 <div class="custom-table-container">
@@ -489,5 +509,6 @@ table_style = """
 
 # Display the table with the custom style
 st.markdown(table_style.format(table_html=df.to_html(index=False)), unsafe_allow_html=True)
+
 # st.markdown(df.to_html(index=False), unsafe_allow_html=True)
 
