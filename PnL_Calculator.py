@@ -275,11 +275,14 @@ biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
 # Function to dynamically adjust percentages
-def adjust_percentages(biotech, opv_base, hybrid_base):
+def adjust_percentages(biotech, opv, hybrid):
     remaining = 100 - biotech
-    opv = round(opv_base / (opv_base + hybrid_base) * remaining)
-    hybrid = 100 - biotech - opv
-    return opv, hybrid
+    adjusted_opv = round(opv)  # Use OPV as-is
+    adjusted_hybrid = remaining - adjusted_opv  # Remaining goes to Hybrid
+    return adjusted_opv, adjusted_hybrid
+
+
+
 
 
 opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023, default_hybrid_2023)
@@ -302,12 +305,13 @@ df["2023 kg seed Biotech"] = (df["Hectares 2023"] * df["2023 % of Biotech"] / 10
 df["2028 kg seed OPV"] = (df["Hectares 2028"] * df["2028 % of OPV"] / 100 * seed_rate).round(1)
 df["2028 kg seed Hybrid"] = (df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 * seed_rate).round(1)
 df["2028 kg seed Biotech"] = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100 * seed_rate).round(1)
+
+
+
 df["Production Volume 2023"] = (
     df["Avg Yield OPV"] * df["Hectares 2023"] * df["2023 % of OPV"] / 100 +
-    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 +
-    df["Avg Yield Biotech"] * df["Hectares 2023"] * df["2023 % of Biotech"] / 100
+    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100
 )
-
 df["Production Volume 2028"] = (
     df["Avg Yield OPV"] * df["Hectares 2028"] * df["2028 % of OPV"] / 100 +
     df["Avg Yield Hybrid"] * df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 +
