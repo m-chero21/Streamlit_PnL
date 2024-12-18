@@ -266,27 +266,23 @@ st.markdown("""
 #________________________________________________________________________
 with st.sidebar.expander("Select OPV and Hybrid %", expanded=False):
     default_opv_2023 = st.number_input("2023 OPV %", min_value=0, max_value=100, value=30, step=1)
-    default_hybrid_2023 = st.number_input("2023 Hybrid %", min_value=0, max_value=100, value=70, step=1)
-
     default_opv_2028 = st.number_input("2028 OPV %", min_value=0, max_value=100, value=30, step=1)
-    default_hybrid_2028 = st.number_input("2028 Hybrid %", min_value=0, max_value=100, value=70, step=1)
-
+    
 biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
 # Function to dynamically adjust percentages
-def adjust_percentages(biotech, opv, hybrid):
-    remaining = 100 - biotech
-    adjusted_opv = round(opv)  # Use OPV as-is
-    adjusted_hybrid = remaining - adjusted_opv  # Remaining goes to Hybrid
+# Function to dynamically adjust percentages
+def adjust_percentages(biotech, opv):
+    remaining = 100 - biotech  # Remaining percentage after Biotech
+    adjusted_opv = min(opv, remaining)  # Ensure OPV doesn't exceed remaining
+    adjusted_hybrid = remaining - adjusted_opv  # Hybrid takes the remaining percentage
     return adjusted_opv, adjusted_hybrid
 
 
 
-
-
-opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023, default_hybrid_2023)
-opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028, default_hybrid_2028)
+opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023)
+opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028)
 
 
 df["2023 % of OPV"] = [opv_2023] * len(df)
