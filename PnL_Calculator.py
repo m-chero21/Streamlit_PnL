@@ -271,12 +271,12 @@ with st.sidebar.expander("Select OPV and Hybrid %", expanded=False):
 biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
-# Function to dynamically adjust percentages
+
 # Function to dynamically adjust percentages
 def adjust_percentages(biotech, opv):
-    remaining = 100 - biotech  # Remaining percentage after Biotech
-    adjusted_opv = min(opv, remaining)  # Ensure OPV doesn't exceed remaining
-    adjusted_hybrid = remaining - adjusted_opv  # Hybrid takes the remaining percentage
+    remaining = 100 - biotech 
+    adjusted_opv = min(opv, remaining) 
+    adjusted_hybrid = remaining - adjusted_opv  
     return adjusted_opv, adjusted_hybrid
 
 
@@ -307,12 +307,12 @@ df["2028 kg seed Biotech"] = (df["Hectares 2028"] * df["2028 % of Biotech"] / 10
 df["Production Volume 2023"] = (
     df["Avg Yield OPV"] * df["Hectares 2023"] * df["2023 % of OPV"] / 100 +
     df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100
-)
+).round(1)
 df["Production Volume 2028"] = (
     df["Avg Yield OPV"] * df["Hectares 2028"] * df["2028 % of OPV"] / 100 +
     df["Avg Yield Hybrid"] * df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 +
     df["Avg Yield Biotech"] * df["Hectares 2028"] * df["2028 % of Biotech"] / 100
-)
+).round(1)
 
 
 # Sidebar Summary Metrics
