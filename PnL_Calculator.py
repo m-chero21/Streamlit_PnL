@@ -471,5 +471,23 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.markdown(df.to_html(index=False), unsafe_allow_html=True)
+
+table_style = """
+<style>
+    .custom-table-container {{
+        max-height: 400px; /* Desired height */
+        overflow-y: auto; /* Enable scrolling */
+    }}
+    .custom-table-container table {{
+        width: 100%; /* Make table responsive */
+    }}
+</style>
+<div class="custom-table-container">
+    {table_html}
+</div>
+"""
+
+# Display the table with the custom style
+st.markdown(table_style.format(table_html=df.to_html(index=False)), unsafe_allow_html=True)
+# st.markdown(df.to_html(index=False), unsafe_allow_html=True)
 

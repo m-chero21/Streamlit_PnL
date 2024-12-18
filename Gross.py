@@ -342,7 +342,7 @@ if st.button("Insert New Cost"):
 
 # Add Item Section
 if st.session_state.add_item_expanded:
-    with st.expander("Add New Cost", expanded=True):
+    with st.expander("", expanded=True):
         new_item = st.text_input("Cost Name", "Cost Item")
         new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
         new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
