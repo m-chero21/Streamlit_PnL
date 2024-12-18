@@ -361,6 +361,13 @@ def update_summary_metrics():
     }
     st.sidebar.subheader("Summary (National)")
     summary_df = pd.DataFrame(summary_data)
+    # Convert the DataFrame to HTML with custom styles
+    html_table = summary_df.to_html(index=False)
+
+    # Add CSS to center-align the headers
+    html_table = html_table.replace(
+        "<thead>", '<thead style="text-align: center;">'
+    )
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 update_summary_metrics()
@@ -396,6 +403,14 @@ def update_summary2_metrics():
     }
     st.sidebar.subheader("Summary (Sub-National)")
     summary_df = pd.DataFrame(summary_data)
+
+    # Convert the DataFrame to HTML with custom styles
+    html_table = summary_df.to_html(index=False)
+
+    # Add CSS to center-align the headers
+    html_table = html_table.replace(
+        "<thead>", '<thead style="text-align: center;">'
+    )
     st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 
@@ -486,24 +501,29 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# Format the DataFrame with commas for numbers
+formatted_df = df.copy()
+for col in formatted_df.columns:
+    if pd.api.types.is_numeric_dtype(formatted_df[col]):
+        formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else x)
+
 table_style = """
 <style>
     .custom-table-container {{
-        max-height: 400px; /* Desired height */
+        max-height: 200px; /* Desired height */
         overflow-y: auto; /* Enable scrolling */
-        overflow-x: 500px; /* Enable scrolling */
-        width:100%;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        width: 100%;
     }}
     .custom-table-container table {{
         width: 100%; /* Make table responsive */
         font-size: 12px; /* Decrease overall text size */
     }}
-    
     .custom-table-container table th, 
     .custom-table-container table td {{
-        font-size: 10px; /* Decrease header and cell text size */
+        font-size: 11px; /* Decrease header and cell text size */
         padding: 2px; /* Reduce padding for a compact look */
-        text-align: center; /* Center-align the header text */
+        text-align: center; /* Center-align text */
     }}
 </style>
 <div class="custom-table-container">
@@ -511,8 +531,14 @@ table_style = """
 </div>
 """
 
-# Display the table with the custom style
-st.markdown(table_style.format(table_html=df.to_html(index=False)), unsafe_allow_html=True)
+# Generate HTML table with formatted numbers
+st.markdown(
+    table_style.format(
+        table_html=formatted_df.to_html(index=False, escape=False)
+    ),
+    unsafe_allow_html=True
+)
+
 
 # st.markdown(df.to_html(index=False), unsafe_allow_html=True)
 
