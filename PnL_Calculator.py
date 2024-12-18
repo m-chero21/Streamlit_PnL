@@ -280,14 +280,19 @@ df["Production Volume 2028"] = (
     df["Avg Yield Biotech"] * df["Hectares 2028"] * df["2028 % of Biotech"] / 100
 )
 
+
 # Sidebar Summary Metrics
 def update_summary_metrics():
     total_hectares = df["Hectares 2023"].sum()
+    opv_seed_2028 = df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028= df["2028 kg seed OPV"].sum()
     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     percent_national_hectares = (
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
     )
     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
+    opv_seed_2028 = df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028= df["2028 kg seed OPV"].sum()
 
     summary_data = {
         "Indicator": [
@@ -295,12 +300,18 @@ def update_summary_metrics():
             "Area under biotech seed (Ha)",
             "National area under biotech seed (%)",
             "Biotech seed requirement 2028 (Kg)",
+            "OPV seed requirement 2028 (Kg)",
+            "Hybrid seed requirement 2028 (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
             f"{total_biotech_hectares_2028:,.0f}",
             f"{percent_national_hectares:.1f}%",
             f"{commercial_seed_2028:,.0f}",
+            f"{opv_seed_2028:,.0f}",
+            f"{hybrid_seed_2028:,.0f}",
+
+
         ],
     }
     st.sidebar.subheader("Summary (National)")
@@ -310,6 +321,8 @@ def update_summary_metrics():
 update_summary_metrics()
 
 def update_summary2_metrics():
+    opv_seed_2028 = df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028= df["2028 kg seed OPV"].sum()
     total_hectares = df["Hectares 2023"].sum()
     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     percent_national_hectares = (
@@ -324,12 +337,16 @@ def update_summary2_metrics():
             "Area under biotech seed (Ha)",
             "National area under biotech Seed (%)",
             "Biotech seed requirement 2028 (Kg)",
+            "OPV seed requirement 2028 (Kg)",
+            "Hybrid seed requirement 2028 (Kg)",
         ],
         "Value": [
             f"{total_hectares:,.0f}",
             f"{total_biotech_hectares_2028:,.0f}",
             f"{percent_national_hectares:.1f}%",
             f"{commercial_seed_2028:,.0f}",
+            f"{opv_seed_2028:,.0f}",
+            f"{hybrid_seed_2028:,.0f}",
         ],
     }
     st.sidebar.subheader("Summary (Sub-National)")
