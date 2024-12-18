@@ -306,8 +306,10 @@ df["2028 kg seed Biotech"] = (df["Hectares 2028"] * df["2028 % of Biotech"] / 10
 
 df["Production Volume 2023"] = (
     df["Avg Yield OPV"] * df["Hectares 2023"] * df["2023 % of OPV"] / 100 +
-    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100
+    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100+
+    df["Avg Yield Biotech"] * df["Hectares 2028"] * df["2028 % of Biotech"] / 100
 ).round(1)
+
 df["Production Volume 2028"] = (
     df["Avg Yield OPV"] * df["Hectares 2028"] * df["2028 % of OPV"] / 100 +
     df["Avg Yield Hybrid"] * df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 +
@@ -347,7 +349,21 @@ def update_summary_metrics():
 
         ],
     }
-    st.sidebar.subheader("Summary (National)")
+    st.markdown(
+        """
+        <style>
+        .cost-breakdown-title {
+            color: #007278; /* Set text color */
+            font-size: 55px; /* Adjust font size if needed */
+            font-weight: bold;
+            text-align: left; /* Align text to the left */
+            margin-bottom: 10px; /* Add some space below the title */
+        }
+        </style>
+        <div class="cost-breakdown-title">Summary (National)</div>
+        """,
+        unsafe_allow_html=True
+    )
     summary_df = pd.DataFrame(summary_data)
     # Convert the DataFrame to HTML with custom styles
     html_table = summary_df.to_html(index=False)
@@ -356,7 +372,7 @@ def update_summary_metrics():
     html_table = html_table.replace(
         "<thead>", '<thead style="text-align: center;">'
     )
-    st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
+    st.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 update_summary_metrics()
 
@@ -389,7 +405,21 @@ def update_summary2_metrics():
             f"{hybrid_seed_2028:,.0f}",
         ],
     }
-    st.sidebar.subheader("Summary (Sub-National)")
+    st.markdown(
+        """
+        <style>
+        .cost-breakdown-title {
+            color: #007278; /* Set text color */
+            font-size: 35px; /* Adjust font size if needed */
+            font-weight: bold;
+            text-align: left; /* Align text to the left */
+            margin-bottom: 10px; /* Add some space below the title */
+        }
+        </style>
+        <div class="cost-breakdown-title">Summary (Sub-National)</div>
+        """,
+        unsafe_allow_html=True
+    )
     summary_df = pd.DataFrame(summary_data)
 
     # Convert the DataFrame to HTML with custom styles
@@ -399,7 +429,7 @@ def update_summary2_metrics():
     html_table = html_table.replace(
         "<thead>", '<thead style="text-align: center;">'
     )
-    st.sidebar.write(summary_df.to_html(index=False), unsafe_allow_html=True)
+    st.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 
 
@@ -452,7 +482,7 @@ if update_button:
     update_summary2_metrics()
     
     
-    st.markdown(f"""
+    st.sidebar.markdown(f"""
     <div style="text-align: center; background-color: #a4343a; color: white; padding: 10px; border-radius: 5px;">
         <b>Updated {', '.join(selected_counties)} the 2028 Biotech  for the selected counties is now: {new_biotech_percentage} %</b>
     </div>
@@ -484,7 +514,7 @@ for col in formatted_df.columns:
 table_style = """
 <style>
     .custom-table-container {{
-        max-height: 200px; /* Desired height */
+        max-height: 300px; /* Desired height */
         overflow-y: auto; /* Enable scrolling */
         overflow-x: auto; /* Enable horizontal scrolling */
         width: 100%;
