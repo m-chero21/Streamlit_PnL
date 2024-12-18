@@ -491,7 +491,7 @@ table_style = """
     .custom-table-container {{
         max-height: 400px; /* Desired height */
         overflow-y: auto; /* Enable scrolling */
-        overflow-x: auto; /* Enable scrolling */
+        overflow-x: 500px; /* Enable scrolling */
         width:100%;
     }}
     .custom-table-container table {{
@@ -500,7 +500,7 @@ table_style = """
     }}
     .custom-table-container table th, 
     .custom-table-container table td {{
-        font-size: 12px; /* Decrease header and cell text size */
+        font-size: 10px; /* Decrease header and cell text size */
         padding: 2px; /* Reduce padding for a compact look */
     }}
 </style>
