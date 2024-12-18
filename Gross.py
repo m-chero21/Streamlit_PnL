@@ -374,6 +374,32 @@ if st.session_state.add_item_expanded:
             st.success(f"Item '{new_item}' added successfully!")
 
 # Display the Updated Cost Breakdown Table
+
+table_style = """
+<style>
+    .custom-table-container {{
+        max-height: 300px; /* Desired height */
+        overflow-y: auto; /* Enable scrolling */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        width: 100%;
+    }}
+    .custom-table-container table {{
+        width: 100%; /* Make table responsive */
+        font-size: 12px; /* Decrease overall text size */
+    }}
+    .custom-table-container table th, 
+    .custom-table-container table td {{
+        font-size: 11px; /* Decrease header and cell text size */
+        padding: 2px; /* Reduce padding for a compact look */
+        text-align: center; /* Center-align text */
+    }}
+</style>
+<div class="custom-table-container">
+    {table_html}
+</div>
+"""
+
+# Generate HTML table with formatted numbers
 st.dataframe(cost_df, use_container_width=True)
 
 

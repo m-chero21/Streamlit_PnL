@@ -377,15 +377,24 @@ def update_summary_metrics():
 update_summary_metrics()
 
 def update_summary2_metrics():
-    opv_seed_2028 = df["2028 kg seed OPV"].sum()
-    hybrid_seed_2028= df["2028 kg seed Hybrid"].sum()
-    total_hectares = df["Hectares 2023"].sum()
-    total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
+    # Filter the DataFrame for the selected counties
+    if not selected_counties:
+        st.warning("Please select at least one county to display sub-national metrics.")
+        return
+    
+    filtered_df = df[df["County"].isin(selected_counties)]
+
+    # Perform calculations on the filtered DataFrame
+    total_hectares = filtered_df["Hectares 2023"].sum()
+    opv_seed_2028 = filtered_df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028 = filtered_df["2028 kg seed Hybrid"].sum()
+    total_biotech_hectares_2028 = (
+        (filtered_df["Hectares 2028"] * filtered_df["2028 % of Biotech"] / 100).sum()
+    )
     percent_national_hectares = (
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
     )
-    commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
-
+    commercial_seed_2028 = filtered_df["2028 kg seed Biotech"].sum()
 
     summary_data = {
         "Indicator": [
@@ -405,6 +414,7 @@ def update_summary2_metrics():
             f"{hybrid_seed_2028:,.0f}",
         ],
     }
+
     st.markdown(
         """
         <style>
@@ -418,8 +428,9 @@ def update_summary2_metrics():
         </style>
         <div class="cost-breakdown-title">Summary (Sub-National)</div>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
+
     summary_df = pd.DataFrame(summary_data)
 
     # Convert the DataFrame to HTML with custom styles
