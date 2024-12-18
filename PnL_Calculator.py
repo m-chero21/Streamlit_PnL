@@ -264,7 +264,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 #________________________________________________________________________
-with st.sidebar.expander("OPV and Hybrid %", expanded=False):
+with st.sidebar.expander("Select OPV and Hybrid %", expanded=False):
     default_opv_2023 = st.number_input("2023 OPV %", min_value=0, max_value=100, value=30, step=1)
     default_hybrid_2023 = st.number_input("2023 Hybrid %", min_value=0, max_value=100, value=70, step=1)
 
