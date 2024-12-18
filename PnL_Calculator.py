@@ -499,7 +499,7 @@ table_style = """
     .custom-table-container table th, 
     .custom-table-container table td {{
         font-size: 12px; /* Decrease header and cell text size */
-        padding: 4px; /* Reduce padding for a compact look */
+        padding: 2px; /* Reduce padding for a compact look */
     }}
 </style>
 <div class="custom-table-container">
