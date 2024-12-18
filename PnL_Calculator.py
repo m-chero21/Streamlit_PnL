@@ -293,51 +293,39 @@ df["2028 % of OPV"] = [opv_2028] * len(df)
 df["2028 % of Hybrid"] = [hybrid_2028] * len(df)
 df["2028 % of Biotech"] = [biotech_2028] * len(df)
 
-# Add calculated columns
-df["Hectares 2028"] = df["Hectares 2023"] * (1 + df["G% Hectares (2023-2028)"] / 100)
 
-df["2023 kg seed OPV"] = df["Hectares 2023"] * df["2023 % of OPV"] / 100 * seed_rate
-df["2023 kg seed Hybrid"] = df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 * seed_rate
-df["2023 kg seed Biotech"] = df["Hectares 2023"] * df["2023 % of Biotech"] / 100 * seed_rate
-df["2028 kg seed OPV"] = df["Hectares 2028"] * df["2028 % of OPV"] / 100 * seed_rate
-df["2028 kg seed Hybrid"] = df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 * seed_rate
-df["2028 kg seed Biotech"] = df["Hectares 2028"] * df["2028 % of Biotech"] / 100 * seed_rate
+# Add calculated columns
+df["Hectares 2028"] = (df["Hectares 2023"] * (1 + df["G% Hectares (2023-2028)"] / 100)).round(1)
+df["2023 kg seed OPV"] = (df["Hectares 2023"] * df["2023 % of OPV"] / 100 * seed_rate).round(1)
+df["2023 kg seed Hybrid"] =(df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 * seed_rate).round(1)
+df["2023 kg seed Biotech"] = (df["Hectares 2023"] * df["2023 % of Biotech"] / 100 * seed_rate).round(1)
+df["2028 kg seed OPV"] = (df["Hectares 2028"] * df["2028 % of OPV"] / 100 * seed_rate).round(1)
+df["2028 kg seed Hybrid"] = (df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 * seed_rate).round(1)
+df["2028 kg seed Biotech"] = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100 * seed_rate).round(1)
 df["Production Volume 2023"] = (
     df["Avg Yield OPV"] * df["Hectares 2023"] * df["2023 % of OPV"] / 100 +
-    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100
+    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 +
+    df["Avg Yield Biotech"] * df["Hectares 2023"] * df["2023 % of Biotech"] / 100
 )
+
 df["Production Volume 2028"] = (
     df["Avg Yield OPV"] * df["Hectares 2028"] * df["2028 % of OPV"] / 100 +
     df["Avg Yield Hybrid"] * df["Hectares 2028"] * df["2028 % of Hybrid"] / 100 +
     df["Avg Yield Biotech"] * df["Hectares 2028"] * df["2028 % of Biotech"] / 100
 )
 
-# Reorder columns to place "Hectares 2028" after "G% Hectares (2023-2028)"
-column_order = [
-    "County", "Hectares 2023", "G% Hectares (2023-2028)", "Hectares 2028",
-    "2023 % of OPV", "2023 % of Hybrid", "2023 % of Biotech",
-    "2028 % of OPV", "2028 % of Hybrid", "2028 % of Biotech",
-    "2023 kg seed OPV", "2023 kg seed Hybrid", "2023 kg seed Biotech",
-    "2028 kg seed OPV", "2028 kg seed Hybrid", "2028 kg seed Biotech",
-    "Avg Yield OPV", "Avg Yield Hybrid", "Avg Yield Biotech",
-    "Production Volume 2023", "Production Volume 2028"
-]
-
-# Reorder DataFrame columns
-df = df[column_order]
 
 # Sidebar Summary Metrics
 def update_summary_metrics():
     total_hectares = df["Hectares 2023"].sum()
     opv_seed_2028 = df["2028 kg seed OPV"].sum()
-    hybrid_seed_2028= df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028= df["2028 kg seed Hybrid"].sum()
     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     percent_national_hectares = (
         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
     )
     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
-    opv_seed_2028 = df["2028 kg seed OPV"].sum()
-    hybrid_seed_2028= df["2028 kg seed OPV"].sum()
+   
 
     summary_data = {
         "Indicator": [
@@ -374,7 +362,7 @@ update_summary_metrics()
 
 def update_summary2_metrics():
     opv_seed_2028 = df["2028 kg seed OPV"].sum()
-    hybrid_seed_2028= df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028= df["2028 kg seed Hybrid"].sum()
     total_hectares = df["Hectares 2023"].sum()
     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     percent_national_hectares = (
@@ -415,30 +403,16 @@ def update_summary2_metrics():
 
 
 
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Scenario Testing</div>
-    """,
-    unsafe_allow_html=True
-)
+st.sidebar.header("Scenario Testing")
 
 
 
 # Use multi-select to select multiple counties
-selected_counties = st.multiselect("Counties:", options=kenyan_counties)
+selected_counties = st.sidebar.multiselect("Counties:", options=kenyan_counties, placeholder="Choose a County")
 
-new_biotech_percentage = st.number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
+new_biotech_percentage = st.sidebar. number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
 
-update_button = st.button("Update")
+update_button = st.sidebar.button("Update")
 
 # The logic to handle updates
 if update_button:
