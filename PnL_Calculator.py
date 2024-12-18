@@ -509,7 +509,7 @@ st.markdown(
 formatted_df = df.copy()
 for col in formatted_df.columns:
     if pd.api.types.is_numeric_dtype(formatted_df[col]):
-        formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else x)
+        formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:,.1f}" if pd.notnull(x) else x)
 
 table_style = """
 <style>
