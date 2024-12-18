@@ -234,12 +234,43 @@ st.markdown("""
 st.sidebar.header("Global Inputs")
 st.sidebar.markdown("---")
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
+#_______________________________________________________________________
+st.markdown("""
+    <style>
+        /* Customize the entire expander container */
+        .streamlit-expander {
+            border: 2px solid #007278 !important; /* Add a border */
+            border-radius: 8px !important; /* Rounded corners */
+            margin-bottom: 10px !important; /* Add spacing */
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+        }
+        
+        /* Target the header part of the expander */
+        .streamlit-expanderHeader {
+            background-color: #007278 !important; /* Background color */
+            color: white !important; /* Text color */
+            font-size: 16px !important; /* Font size */
+            font-weight: bold !important; /* Bold text */
+            padding: 10px !important; /* Add padding */
+            border-top-left-radius: 8px !important;
+            border-top-right-radius: 8px !important;
+        }
+        
+        /* Optional: Style the collapsed arrow icon */
+        .streamlit-expanderHeader svg {
+            fill: white !important; /* Arrow icon color */
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-default_opv_2023 = st.sidebar.number_input("2023 OPV Default %", min_value=0, max_value=100, value=30, step=1)
-default_hybrid_2023 = st.sidebar.number_input("2023 Hybrid Default %", min_value=0, max_value=100, value=70, step=1)
+#________________________________________________________________________
+with st.sidebar.expander("OPV and Hybrid %", expanded=False):
+    default_opv_2023 = st.number_input("2023 OPV %", min_value=0, max_value=100, value=30, step=1)
+    default_hybrid_2023 = st.number_input("2023 Hybrid %", min_value=0, max_value=100, value=70, step=1)
 
-default_opv_2028 = st.sidebar.number_input("2028 OPV Default %", min_value=0, max_value=100, value=30, step=1)
-default_hybrid_2028 = st.sidebar.number_input("2028 Hybrid Default %", min_value=0, max_value=100, value=70, step=1)
+    default_opv_2028 = st.number_input("2028 OPV %", min_value=0, max_value=100, value=30, step=1)
+    default_hybrid_2028 = st.number_input("2028 Hybrid %", min_value=0, max_value=100, value=70, step=1)
+
 biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
