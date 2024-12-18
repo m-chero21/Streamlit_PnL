@@ -498,10 +498,12 @@ table_style = """
         width: 100%; /* Make table responsive */
         font-size: 12px; /* Decrease overall text size */
     }}
+    
     .custom-table-container table th, 
     .custom-table-container table td {{
         font-size: 10px; /* Decrease header and cell text size */
         padding: 2px; /* Reduce padding for a compact look */
+        text-align: center; /* Center-align the header text */
     }}
 </style>
 <div class="custom-table-container">
