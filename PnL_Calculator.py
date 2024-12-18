@@ -491,6 +491,8 @@ table_style = """
     .custom-table-container {{
         max-height: 400px; /* Desired height */
         overflow-y: auto; /* Enable scrolling */
+        overflow-x: auto; /* Enable scrolling */
+        width:100%;
     }}
     .custom-table-container table {{
         width: 100%; /* Make table responsive */
