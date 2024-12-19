@@ -565,7 +565,7 @@ summary_data = [
     # {"Indicator": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
     
     {"Indicator": f"Break-Even Price ({currency})", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
-    {"Indicator": f"Net Margin ({currency})", "Value": f"{gross_margin:,.2f}"},
+    {"Indicator": f"Marketed Output ({currency})", "Value": f"{gross_margin:,.2f}"},
     {"Indicator": f"Gross Output ({currency})", "Value": f"{gross_output:,.2f}"},
     {"Indicator": f"Gross Margin ({currency})", "Value": f"{real_g_margin:,.2f}"},
     # {"Indicator": f"Total Costs ({currency})", "Value": f"{total_costs:,.2f}"},
@@ -590,7 +590,7 @@ st.markdown(
 
 
 
-categories = ["Gross Output", "Net Output", "Total Costs", "Net Margin", "Gross Margin"]
+categories = ["Gross Output", "Net Output", "Total Costs", "Marketed Output", "Gross Margin"]
 values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin, real_g_margin]
 
 
