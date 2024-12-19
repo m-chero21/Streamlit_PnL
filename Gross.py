@@ -413,12 +413,17 @@ def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, o
     
     total_costs = cost_df["Cost Per Unit"].sum() * exchange_rate
     gross_margin = net_output - total_costs
-    
-    return gross_output, net_output, gross_margin
+    real_g_margin= total_costs-gross_output
+    return gross_output, net_output, gross_margin, real_g_margin
 
-gross_output, net_output, gross_margin = calculate_gross_margin(
+# gross_output, net_output, gross_margin = calculate_gross_margin(
+#     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
+# )
+gross_output, net_output, gross_margin, real_g_margin = calculate_gross_margin(
     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
 )
+
+
 
 # Calculate Best and Worst Case Scenarios
 std_dev = gross_margin * (0.01 * fluctuation_levels[selected_fluctuation])
@@ -446,63 +451,17 @@ variable_cost_per_unit = (variable_costs / yield_kg)
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
 required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg 
-
-
-
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Results Summary</div>
-    """,
-    unsafe_allow_html=True
-)
-
-summary_data = [
-    {"Indicator": f"Farmgate Price ({currency})", "Value": f"{farmgate_price*exchange_rate:,.2f} {currency}"},
-    {"Indicator": "Break-Even Quantity (Bags)", "Value": f"{break_even_quantity / bag_weight:,.2f}" if break_even_quantity is not None else "N/A"},
-    {"Indicator": "Break-Even Quantity (Kg)", "Value": f"{break_even_quantity:,.2f}" if break_even_quantity is not None else "N/A"},
-    # {"Indicator": "Worst-Case Break-Even Quantity (Kg)", "Value": f"{worst_case_quantity:,.2f}" if worst_case_quantity is not None else "N/A"},
-    # {"Indicator": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
-    
-    {"Indicator": f"Break-Even Price ({currency})", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
-    {"Indicator": f"Gross Margin ({currency})", "Value": f"{gross_margin:,.2f}"},
-    {"Indicator": f"Gross Output ({currency})", "Value": f"{gross_output:,.2f}"},
-    # {"Indicator": f"Total Costs ({currency})", "Value": f"{total_costs:,.2f}"},
-  
-    # {"Indicator": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
-    # {"Indicator": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
-]
-
-summary_df = pd.DataFrame(summary_data)
-
-st.markdown(
-    summary_df.style
-    .set_table_styles([
-        {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
-        {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]}])
-    .hide(axis="index")
-    .to_html(),
-    unsafe_allow_html=True,
-)
-
+#_____________________________________________________________
 import plotly.graph_objects as go
 
 # Break-Even Plot Function
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-    
     units = np.arange(0, 2000, 10)
     total_costs = exchange_rate*fixed_costs + variable_cost_per_unit * units 
     total_revenue = selling_price_per_unit * units * exchange_rate
     
-
+    
+    
     
     fig = go.Figure()
 
@@ -549,8 +508,8 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         height=600   # 
     )
 
-    return fig
-
+    return fig, total_costs, total_revenue
+fig, total_costs, total_revenue = plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
 # Cost and Revenue Distribution Plot Function
 def plot_cost_and_revenue_distribution(categories, values, currency):
@@ -562,7 +521,7 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
                 y=values,
                 text=[f"{value:,.2f}" for value in values],  
                 textposition='auto',
-                marker=dict(color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7"])  
+                marker=dict(color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7", "#FADA7A"])  
             )
         ]
     )
@@ -579,10 +538,60 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
 
     return fig
 
+#________________________________________________________________________________________
 
 
-categories = ["Gross Output", "Net Output", "Total Costs", "Gross Margin"]
-values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Results Summary</div>
+    """,
+    unsafe_allow_html=True
+)
+
+summary_data = [
+    {"Indicator": f"Farmgate Price ({currency})", "Value": f"{farmgate_price*exchange_rate:,.2f} {currency}"},
+    {"Indicator": "Break-Even Quantity (Bags)", "Value": f"{break_even_quantity / bag_weight:,.2f}" if break_even_quantity is not None else "N/A"},
+    {"Indicator": "Break-Even Quantity (Kg)", "Value": f"{break_even_quantity:,.2f}" if break_even_quantity is not None else "N/A"},
+    # {"Indicator": "Worst-Case Break-Even Quantity (Kg)", "Value": f"{worst_case_quantity:,.2f}" if worst_case_quantity is not None else "N/A"},
+    # {"Indicator": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
+    
+    {"Indicator": f"Break-Even Price ({currency})", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
+    {"Indicator": f"Net Margin ({currency})", "Value": f"{gross_margin:,.2f}"},
+    {"Indicator": f"Gross Output ({currency})", "Value": f"{gross_output:,.2f}"},
+    {"Indicator": f"Gross Margin ({currency})", "Value": f"{real_g_margin:,.2f}"},
+    # {"Indicator": f"Total Costs ({currency})", "Value": f"{total_costs:,.2f}"},
+  
+    # {"Indicator": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
+    # {"Indicator": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
+]
+
+summary_df = pd.DataFrame(summary_data)
+
+st.markdown(
+    summary_df.style
+    .set_table_styles([
+        {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
+        {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]}])
+    .hide(axis="index")
+    .to_html(),
+    unsafe_allow_html=True,
+)
+
+
+
+
+
+categories = ["Gross Output", "Net Output", "Total Costs", "Net Margin", "Gross Margin"]
+values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin, real_g_margin]
 
 
 col1, col2 = st.columns(2) 
@@ -605,7 +614,7 @@ with col1:
     unsafe_allow_html=True
 )
     
-    st.plotly_chart(plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price), use_container_width=False)
+    st.plotly_chart(fig, use_container_width=False)
 
 with col2:
    
