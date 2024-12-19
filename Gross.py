@@ -557,6 +557,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
 summary_data = [
     {"Indicator": f"Farmgate Price ({currency})", "Value": f"{farmgate_price*exchange_rate:,.2f} {currency}"},
     {"Indicator": "Break-Even Quantity (Bags)", "Value": f"{break_even_quantity / bag_weight:,.2f}" if break_even_quantity is not None else "N/A"},
