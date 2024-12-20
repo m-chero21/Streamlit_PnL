@@ -412,7 +412,7 @@ def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, o
     net_output = gross_output - (post_harvest_loss + own_consumption)
     
     total_costs = cost_df["Cost Per Unit"].sum() * exchange_rate
-    gross_margin = net_output - total_costs
+    gross_margin = net_output - total_costs + own_consumption
     real_g_margin= total_costs-gross_output
     return gross_output, net_output, gross_margin, real_g_margin
 
@@ -566,9 +566,9 @@ summary_data = [
     # {"Indicator": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
     
     {"Indicator": f"Break-Even Price ({currency})", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
-    {"Indicator": f"Marketed Output ({currency})", "Value": f"{gross_margin:,.2f}"},
+    {"Indicator": f"Gross Margin ({currency})", "Value": f"{gross_margin:,.2f}"},
     {"Indicator": f"Gross Output ({currency})", "Value": f"{gross_output:,.2f}"},
-    {"Indicator": f"Gross Margin ({currency})", "Value": f"{real_g_margin:,.2f}"},
+    # {"Indicator": f"Gross Margin ({currency})", "Value": f"{real_g_margin:,.2f}"},
     # {"Indicator": f"Total Costs ({currency})", "Value": f"{total_costs:,.2f}"},
   
     # {"Indicator": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
@@ -591,8 +591,8 @@ st.markdown(
 
 
 
-categories = ["Gross Output", "Net Output", "Total Costs", "Marketed Output", "Gross Margin"]
-values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin, real_g_margin]
+categories = ["Gross Output", "Marketed Output", "Total Costs", "Gross Margin"]
+values = [gross_output, net_output, cost_df["Cost Per Unit"].sum(), gross_margin]
 
 
 col1, col2 = st.columns(2) 
