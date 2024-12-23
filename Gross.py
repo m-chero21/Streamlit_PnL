@@ -225,6 +225,7 @@ own_consumption_percentage = st.sidebar.slider("Own Consumption %:", 0, 50, 10)
 
 
 # Filter Data
+
 filtered_df = df.copy()
 if selected_county != "All":
     filtered_df = filtered_df[filtered_df["County"] == selected_county]
