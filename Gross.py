@@ -219,7 +219,7 @@ exchange_rate = st.sidebar.number_input(
 )
 
 bag_weight = st.sidebar.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
-farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=28.62, step=1.0)
+farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=38.89, step=1.0)
 loss_percentage = st.sidebar.slider("Post-Harvest Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Own Consumption %:", 0, 50, 10)
 
