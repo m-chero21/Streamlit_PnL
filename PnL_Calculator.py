@@ -316,19 +316,57 @@ df["Production Volume 2028"] = (
     df["Avg Yield Biotech"] * df["Hectares 2028"] * df["2028 % of Biotech"] / 100
 ).round(1)
 
+st.sidebar.header("Scenario Testing")
 
-# Sidebar Summary Metrics
-def update_summary_metrics():
-    total_hectares = df["Hectares 2023"].sum()
-    opv_seed_2028 = df["2028 kg seed OPV"].sum()
-    hybrid_seed_2028= df["2028 kg seed Hybrid"].sum()
-    total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
-    percent_national_hectares = (
-        (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
+
+
+# Use multi-select to select multiple counties
+selected_counties = st.sidebar.multiselect("Counties:", options=kenyan_counties, placeholder="Choose a County")
+
+new_biotech_percentage = st.sidebar. number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
+
+update_button = st.sidebar.button("Update")
+
+
+def update_combined_summary_metrics():
+    # National metrics
+    total_hectares_national = df["Hectares 2023"].sum()
+    opv_seed_2028_national = df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028_national = df["2028 kg seed Hybrid"].sum()
+    total_biotech_hectares_2028_national = (
+        (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
     )
-    commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
-   
+    percent_national_hectares_national = (
+        (total_biotech_hectares_2028_national / total_hectares_national * 100)
+        if total_hectares_national != 0
+        else 0
+    )
+    commercial_seed_2028_national = df["2028 kg seed Biotech"].sum()
 
+    # Sub-national metrics based on selected counties
+    if selected_counties:
+        filtered_df = df[df["County"].isin(selected_counties)]
+        total_hectares_sub = filtered_df["Hectares 2023"].sum()
+        opv_seed_2028_sub = filtered_df["2028 kg seed OPV"].sum()
+        hybrid_seed_2028_sub = filtered_df["2028 kg seed Hybrid"].sum()
+        total_biotech_hectares_2028_sub = (
+            (filtered_df["Hectares 2028"] * filtered_df["2028 % of Biotech"] / 100).sum()
+        )
+        percent_national_hectares_sub = (
+            (total_biotech_hectares_2028_sub / total_hectares_sub * 100)
+            if total_hectares_sub != 0
+            else 0
+        )
+        commercial_seed_2028_sub = filtered_df["2028 kg seed Biotech"].sum()
+    else:
+        total_hectares_sub = 0
+        opv_seed_2028_sub = 0
+        hybrid_seed_2028_sub = 0
+        total_biotech_hectares_2028_sub = 0
+        percent_national_hectares_sub = 0
+        commercial_seed_2028_sub = 0
+
+    # Prepare the combined summary data
     summary_data = {
         "Indicator": [
             "Area under maize (Ha)",
@@ -338,83 +376,25 @@ def update_summary_metrics():
             "OPV seed requirement 2028 (Kg)",
             "Hybrid seed requirement 2028 (Kg)",
         ],
-        "Value": [
-            f"{total_hectares:,.0f}",
-            f"{total_biotech_hectares_2028:,.0f}",
-            f"{percent_national_hectares:.1f}%",
-            f"{commercial_seed_2028:,.0f}",
-            f"{opv_seed_2028:,.0f}",
-            f"{hybrid_seed_2028:,.0f}",
-
-
+        "National": [
+            f"{total_hectares_national:,.0f}",
+            f"{total_biotech_hectares_2028_national:,.0f}",
+            f"{percent_national_hectares_national:.1f}%",
+            f"{commercial_seed_2028_national:,.0f}",
+            f"{opv_seed_2028_national:,.0f}",
+            f"{hybrid_seed_2028_national:,.0f}",
         ],
-    }
-    st.markdown(
-        """
-        <style>
-        .cost-breakdown-title {
-            color: #007278; /* Set text color */
-            font-size: 55px; /* Adjust font size if needed */
-            font-weight: bold;
-            text-align: left; /* Align text to the left */
-            margin-bottom: 10px; /* Add some space below the title */
-        }
-        </style>
-        <div class="cost-breakdown-title">Summary (National)</div>
-        """,
-        unsafe_allow_html=True
-    )
-    summary_df = pd.DataFrame(summary_data)
-    # Convert the DataFrame to HTML with custom styles
-    html_table = summary_df.to_html(index=False)
-
-    # Add CSS to center-align the headers
-    html_table = html_table.replace(
-        "<thead>", '<thead style="text-align: center;">'
-    )
-    st.write(summary_df.to_html(index=False), unsafe_allow_html=True)
-
-update_summary_metrics()
-
-def update_summary2_metrics():
-    # Filter the DataFrame for the selected counties
-    if not selected_counties:
-        st.warning("Please select at least one county to display sub-national metrics.")
-        return
-    
-    filtered_df = df[df["County"].isin(selected_counties)]
-
-    # Perform calculations on the filtered DataFrame
-    total_hectares = filtered_df["Hectares 2023"].sum()
-    opv_seed_2028 = filtered_df["2028 kg seed OPV"].sum()
-    hybrid_seed_2028 = filtered_df["2028 kg seed Hybrid"].sum()
-    total_biotech_hectares_2028 = (
-        (filtered_df["Hectares 2028"] * filtered_df["2028 % of Biotech"] / 100).sum()
-    )
-    percent_national_hectares = (
-        (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
-    )
-    commercial_seed_2028 = filtered_df["2028 kg seed Biotech"].sum()
-
-    summary_data = {
-        "Indicator": [
-            "Area under maize (Ha)",
-            "Area under biotech seed (Ha)",
-            "National area under biotech Seed (%)",
-            "Biotech seed requirement 2028 (Kg)",
-            "OPV seed requirement 2028 (Kg)",
-            "Hybrid seed requirement 2028 (Kg)",
-        ],
-        "Value": [
-            f"{total_hectares:,.0f}",
-            f"{total_biotech_hectares_2028:,.0f}",
-            f"{percent_national_hectares:.1f}%",
-            f"{commercial_seed_2028:,.0f}",
-            f"{opv_seed_2028:,.0f}",
-            f"{hybrid_seed_2028:,.0f}",
+        "Sub-National": [
+            f"{total_hectares_sub:,.0f}" if total_hectares_sub > 0 else "N/A",
+            f"{total_biotech_hectares_2028_sub:,.0f}" if total_biotech_hectares_2028_sub > 0 else "N/A",
+            f"{percent_national_hectares_sub:.1f}%" if total_hectares_sub > 0 else "N/A",
+            f"{commercial_seed_2028_sub:,.0f}" if commercial_seed_2028_sub > 0 else "N/A",
+            f"{opv_seed_2028_sub:,.0f}" if opv_seed_2028_sub > 0 else "N/A",
+            f"{hybrid_seed_2028_sub:,.0f}" if hybrid_seed_2028_sub > 0 else "N/A",
         ],
     }
 
+    # Render the combined summary table
     st.markdown(
         """
         <style>
@@ -426,7 +406,7 @@ def update_summary2_metrics():
             margin-bottom: 10px; /* Add some space below the title */
         }
         </style>
-        <div class="cost-breakdown-title">Summary (Sub-National)</div>
+        <div class="cost-breakdown-title">Summary</div>
         """,
         unsafe_allow_html=True,
     )
@@ -442,18 +422,139 @@ def update_summary2_metrics():
     )
     st.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
+# Call the function to display the combined summary
 
 
-st.sidebar.header("Scenario Testing")
+
+
+# Sidebar Summary Metrics
+# def update_summary_metrics():
+#     total_hectares = df["Hectares 2023"].sum()
+#     opv_seed_2028 = df["2028 kg seed OPV"].sum()
+#     hybrid_seed_2028= df["2028 kg seed Hybrid"].sum()
+#     total_biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
+#     percent_national_hectares = (
+#         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
+#     )
+#     commercial_seed_2028 = df["2028 kg seed Biotech"].sum()
+   
+
+#     summary_data = {
+#         "Indicator": [
+#             "Area under maize (Ha)",
+#             "Area under biotech seed (Ha)",
+#             "National area under biotech seed (%)",
+#             "Biotech seed requirement 2028 (Kg)",
+#             "OPV seed requirement 2028 (Kg)",
+#             "Hybrid seed requirement 2028 (Kg)",
+#         ],
+#         "Value": [
+#             f"{total_hectares:,.0f}",
+#             f"{total_biotech_hectares_2028:,.0f}",
+#             f"{percent_national_hectares:.1f}%",
+#             f"{commercial_seed_2028:,.0f}",
+#             f"{opv_seed_2028:,.0f}",
+#             f"{hybrid_seed_2028:,.0f}",
+
+
+#         ],
+#     }
+#     st.markdown(
+#         """
+#         <style>
+#         .cost-breakdown-title {
+#             color: #007278; /* Set text color */
+#             font-size: 55px; /* Adjust font size if needed */
+#             font-weight: bold;
+#             text-align: left; /* Align text to the left */
+#             margin-bottom: 10px; /* Add some space below the title */
+#         }
+#         </style>
+#         <div class="cost-breakdown-title">Summary (National)</div>
+#         """,
+#         unsafe_allow_html=True
+#     )
+#     summary_df = pd.DataFrame(summary_data)
+#     # Convert the DataFrame to HTML with custom styles
+#     html_table = summary_df.to_html(index=False)
+
+#     # Add CSS to center-align the headers
+#     html_table = html_table.replace(
+#         "<thead>", '<thead style="text-align: center;">'
+#     )
+#     st.write(summary_df.to_html(index=False), unsafe_allow_html=True)
+
+# update_summary_metrics()
+
+# def update_summary2_metrics():
+#     # Filter the DataFrame for the selected counties
+#     if not selected_counties:
+#         st.warning("Please select at least one county to display sub-national metrics.")
+#         return
+    
+#     filtered_df = df[df["County"].isin(selected_counties)]
+
+#     # Perform calculations on the filtered DataFrame
+#     total_hectares = filtered_df["Hectares 2023"].sum()
+#     opv_seed_2028 = filtered_df["2028 kg seed OPV"].sum()
+#     hybrid_seed_2028 = filtered_df["2028 kg seed Hybrid"].sum()
+#     total_biotech_hectares_2028 = (
+#         (filtered_df["Hectares 2028"] * filtered_df["2028 % of Biotech"] / 100).sum()
+#     )
+#     percent_national_hectares = (
+#         (total_biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
+#     )
+#     commercial_seed_2028 = filtered_df["2028 kg seed Biotech"].sum()
+
+#     summary_data = {
+#         "Indicator": [
+#             "Area under maize (Ha)",
+#             "Area under biotech seed (Ha)",
+#             "National area under biotech Seed (%)",
+#             "Biotech seed requirement 2028 (Kg)",
+#             "OPV seed requirement 2028 (Kg)",
+#             "Hybrid seed requirement 2028 (Kg)",
+#         ],
+#         "Value": [
+#             f"{total_hectares:,.0f}",
+#             f"{total_biotech_hectares_2028:,.0f}",
+#             f"{percent_national_hectares:.1f}%",
+#             f"{commercial_seed_2028:,.0f}",
+#             f"{opv_seed_2028:,.0f}",
+#             f"{hybrid_seed_2028:,.0f}",
+#         ],
+#     }
+
+#     st.markdown(
+#         """
+#         <style>
+#         .cost-breakdown-title {
+#             color: #007278; /* Set text color */
+#             font-size: 35px; /* Adjust font size if needed */
+#             font-weight: bold;
+#             text-align: left; /* Align text to the left */
+#             margin-bottom: 10px; /* Add some space below the title */
+#         }
+#         </style>
+#         <div class="cost-breakdown-title">Summary (Sub-National)</div>
+#         """,
+#         unsafe_allow_html=True,
+#     )
+
+#     summary_df = pd.DataFrame(summary_data)
+
+#     # Convert the DataFrame to HTML with custom styles
+#     html_table = summary_df.to_html(index=False)
+
+#     # Add CSS to center-align the headers
+#     html_table = html_table.replace(
+#         "<thead>", '<thead style="text-align: center;">'
+#     )
+#     st.write(summary_df.to_html(index=False), unsafe_allow_html=True)
 
 
 
-# Use multi-select to select multiple counties
-selected_counties = st.sidebar.multiselect("Counties:", options=kenyan_counties, placeholder="Choose a County")
 
-new_biotech_percentage = st.sidebar. number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
-
-update_button = st.sidebar.button("Update")
 
 # The logic to handle updates
 if update_button:
@@ -490,7 +591,8 @@ if update_button:
 
 
     
-    update_summary2_metrics()
+    
+
     
     
     st.sidebar.markdown(f"""
@@ -500,27 +602,21 @@ if update_button:
 """, unsafe_allow_html=True)
     
 
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Calculator</div>
-    """,
-    unsafe_allow_html=True
-)
 
-# Format the DataFrame with commas for numbers
+
 formatted_df = df.copy()
+
+# Ensure specific columns have one decimal place
+columns_to_round = ["Avg Yield OPV", "Avg Yield Hybrid", "Avg Yield Biotech"]
+for col in columns_to_round:
+    if col in formatted_df.columns:
+        formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:.1f}" if pd.notnull(x) else x)
+
+# Format all other numeric columns with commas
 for col in formatted_df.columns:
-    if pd.api.types.is_numeric_dtype(formatted_df[col]):
-        formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:,.1f}" if pd.notnull(x) else x)
+    if col not in columns_to_round and pd.api.types.is_numeric_dtype(formatted_df[col]):
+        formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else x)
+
 
 table_style = """
 <style>
@@ -545,7 +641,22 @@ table_style = """
     {table_html}
 </div>
 """
-
+update_combined_summary_metrics()
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Calculator</div>
+    """,
+    unsafe_allow_html=True
+)
 # Generate HTML table with formatted numbers
 st.markdown(
     table_style.format(
