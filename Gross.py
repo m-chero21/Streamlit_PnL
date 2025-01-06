@@ -37,6 +37,21 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Add custom CSS for the sticky sidebar
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"] {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: inherit;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 nav_logo = "logo2.png"
 LOGO_PATH = "logo.png"
 st.sidebar.image(LOGO_PATH, use_container_width=True)
@@ -198,7 +213,7 @@ st.sidebar.header("Global Parameters")
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
-value_chains = ["Maize"]
+value_chains = ["Maize", "Potatoes", "Avocado"]
 selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
 
 scale_options = ["Small-scale", "Large-scale"]
@@ -317,91 +332,10 @@ cost_df = pd.DataFrame(cost_parameters)
 if "cost_df" not in st.session_state:
     st.session_state.cost_df = pd.DataFrame(cost_parameters) 
 
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Cost Breakdown</div>
-    """,
-    unsafe_allow_html=True
-)
+
+#_______________________________________________________________
 
 
-if "add_item_expanded" not in st.session_state:
-    st.session_state.add_item_expanded = False
-
-# Button to expand or collapse the Add Item section
-if st.button("Insert New Cost"):
-    st.session_state.add_item_expanded = not st.session_state.add_item_expanded
-
-# Add Item Section
-if st.session_state.add_item_expanded:
-    with st.expander("", expanded=True):
-        new_item = st.text_input("Cost Name", "Cost Item")
-        new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
-        new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
-        new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
-
-        
-        std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
-        new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
-        new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
-        new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
-
-        
-        if st.button("Add Item", key="confirm_add_item"):
-            
-            new_row = {
-                "Item": new_item,
-                "Category": new_category,
-                "Quantity": new_quantity,
-                "Cost Per Unit": new_cost_per_unit,
-                "Confidence Interval": new_confidence_interval,
-            }
-            st.session_state.cost_df = pd.concat(
-                [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
-            )
-
-
-            
-            cost_df = st.session_state.cost_df
-            st.success(f"Item '{new_item}' added successfully!")
-
-# Display the Updated Cost Breakdown Table
-
-table_style = """
-<style>
-    .custom-table-container {{
-        max-height: 300px; /* Desired height */
-        overflow-y: auto; /* Enable scrolling */
-        overflow-x: auto; /* Enable horizontal scrolling */
-        width: 100%;
-    }}
-    .custom-table-container table {{
-        width: 100%; /* Make table responsive */
-        font-size: 12px; /* Decrease overall text size */
-    }}
-    .custom-table-container table th, 
-    .custom-table-container table td {{
-        font-size: 11px; /* Decrease header and cell text size */
-        padding: 2px; /* Reduce padding for a compact look */
-        text-align: center; /* Center-align text */
-    }}
-</style>
-<div class="custom-table-container">
-    {table_html}
-</div>
-"""
-
-# Generate HTML table with formatted numbers
-st.dataframe(cost_df, use_container_width=True)
 
 
 
@@ -514,7 +448,9 @@ fig, total_costs, total_revenue = plot_break_even(fixed_costs, variable_cost_per
 
 # Cost and Revenue Distribution Plot Function
 def plot_cost_and_revenue_distribution(categories, values, currency):
-   
+    # Define colors based on whether the value is negative or not
+    colors = ['#a4343a' if value < 0 else '#2D9596' for value in values]
+
     fig = go.Figure(
         data=[
             go.Bar(
@@ -522,12 +458,11 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
                 y=values,
                 text=[f"{value:,.2f}" for value in values],  
                 textposition='auto',
-                marker=dict(color=["#007278", "#6295A2", "#80B9AD", "#B3E2A7", "#FADA7A"])  
+                marker=dict(color=colors)  # Use the colors defined based on value
             )
         ]
     )
 
- 
     fig.update_layout(
         xaxis_title='Category',
         yaxis_title=f'Value ({currency})',
@@ -578,17 +513,66 @@ summary_data = [
 
 summary_df = pd.DataFrame(summary_data)
 
-st.markdown(
-    summary_df.style
-    .set_table_styles([
-        {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
-        {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]}])
-    .hide(axis="index")
-    .to_html(),
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     summary_df.style
+#     .set_table_styles([
+#         {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
+#         {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]}])
+#     .hide(axis="index")
+#     .to_html(),
+#     unsafe_allow_html=True,
+# )
 
+# Layout for table and story side by side
+col1, col2 = st.columns([1, 1])
 
+# Display the summary table on the left
+with col1:
+    st.markdown(
+        """
+        <style>
+        .cost-breakdown-title {
+            color: #007278; /* Set text color */
+            font-size: 35px; /* Adjust font size if needed */
+            font-weight: bold;
+            text-align: left; /* Align text to the left */
+            margin-bottom: 10px; /* Add some space below the title */
+        }
+        .summary-table {
+            width: 100%; /* Increase the table width */
+        }
+        </style>
+        
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        summary_df.style
+        .set_table_styles([
+            {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
+            {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]},
+        ])
+        .hide(axis="index")
+        .to_html()
+        .replace('<table', '<table class="summary-table"'),  # Add a class to the table for custom styling
+        unsafe_allow_html=True,
+    )
+
+# Display the story on the right
+with col2:
+    st.markdown(
+        f"""
+        <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
+        At the farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b>, 
+        the break-even quantity is estimated at <b>{break_even_quantity / bag_weight:,.2f} bags</b> 
+        or <b>{break_even_quantity:,.2f} kg</b>. To break even, the required price is 
+        <b>{required_price_to_break_even:,.2f} {currency}</b>. The gross margin stands at 
+        <b>{gross_margin:,.2f} {currency}</b>, while the gross output is <b>{gross_output:,.2f} {currency}</b>.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 
@@ -639,6 +623,106 @@ with col2:
     
     st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False)
 
+
+
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Cost Breakdown</div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+if "add_item_expanded" not in st.session_state:
+    st.session_state.add_item_expanded = False
+
+# Button to expand or collapse the Add Item section
+if st.button("Insert New Cost"):
+    st.session_state.add_item_expanded = not st.session_state.add_item_expanded
+
+# Add Item Section
+if st.session_state.add_item_expanded:
+    with st.expander("", expanded=True):
+        new_item = st.text_input("Cost Name", "Cost Item")
+        new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
+        new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
+        new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
+
+        
+        std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
+        new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
+        new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
+        new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
+
+        
+        if st.button("Add Item", key="confirm_add_item"):
+            
+            new_row = {
+                "Item": new_item,
+                "Category": new_category,
+                "Quantity": new_quantity,
+                "Cost Per Unit": new_cost_per_unit,
+                "Confidence Interval": new_confidence_interval,
+            }
+            st.session_state.cost_df = pd.concat(
+                [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
+            )
+
+
+            
+            cost_df = st.session_state.cost_df
+            st.success(f"Item '{new_item}' added successfully!")
+
+        
+# Display the Updated Cost Breakdown Table
+
+table_style = """
+<style>
+    .custom-table-container {{
+        max-height: 300px; /* Desired height */
+        overflow-y: auto; /* Enable vertical scrolling */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        width: 100%;
+    }}
+    .custom-table-container table {{
+        width: 100%; /* Make table responsive */
+        font-size: 12px; /* Decrease overall text size */
+        border-collapse: collapse; /* Remove spacing between cells */
+    }}
+    .custom-table-container table th, 
+    .custom-table-container table td {{
+        font-size: 11px; /* Decrease header and cell text size */
+        padding: 5px; /* Adjust padding for a compact look */
+        text-align: center; /* Center-align text */
+        border: 1px solid #ddd; /* Add borders to cells */
+    }}
+    .custom-table-container table th {{
+        background-color: #007278; /* Header background color */
+        color: white; /* Header text color */
+    }}
+</style>
+<div class="custom-table-container">
+    {table_html}
+</div>
+"""
+
+# st.dataframe(cost_df, use_container_width=True)
+
+
+# Convert the DataFrame to an HTML table
+table_html = cost_df.to_html(index=False, escape=False)
+
+# Render the styled table in Streamlit
+st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
 
 
   
