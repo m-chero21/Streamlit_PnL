@@ -209,11 +209,11 @@ def load_data():
 df, cost = load_data()
 
 # Sidebar - Global Parameters
-st.sidebar.header("Global Parameters")
+st.sidebar.header("Global Inputs")
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
-value_chains = ["Maize", "Potatoes", "Avocado"]
+value_chains = ["Maize", "Irish Potatoes", "Meat", "Rice", "Dairy", "Coffee"]
 selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
 
 scale_options = ["Small-scale", "Large-scale"]
@@ -333,6 +333,102 @@ if "cost_df" not in st.session_state:
     st.session_state.cost_df = pd.DataFrame(cost_parameters) 
 
 
+
+st.markdown(
+    """
+    <style>
+    .cost-breakdown-title {
+        color: #007278; /* Set text color */
+        font-size: 35px; /* Adjust font size if needed */
+        font-weight: bold;
+        text-align: left; /* Align text to the left */
+        margin-bottom: 10px; /* Add some space below the title */
+    }
+    </style>
+    <div class="cost-breakdown-title">Cost Breakdown</div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+if "add_item_expanded" not in st.session_state:
+    st.session_state.add_item_expanded = False
+
+# Button to expand or collapse the Add Item section
+if st.button("Insert New Cost"):
+    st.session_state.add_item_expanded = not st.session_state.add_item_expanded
+
+# Add Item Section
+if st.session_state.add_item_expanded:
+    with st.expander("", expanded=True):
+        new_item = st.text_input("Cost Name", "Cost Item")
+        new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
+        new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
+        new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
+
+        
+        std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
+        new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
+        new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
+        new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
+
+        
+        if st.button("Add Item", key="confirm_add_item"):
+            
+            new_row = {
+                "Item": new_item,
+                "Category": new_category,
+                "Quantity": new_quantity,
+                "Cost Per Unit": new_cost_per_unit,
+                "Confidence Interval": new_confidence_interval,
+            }
+            st.session_state.cost_df = pd.concat(
+                [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
+            )
+
+
+            
+            cost_df = st.session_state.cost_df
+            st.success(f"Item '{new_item}' added successfully!")
+
+        
+# Display the Updated Cost Breakdown Table
+
+table_style = """
+<style>
+    .custom-table-container {{
+        max-height: 300px; /* Desired height */
+        overflow-y: auto; /* Enable vertical scrolling */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        width: 100%;
+    }}
+    .custom-table-container table {{
+        width: 100%; /* Make table responsive */
+        font-size: 12px; /* Decrease overall text size */
+        border-collapse: collapse; /* Remove spacing between cells */
+    }}
+    .custom-table-container table th, 
+    .custom-table-container table td {{
+        font-size: 11px; /* Decrease header and cell text size */
+        padding: 5px; /* Adjust padding for a compact look */
+        text-align: center; /* Center-align text */
+        border: 1px solid #ddd; /* Add borders to cells */
+    }}
+    .custom-table-container table th {{
+        background-color: #007278; /* Header background color */
+        color: white; /* Header text color */
+    }}
+</style>
+<div class="custom-table-container">
+    {table_html}
+</div>
+"""
+
+table_html = cost_df.to_html(index=False, escape=False)
+st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
+
+
+  
 #_______________________________________________________________
 
 
@@ -623,106 +719,3 @@ with col2:
     
     st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False)
 
-
-
-st.markdown(
-    """
-    <style>
-    .cost-breakdown-title {
-        color: #007278; /* Set text color */
-        font-size: 35px; /* Adjust font size if needed */
-        font-weight: bold;
-        text-align: left; /* Align text to the left */
-        margin-bottom: 10px; /* Add some space below the title */
-    }
-    </style>
-    <div class="cost-breakdown-title">Cost Breakdown</div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-if "add_item_expanded" not in st.session_state:
-    st.session_state.add_item_expanded = False
-
-# Button to expand or collapse the Add Item section
-if st.button("Insert New Cost"):
-    st.session_state.add_item_expanded = not st.session_state.add_item_expanded
-
-# Add Item Section
-if st.session_state.add_item_expanded:
-    with st.expander("", expanded=True):
-        new_item = st.text_input("Cost Name", "Cost Item")
-        new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
-        new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
-        new_cost_per_unit = st.number_input("Cost Per Unit", value=0.0, step=1.0)
-
-        
-        std_dev = new_cost_per_unit * (0.01 * fluctuation_levels[selected_fluctuation])
-        new_lower_bound = round(new_cost_per_unit - 1.96 * std_dev)
-        new_upper_bound = round(new_cost_per_unit + 1.96 * std_dev)
-        new_confidence_interval = f"[{new_lower_bound}, {new_upper_bound}]"
-
-        
-        if st.button("Add Item", key="confirm_add_item"):
-            
-            new_row = {
-                "Item": new_item,
-                "Category": new_category,
-                "Quantity": new_quantity,
-                "Cost Per Unit": new_cost_per_unit,
-                "Confidence Interval": new_confidence_interval,
-            }
-            st.session_state.cost_df = pd.concat(
-                [st.session_state.cost_df, pd.DataFrame([new_row])], ignore_index=True
-            )
-
-
-            
-            cost_df = st.session_state.cost_df
-            st.success(f"Item '{new_item}' added successfully!")
-
-        
-# Display the Updated Cost Breakdown Table
-
-table_style = """
-<style>
-    .custom-table-container {{
-        max-height: 300px; /* Desired height */
-        overflow-y: auto; /* Enable vertical scrolling */
-        overflow-x: auto; /* Enable horizontal scrolling */
-        width: 100%;
-    }}
-    .custom-table-container table {{
-        width: 100%; /* Make table responsive */
-        font-size: 12px; /* Decrease overall text size */
-        border-collapse: collapse; /* Remove spacing between cells */
-    }}
-    .custom-table-container table th, 
-    .custom-table-container table td {{
-        font-size: 11px; /* Decrease header and cell text size */
-        padding: 5px; /* Adjust padding for a compact look */
-        text-align: center; /* Center-align text */
-        border: 1px solid #ddd; /* Add borders to cells */
-    }}
-    .custom-table-container table th {{
-        background-color: #007278; /* Header background color */
-        color: white; /* Header text color */
-    }}
-</style>
-<div class="custom-table-container">
-    {table_html}
-</div>
-"""
-
-# st.dataframe(cost_df, use_container_width=True)
-
-
-# Convert the DataFrame to an HTML table
-table_html = cost_df.to_html(index=False, escape=False)
-
-# Render the styled table in Streamlit
-st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
-
-
-  
