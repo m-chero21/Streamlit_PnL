@@ -172,6 +172,7 @@ st.markdown(
         background-color: #a4343a; /* Hover color */
         color: white !important; /* Keep text color white on hover */
     }
+    
     </style>
     """,
     unsafe_allow_html=True
