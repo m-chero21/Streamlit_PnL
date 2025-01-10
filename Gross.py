@@ -483,6 +483,8 @@ variable_cost_per_unit = (variable_costs / yield_kg)
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
 required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg 
+
+
 #_____________________________________________________________
 import plotly.graph_objects as go
 
