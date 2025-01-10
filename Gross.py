@@ -488,7 +488,7 @@ import plotly.graph_objects as go
 
 # Break-Even Plot Function
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-    units = np.arange(0, 2000, 10)
+    units = np.arange(0, 7000, 10)
     total_costs = exchange_rate*fixed_costs + variable_cost_per_unit * units 
     total_revenue = selling_price_per_unit * units * exchange_rate
     
