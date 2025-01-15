@@ -427,8 +427,14 @@ table_style = """
 
 table_html = cost_df.to_html(index=False, escape=False)
 st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
-# total_costs_display = cost_df[cost_df["Cost Per Unit"].sum()]
-# print(f"The total costs are {total_costs_display}")
+
+
+
+# Calculate the total costs
+total_costs_display = cost_df["Cost Per Unit"].sum()
+
+# Print the total costs
+st.write(f"The total costs are **{currency} {total_costs_display:,.2f}**")
 
 #___________________________________________________________________________________________
 
