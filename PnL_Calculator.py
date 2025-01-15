@@ -448,8 +448,6 @@ if update_button:
             df.loc[df["County"] == county, "Hectares 2028"] *
             df.loc[df["County"] == county, "2028 % of Biotech"] / 100
         )
- 
-
     
 formatted_df = df.copy()
 
@@ -488,6 +486,7 @@ table_style = """
 </div>
 """
 update_combined_summary_metrics()
+
 st.markdown(
     """
     <style>

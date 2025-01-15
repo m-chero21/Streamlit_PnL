@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, JsCode
+
 
 st.set_page_config(
     page_title="Gross Margin Calculator",
@@ -214,7 +216,7 @@ st.sidebar.header("Global Inputs")
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
-value_chains = ["Maize", "Irish Potatoes", "Meat", "Rice", "Dairy", "Coffee"]
+value_chains = ["Maize", "Irish Potatoes", "Coffee"]
 selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
 
 scale_options = ["Small-scale", "Large-scale"]
@@ -239,6 +241,7 @@ farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=38.89, s
 loss_percentage = st.sidebar.slider("Post-Harvest Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Own Consumption %:", 0, 50, 10)
 
+selling_price_per_unit = farmgate_price
 
 # Filter Data
 
@@ -253,8 +256,6 @@ if selected_value_chain != "All":
 area_unit = st.sidebar.selectbox("Area Unit:", ["Hectares", "Acres"], index=0)
 # Acre conversion
 acre_to_hectare = 2.47105  
-
-
 
 # Aggregate Metrics
 total_production = filtered_df["Production (Tonnes)"].sum()
@@ -272,7 +273,7 @@ else:
 
 # Create a DataFrame for the Indicators
 metrics_data = {
-    "Indicator": ["Production (Tonnes)", "Area (Ha)", "Yield (MT/Ha)"],
+    "Indicator": ["Production (Tonnes)", f"Area({area_unit})", "Yield (MT/Ha)"],
     "Value": [f"{total_production:,.2f}", f"{total_area:,.2f}", f"{yield_kg:,.2f}"],
 }
 
@@ -300,10 +301,6 @@ category_mapping = {
     "Landrent Cost (KES)": "Fixed Cost",
     "Other Costs (KES)": "Other Cost"
 }
-
-
-
-
 cost_parameters = []
 for col, category in category_mapping.items():
     if col in filtered_costs.columns:
@@ -329,6 +326,8 @@ for col, category in category_mapping.items():
         })
 
 cost_df = pd.DataFrame(cost_parameters)
+
+
 
 if "cost_df" not in st.session_state:
     st.session_state.cost_df = pd.DataFrame(cost_parameters) 
@@ -425,16 +424,92 @@ table_style = """
 </div>
 """
 
+
 table_html = cost_df.to_html(index=False, escape=False)
 st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
+# total_costs_display = cost_df[cost_df["Cost Per Unit"].sum()]
+# print(f"The total costs are {total_costs_display}")
+
+#___________________________________________________________________________________________
+
+# # Define a function to delete an item
+# def delete_item(index):
+#     st.session_state.cost_df = st.session_state.cost_df.drop(index).reset_index(drop=True)
+#     st.success("Item deleted successfully!")
 
 
-  
-#_______________________________________________________________
+
+# cost_df = st.session_state.cost_df
+
+# # Render the table header
+
+# st.markdown(
+#     """
+#     <style>
+#         table {
+#             border-collapse: collapse;
+#             width: 100%;
+#         }
+#         th, td {
+#             border: 1px solid #ddd;
+#             padding: 8px;
+#             text-align: center;
+#         }
+#         th {
+#             background-color: #007278;
+#             color: white;
+#         }
+#         .delete-button {
+#             background-color: #f44336;
+#             color: white;
+#             border: none;
+#             padding: 5px 10px;
+#             text-align: center;
+#             font-size: 12px;
+#             cursor: pointer;
+#             border-radius: 4px;
+#         }
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
+
+# # Render the table with delete buttons
+# st.markdown("<table><thead><tr>", unsafe_allow_html=True)
+
+# # Add column headers
+# columns = cost_df.columns.tolist() + ["Delete"]
+# st.markdown("".join(f"<th>{col}</th>" for col in columns), unsafe_allow_html=True)
+
+# st.markdown("</tr></thead><tbody>", unsafe_allow_html=True)
+
+# # Add rows
+# for i, row in cost_df.iterrows():
+#     st.markdown("<tr>", unsafe_allow_html=True)
+    
+#     # Add data cells
+#     for col in cost_df.columns:
+#         st.markdown(f"<td>{row[col]}</td>", unsafe_allow_html=True)
+
+#     # Add a delete button in the last column
+#     delete_button_key = f"delete_{i}"
+#     if st.button("Delete", key=delete_button_key):
+#         delete_item(i)
+
+#     st.markdown("</tr>", unsafe_allow_html=True)
+
+# st.markdown("</tbody></table>", unsafe_allow_html=True)
 
 
 
 
+
+
+
+
+
+
+#____________________________________________________________________
 
 # Gross Margin Calculation
 def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
@@ -463,9 +538,10 @@ best_case_gross_margin = gross_margin + 1.96 * std_dev
 worst_case_gross_margin = gross_margin - 1.96 * std_dev
 
 # Break-Even Analysis
-def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
+def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, total_costs, required_price_to_break_even):
     if selling_price_per_unit > variable_cost_per_unit:
-        break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit)
+        # break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit - other_costs)
+        break_even_quantity = total_costs / required_price_to_break_even
         break_even_revenue = break_even_quantity * selling_price_per_unit
 
         
@@ -478,11 +554,15 @@ def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_
 
 fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum() 
 variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum() 
+other_costs= cost_df[cost_df["Category"] == "Other Cost"]["Cost Per Unit"].sum() 
 variable_cost_per_unit = (variable_costs / yield_kg) 
+import numpy as np
 
-break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
+total_costs = exchange_rate*(fixed_costs + variable_costs +other_costs)
+required_price_to_break_even = (fixed_costs + variable_costs + other_costs) / yield_kg 
 
-required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg 
+break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price, total_costs, required_price_to_break_even)
+
 
 
 #_____________________________________________________________
@@ -493,8 +573,6 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
     units = np.arange(0, 7000, 10)
     total_costs = exchange_rate*fixed_costs + variable_cost_per_unit * units 
     total_revenue = selling_price_per_unit * units * exchange_rate
-    
-    
     
     
     fig = go.Figure()
@@ -592,40 +670,70 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+import numpy as np
+break_even_bags = break_even_quantity / bag_weight
+
+
 
 summary_data = [
-    {"Indicator": f"Farmgate Price ({currency})", "Value": f"{farmgate_price*exchange_rate:,.2f} {currency}"},
-    {"Indicator": "Break-Even Quantity (Bags)", "Value": f"{break_even_quantity / bag_weight:,.2f}" if break_even_quantity is not None else "N/A"},
-    {"Indicator": "Break-Even Quantity (Kg)", "Value": f"{break_even_quantity:,.2f}" if break_even_quantity is not None else "N/A"},
-    # {"Indicator": "Worst-Case Break-Even Quantity (Kg)", "Value": f"{worst_case_quantity:,.2f}" if worst_case_quantity is not None else "N/A"},
-    # {"Indicator": "Best-Case Break-Even Quantity (Kg)", "Value": f"{best_case_quantity:,.2f}" if best_case_quantity is not None else "N/A"},
-    
-    {"Indicator": f"Break-Even Price ({currency})", "Value": f"{required_price_to_break_even:,.2f} {currency}" if required_price_to_break_even is not None else "N/A"},
-    {"Indicator": f"Gross Margin ({currency})", "Value": f"{gross_margin:,.2f}"},
-    {"Indicator": f"Gross Output ({currency})", "Value": f"{gross_output:,.2f}"},
-    # {"Indicator": f"Gross Margin ({currency})", "Value": f"{real_g_margin:,.2f}"},
-    # {"Indicator": f"Total Costs ({currency})", "Value": f"{total_costs:,.2f}"},
-  
-    # {"Indicator": "Worst-Case Gross Margin", "Value": f"{worst_case_gross_margin:,.2f} {currency}"},
-    # {"Indicator": "Best-Case Gross Margin", "Value": f"{best_case_gross_margin:,.2f} {currency}"},
+    {
+        "Indicator": f"Farmgate Price ({currency})",
+        "Value": (
+            f"{(farmgate_price * exchange_rate):,.2f} {currency}"
+        
+        ),
+    },
+    {
+        "Indicator": "Break-Even Quantity (Bags)",
+        "Value": (
+            f"{(break_even_bags):,.2f}"
+            if isinstance(break_even_bags, (int, float, np.number)) and isinstance(bag_weight, (int, float, np.number))
+            else "N/A"
+        ),
+    },
+    {
+        "Indicator": "Break-Even Quantity (Kg)",
+        "Value": (
+            f"{break_even_quantity:,.2f}"
+            if isinstance(break_even_quantity, (int, float, np.number))
+            else "N/A"
+        ),
+    },
+    {
+        "Indicator": f"Break-Even Price ({currency})",
+        "Value": (
+            f"{required_price_to_break_even:,.2f} {currency}"
+            if required_price_to_break_even is not None and isinstance(required_price_to_break_even, (int, float, np.number))
+            else "N/A"
+        ),
+    },
+    {
+        "Indicator": f"Gross Margin ({currency})",
+        "Value": (
+            f"{gross_margin:,.2f}"
+            if isinstance(gross_margin, (int, float, np.number))
+            else "N/A"
+        ),
+    },
+    {
+        "Indicator": f"Gross Output ({currency})",
+        "Value": (
+            f"{gross_output:,.2f}"
+            if isinstance(gross_output, (int, float, np.number))
+            else "N/A"
+        ),
+    },
 ]
+
+
+
 
 summary_df = pd.DataFrame(summary_data)
 
-# st.markdown(
-#     summary_df.style
-#     .set_table_styles([
-#         {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
-#         {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]}])
-#     .hide(axis="index")
-#     .to_html(),
-#     unsafe_allow_html=True,
-# )
 
-# Layout for table and story side by side
 col1, col2 = st.columns([1, 1])
 
-# Display the summary table on the left
+
 with col1:
     st.markdown(
         """
@@ -658,14 +766,13 @@ with col1:
         unsafe_allow_html=True,
     )
 
-# Display the story on the right
 with col2:
     st.markdown(
         f"""
         <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
         At the farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b>, 
-        the break-even quantity is estimated at <b>{break_even_quantity / bag_weight:,.2f} bags</b> 
-        or <b>{break_even_quantity:,.2f} kg</b>. To break even, the required price is 
+        the break-even quantity is estimated at <b> {f"{break_even_bags:,.2f}" if break_even_quantity is not None else "N/A"} bags</b> 
+        To break even, the required price is 
         <b>{required_price_to_break_even:,.2f} {currency}</b>. The gross margin stands at 
         <b>{gross_margin:,.2f} {currency}</b>, while the gross output is <b>{gross_output:,.2f} {currency}</b>.
         </div>
@@ -721,4 +828,3 @@ with col2:
 )
     
     st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False)
-
