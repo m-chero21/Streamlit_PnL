@@ -1,6 +1,5 @@
 import streamlit as st
 from config.margin_data import Data
-from utils.styling import apply_global_styling
 from views.side_margin import setup_sidebar
 
 def margin():
@@ -29,9 +28,6 @@ def margin():
         "own_consumption_percentage": 10,
         "cost_df": None
     })
-
-    # Apply Global CSS Styling
-    apply_global_styling()
 
     # Load Data
     data = Data("resources/aggregate_farm_data_template.xlsx")

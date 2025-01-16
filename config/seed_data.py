@@ -47,6 +47,44 @@ class Data:
             self.calculate_seed_requirements(year, seed_rate)
             self.calculate_production_volume(year)
 
+    def calculate_summary_metrics(self, selected_counties=None):
+        """Calculate combined summary metrics for national and sub-national levels."""
+        def calculate_metrics(df):
+            """Helper to calculate summary metrics for a given DataFrame."""
+            total_hectares = df["Hectares 2023"].sum()
+            biotech_hectares_2028 = (df["Hectares 2028"] * df["2028 % of Biotech"] / 100).sum()
+            percent_biotech = (biotech_hectares_2028 / total_hectares * 100) if total_hectares != 0 else 0
+            return {
+                "Area under maize (Ha)": total_hectares,
+                "Area under biotech seed (Ha)": biotech_hectares_2028,
+                "Area under biotech seed (%)": percent_biotech,
+                "Biotech seed requirement 2028 (Kg)": df["2028 kg seed Biotech"].sum(),
+                "OPV seed requirement 2028 (Kg)": df["2028 kg seed OPV"].sum(),
+                "Hybrid seed requirement 2028 (Kg)": df["2028 kg seed Hybrid"].sum(),
+            }
+
+        # Calculate national metrics
+        national_metrics = calculate_metrics(self.df)
+
+        # Calculate sub-national metrics if counties are selected
+        if selected_counties:
+            filtered_df = self.df[self.df["County"].isin(selected_counties)]
+            sub_national_metrics = calculate_metrics(filtered_df)
+        else:
+            sub_national_metrics = {key: "N/A" for key in national_metrics.keys()}
+
+        # Combine results into a DataFrame
+        summary_data = {
+            "Indicator": list(national_metrics.keys()),
+            "National": [f"{value:,.1f}" if isinstance(value, (int, float)) else value for value in national_metrics.values()],
+            "Sub-National": [
+                f"{value:,.1f}" if isinstance(value, (int, float)) else value
+                for value in sub_national_metrics.values()
+            ],
+        }
+
+        return pd.DataFrame(summary_data)
+
     @staticmethod
     def get_dataframe():
         """Return the processed DataFrame."""

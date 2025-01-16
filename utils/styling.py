@@ -13,19 +13,6 @@ def apply_global_styling():
         </style>
     """, unsafe_allow_html=True)
 
-def render_navigation_bar():
-    """Render the navigation bar."""
-    st.markdown("""
-        <div class="navbar">
-            <a href="https://integrated-seed-and-gross-margin-calculator.streamlit.app/" class="navbar-button">
-                Seed Requirement Calculator
-            </a>
-            <a href="https://gross-margin-calculator.streamlit.app/" class="navbar-link">
-                Gross Margin Calculator
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
-
 # Header CSS
 header_css = """
 /* Hide Streamlit header */

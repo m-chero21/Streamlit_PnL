@@ -19,7 +19,7 @@ def render_sidebar(df):
         help="Select counties for which to test scenarios."
     )
 
-    # OPV and Biotech Percentage Inputs
+    # OPV Percentage Inputs
     with st.sidebar.expander("Select OPV %", expanded=False):
         default_opv_2023 = st.number_input(
             "2023 OPV %",
@@ -38,7 +38,8 @@ def render_sidebar(df):
             help="Set the OPV percentage for 2028."
         )
 
-    with st.sidebar.expander("Select Biotexh %", expanded=False):
+    # Biotech Percentage Inputs
+    with st.sidebar.expander("Select Biotech % ", expanded=False):
         biotech_2023 = st.sidebar.number_input(
             "2023 Biotech %:",
             min_value=0,
