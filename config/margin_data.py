@@ -26,15 +26,6 @@ class Data:
         ]
         cost = pd.DataFrame(cost_data, columns=columns)
         return df, cost
-
-    def filter_data(self, selected_county, selected_value_chain):
-        """Filter the main dataset based on county and value chain."""
-        filtered_df = self.df.copy()
-        if selected_county != "All":
-            filtered_df = filtered_df[filtered_df["County"] == selected_county]
-        if selected_value_chain != "All":
-            filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
-        return filtered_df
     
     def calculate_gross_margin(self, cost_df, farmgate_price, loss_percentage, own_consumption_percentage):
         gross_output = farmgate_price * (1 - loss_percentage / 100)
@@ -42,40 +33,70 @@ class Data:
         gross_margin = net_output - cost_df["Cost Per Unit"].sum()
         return gross_output, net_output, gross_margin
 
+    def filter_data(self, selected_county, selected_value_chain):
+        """Filter the dataset based on county and value chain."""
+        filtered_df = self.df.copy()
+        if selected_county != "All":
+            filtered_df = filtered_df[filtered_df["County"] == selected_county]
+        if selected_value_chain != "All":
+            filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
+        return filtered_df
+
     def calculate_aggregate_metrics(self, filtered_df, area_unit="Hectares"):
-        """Calculate total production, area, and yield per hectare or acre."""
+        """Calculate aggregate metrics for the filtered dataset."""
         total_production = filtered_df["Production (Tonnes)"].sum()
         total_area = filtered_df["Area (Ha)"].sum()
-        
         if area_unit == "Acres":
             total_area *= self.acre_to_hectare
         yield_kg = (total_production * 1000) / total_area if total_area else 0
-
-        return {
-            "total_production": total_production,
-            "total_area": total_area,
-            "yield_kg": yield_kg
-        }
+        return total_production, total_area, yield_kg
 
     def adjust_costs(self, area_unit, exchange_rate, fluctuation_level):
-        """
-        Adjust costs based on area unit, exchange rate, and fluctuation level.
-        """
-        multiplier = self.acre_to_hectare if area_unit == "Acres" else 1
+        """Adjust costs based on area unit, exchange rate, and fluctuation level."""
+        multiplier = self.acre_to_hectare if area_unit == "Hectares" else 1
         fluctuation = self.fluctuation_mapping[fluctuation_level]
 
+        # Define category mapping for costs
+        category_mapping = {
+            "Seed Cost (KES)": "Variable Cost",
+            "Fertilizer Cost (KES)": "Variable Cost",
+            "Pesticides Cost": "Variable Cost",
+            "Herbicides Cost (KES)": "Variable Cost",
+            "Machinery Cost (KES)": "Fixed Cost",
+            "Labour Cost (KES)": "Variable Cost",
+            "Landrent Cost (KES)": "Fixed Cost",
+            "Other Costs (KES)": "Other Cost"
+        }
+
         adjusted_costs = []
+
         for _, row in self.cost.iterrows():
-            adjusted_row = row.copy()
-            for col in ["Seed Cost (KES)", "Fertilizer Cost (KES)", "Pesticides Cost",
-                        "Herbicides Cost (KES)", "Machinery Cost (KES)", "Labour Cost (KES)",
-                        "Landrent Cost (KES)", "Other Costs (KES)"]:
-                value = row[col] * multiplier * exchange_rate
-                std_dev = value * fluctuation
-                adjusted_row[col] = value
-                adjusted_row[f"{col}_CI"] = (value - 1.96 * std_dev, value + 1.96 * std_dev)
-            adjusted_costs.append(adjusted_row)
-        return pd.DataFrame(adjusted_costs)
+            for col, category in category_mapping.items():
+                if col in row.index:
+                    # Calculate raw value adjusted by area and exchange rate
+                    raw_value = row[col] * multiplier * exchange_rate
+                    
+                    # Calculate standard deviation for fluctuation
+                    std_dev = raw_value * fluctuation
+                    lower_bound = raw_value - 1.96 * std_dev
+                    upper_bound = raw_value + 1.96 * std_dev
+
+                    # Append the adjusted cost with category and confidence intervals
+                    adjusted_costs.append({
+                        "Item": col.replace(" (KES)", ""),  # Clean up column name
+                        "Category": category,
+                        "Raw Value": row[col],
+                        "Adjusted Value": round(raw_value),
+                        "Confidence Interval": (round(lower_bound), round(upper_bound))
+                    })
+
+        # Convert to DataFrame
+        adjusted_df = pd.DataFrame(adjusted_costs)
+
+        # Add total cost per unit for each category if required
+        adjusted_df["Cost Per Unit"] = adjusted_df["Adjusted Value"]
+
+        return adjusted_df
 
     def calculate_break_even(self, fixed_costs, variable_cost_per_unit, selling_price_per_unit):
         """
@@ -121,3 +142,4 @@ class Data:
             template="plotly_white"
         )
         return fig
+

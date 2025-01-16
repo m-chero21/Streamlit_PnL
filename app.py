@@ -1,6 +1,6 @@
 import streamlit as st
-from views.seed import Seed
-from views.gross import Gross
+from views.seed import seed
+from views.margin import margin
 
 class App:
     def __init__(self):
@@ -8,14 +8,14 @@ class App:
 
     def render_page(self):
         """Render the appropriate page based on session state."""
-        st.session_state['page_view'] = 'seed'
-
         st.set_page_config(layout="wide")
-        
-        if st.session_state.page_view == "gross":
-            Gross()
+
+        st.session_state['page_view'] = 'seed'
+            
+        if st.session_state.page_view == "margin":
+            margin()
         else:
-            Seed()
+            seed()
 
 
 # Run the application

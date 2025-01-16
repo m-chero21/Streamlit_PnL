@@ -3,13 +3,13 @@ from views.side_seed import render_sidebar
 from utils.styling import apply_global_styling, render_navigation_bar
 from config.seed_data import Data
 
-class Seed:
-    # Streamlit Page Configuration
-    st.set_page_config(
-        page_title="Seed Requirement Calculator",
-        page_icon="assets/logo2.png",
-        layout="wide"
-    )
+def seed():
+    # Page Configuration
+    st.title("Seed Requirement Calculator")
+    # Set the favicon
+    st.markdown("""
+        <link rel="icon" href="assets/logo2.png">
+    """, unsafe_allow_html=True)
 
     # Apply Global CSS Styling
     apply_global_styling()
@@ -24,12 +24,16 @@ class Seed:
     data = Data()
 
     # Render Sidebar and Get Inputs
-    seed_rate, selected_counties, new_biotech_percentage, update_button = render_sidebar(data.df)
+    seed_rate, selected_counties, default_opv_2023, default_opv_2028, biotech_2023, biotech_2028, update_button = render_sidebar(data.df)
 
     if update_button:
         # Update Percentages and Recalculate Metrics
         for county in selected_counties:
-            data.df.loc[data.df["County"] == county, "2028 % of Biotech"] = new_biotech_percentage
+            # Filter the dataframe by county and update columns
+            data.df.loc[data.df["County"] == county, ["2023 % of Biotech", "2028 % of Biotech"]] = [biotech_2023, biotech_2028]
+            
+            # Optionally update default OPV values if needed
+            # data.df.loc[data.df["County"] == county, ["2023 % of OPV", "2028 % of OPV"]] = [default_opv_2023, default_opv_2028]
         data.calculate_projections(seed_rate)
 
     # Display Metrics

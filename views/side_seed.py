@@ -19,14 +19,43 @@ def render_sidebar(df):
         help="Select counties for which to test scenarios."
     )
 
-    new_biotech_percentage = st.sidebar.number_input(
-        "2028 Biotech %:",
-        min_value=0,
-        max_value=100,
-        value=0,
-        step=1,
-        help="Specify the biotech percentage for 2028."
-    )
+    # OPV and Biotech Percentage Inputs
+    with st.sidebar.expander("Select OPV %", expanded=False):
+        default_opv_2023 = st.number_input(
+            "2023 OPV %",
+            min_value=0,
+            max_value=100,
+            value=30,
+            step=1,
+            help="Set the OPV percentage for 2023."
+        )
+        default_opv_2028 = st.number_input(
+            "2028 OPV %",
+            min_value=0,
+            max_value=100,
+            value=30,
+            step=1,
+            help="Set the OPV percentage for 2028."
+        )
+
+    with st.sidebar.expander("Select Biotexh %", expanded=False):
+        biotech_2023 = st.sidebar.number_input(
+            "2023 Biotech %:",
+            min_value=0,
+            max_value=100,
+            value=0,
+            step=1,
+            help="Specify the biotech percentage for 2023."
+        )
+
+        biotech_2028 = st.sidebar.number_input(
+            "2028 Biotech %:",
+            min_value=0,
+            max_value=100,
+            value=0,
+            step=1,
+            help="Specify the biotech percentage for 2028."
+        )
 
     update_button = st.sidebar.button(
         "Update",
@@ -34,5 +63,5 @@ def render_sidebar(df):
     )
 
     # Return values for use in the main app
-    return seed_rate, selected_counties, new_biotech_percentage, update_button
+    return seed_rate, selected_counties, default_opv_2023, default_opv_2028, biotech_2023, biotech_2028, update_button
 

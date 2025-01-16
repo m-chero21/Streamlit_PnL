@@ -8,6 +8,8 @@ def apply_global_styling():
             {title_css}
             {nav_css}
             {button_css}
+            {table_css}
+            {cost_css}
         </style>
     """, unsafe_allow_html=True)
 
@@ -124,3 +126,39 @@ button_css = """
         color: white !important; /* Keep text color white on hover */
     }
     """
+
+
+cost_css = """
+        .cost-breakdown-title {
+            color: #007278;
+            font-size: 35px;
+            font-weight: bold;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+    """
+
+table_css = """
+            .custom-table-container {{
+                max-height: 300px;
+                overflow-y: auto;
+                overflow-x: auto;
+                width: 100%;
+            }}
+            .custom-table-container table {{
+                width: 100%;
+                font-size: 12px;
+                border-collapse: collapse;
+            }}
+            .custom-table-container table th,
+            .custom-table-container table td {{
+                font-size: 11px;
+                padding: 5px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }}
+            .custom-table-container table th {{
+                background-color: #007278;
+                color: white;
+            }}
+        """
