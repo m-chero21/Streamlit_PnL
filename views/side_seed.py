@@ -39,24 +39,24 @@ def render_sidebar(df):
         )
 
     # Biotech Percentage Inputs
-    with st.sidebar.expander("Select Biotech % ", expanded=False):
-        biotech_2023 = st.sidebar.number_input(
-            "2023 Biotech %:",
+    with st.sidebar.expander("Select Biotech %", expanded=False):
+        biotech_2023 = st.number_input(
+            "2023 Biotech %",
             min_value=0,
             max_value=100,
             value=0,
             step=1,
             help="Specify the biotech percentage for 2023."
         )
-
-        biotech_2028 = st.sidebar.number_input(
-            "2028 Biotech %:",
+        biotech_2028 = st.number_input(
+            "2028 Biotech %",
             min_value=0,
             max_value=100,
             value=0,
             step=1,
             help="Specify the biotech percentage for 2028."
         )
+
 
     update_button = st.sidebar.button(
         "Update",

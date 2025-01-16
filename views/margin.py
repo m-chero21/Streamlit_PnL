@@ -31,10 +31,9 @@ def margin():
 
     # Load Data
     data = Data("resources/aggregate_farm_data_template.xlsx")
-    df, cost = data.df, data.cost
 
     # Sidebar Inputs
-    selected_county, selected_value_chain, area_unit, fluctuation_level, exchange_rate = setup_sidebar(df)
+    selected_county, selected_value_chain, area_unit, fluctuation_level, exchange_rate = setup_sidebar(data.df)
 
     # Gross Margin Calculation
     farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=38.89, step=1.0)
@@ -71,6 +70,22 @@ def margin():
 
     # Display Results
     st.header("Gross Margin Calculator")
+
+    st.markdown(
+        """
+        <div class="cost-breakdown-title">Cost Breakdown</div>
+        """,
+        unsafe_allow_html=True
+    )
+    # Display Metrics
+    st.dataframe(adjusted_costs)
+
+    st.markdown(
+        """
+        <div class="cost-breakdown-title">Results Summary</div>
+        """,
+        unsafe_allow_html=True
+    )
 
     col1, col2 = st.columns(2)
 
