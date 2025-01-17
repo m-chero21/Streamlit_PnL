@@ -33,13 +33,16 @@ class Data:
         gross_margin = net_output - cost_df["Cost Per Unit"].sum()
         return gross_output, net_output, gross_margin
 
-    def filter_data(self, selected_county, selected_value_chain):
+    def filter_data(self, selected_county, selected_value_chain, selected_subsidy):
         """Filter the dataset based on county and value chain."""
         filtered_df = self.df.copy()
+        filtered_cost = self.cost.copy()
         if selected_county != "All":
             filtered_df = filtered_df[filtered_df["County"] == selected_county]
         if selected_value_chain != "All":
             filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
+        if selected_subsidy != "All":
+            filtered_cost = filtered_cost[filtered_cost["Fertilizer Subsidy"] == selected_value_chain]
         return filtered_df
 
     def calculate_aggregate_metrics(self, filtered_df, area_unit="Hectares"):

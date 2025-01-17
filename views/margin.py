@@ -1,7 +1,7 @@
 import streamlit as st
 from utils.styling import render_summary_table
 from config.margin_data import Data
-from views.side_margin import setup_sidebar
+from components.side_margin import setup_sidebar
 
 def margin():
     # Page Configuration
@@ -34,11 +34,11 @@ def margin():
     data = Data("resources/aggregate_farm_data_template.xlsx")
 
     # Sidebar Inputs
-    (selected_county, selected_value_chain, area_unit, fluctuation_level, currency, bag_weight, 
+    (selected_county, selected_value_chain, selected_subsidy, area_unit, fluctuation_level, currency, bag_weight, 
      farmgate_price, exchange_rate, loss_percentage, own_consumption_percentage) = setup_sidebar(data.df)
 
     # Filter Data Based on Sidebar Inputs
-    filtered_df = data.filter_data(selected_county, selected_value_chain)
+    filtered_df = data.filter_data(selected_county, selected_value_chain, selected_subsidy)
 
     # Aggregate Metrics
     total_production, total_area, yield_kg  = data.calculate_aggregate_metrics(filtered_df, area_unit)
@@ -68,12 +68,6 @@ def margin():
     # Display Results
     st.header("Gross Margin Calculator")
 
-    st.markdown(
-        """
-        <div class="cost-breakdown-title">Cost Breakdown</div>
-        """,
-        unsafe_allow_html=True
-    )
     # Display Metrics
     st.dataframe(adjusted_costs)
 

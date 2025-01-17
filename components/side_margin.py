@@ -9,6 +9,9 @@ def setup_sidebar(df):
     value_chains = ["All"] + sorted(df["Crop Type"].unique())
     selected_value_chain = st.sidebar.selectbox("Select Value Chain:", value_chains)
 
+    subsidy_options = ["With Subsidy", "Without Subsidy"]
+    selected_subsidy = st.sidebar.selectbox("Fertilizer Subsidy:", subsidy_options)
+
     area_unit = st.sidebar.selectbox("Area Unit:", ["Hectares", "Acres"])
     fluctuation_level = st.sidebar.selectbox("Fluctuation Level:", ["Low", "Moderate", "High"])
 
@@ -24,4 +27,4 @@ def setup_sidebar(df):
         own_consumption_percentage = st.slider("Own Consumption %:", 0, 50, 10)
         
 
-    return selected_county, selected_value_chain, area_unit, fluctuation_level, currency, bag_weight, farmgate_price, exchange_rate, loss_percentage, own_consumption_percentage
+    return selected_county, selected_value_chain, selected_subsidy, area_unit, fluctuation_level, currency, bag_weight, farmgate_price, exchange_rate, loss_percentage, own_consumption_percentage

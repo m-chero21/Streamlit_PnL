@@ -16,7 +16,7 @@ class App:
             st.session_state.active_button = "seed"  # Default active button
 
         # Centered horizontal buttons with active styling
-        col1, col2, col3, col4, col5 = st.columns([1, 2, 1, 2, 1])  # Side columns for centering
+        _, col2, _, col4, _ = st.columns([1, 2, 1, 2, 1])  # Side columns for centering
 
         with col2:  # Center column
             seed_btn = st.button(

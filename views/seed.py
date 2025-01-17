@@ -1,5 +1,5 @@
 import streamlit as st
-from views.side_seed import render_sidebar
+from components.side_seed import render_sidebar
 from config.seed_data import Data
 
 def seed():
