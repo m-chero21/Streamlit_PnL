@@ -149,3 +149,17 @@ table_css = """
                 color: white;
             }}
         """
+
+# Function to render the summary table
+def render_summary_table(summary_df):
+    st.markdown(
+        summary_df.style
+        .set_table_styles([
+            {"selector": "thead", "props": [("background-color", "#007278"), ("color", "white"), ("font-size", "18px")]},
+            {"selector": "tbody td", "props": [("font-size", "16px"), ("text-align", "center"), ("padding", "10px")]},
+        ])
+        .hide(axis="index")
+        .to_html()
+        .replace('<table', '<table class="summary-table"'),  # Add a class to the table for custom styling
+        unsafe_allow_html=True,
+    )

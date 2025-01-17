@@ -36,10 +36,8 @@ class App:
 
         # Logic for active button
         if seed_btn:
-            st.session_state.page_view = "seed"
             st.session_state.active_button = "seed"
         elif margin_btn:
-            st.session_state.page_view = "margin"
             st.session_state.active_button = "margin"
 
 
@@ -47,15 +45,13 @@ class App:
         """Render the appropriate page based on session state."""
         st.set_page_config(layout="wide")
 
-        st.session_state['page_view'] = 'seed'
-
         # Apply Global CSS Styling
         apply_global_styling()
 
         # Display navigation bar
         self.render_navigation_bar()
             
-        if st.session_state.page_view == "margin":
+        if st.session_state.active_button == "margin":
             margin()
         else:
             seed()

@@ -103,15 +103,48 @@ class Data:
         Calculate break-even quantity and revenue.
         """
         if selling_price_per_unit <= variable_cost_per_unit:
-            return {"break_even_quantity": None, "break_even_revenue": None}
+            return 0, 0
 
         break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit)
         break_even_revenue = break_even_quantity * selling_price_per_unit
-        return {
-            "break_even_quantity": break_even_quantity,
-            "break_even_revenue": break_even_revenue
-        }
+        return break_even_quantity, break_even_revenue
+    
+    # Function to generate results summary data (improved DRY version)
+    def create_summary_data(self, farmgate_price, exchange_rate, break_even_quantity, bag_weight, 
+                            required_price_to_break_even, gross_margin, gross_output, currency="KES"):
+        # Helper function to calculate and format values or return "N/A"
+        def safe_calculate(calculation, formatter="{:,.2f}", unit=""):
+            try:
+                return f"{formatter.format(calculation)} {unit}".strip() if calculation is not None else "N/A"
+            except:
+                return "N/A"
+        
+        # Indicators and their corresponding calculations
+        indicators = [
+            (f"Farmgate Price ({currency})", 
+            lambda: farmgate_price * exchange_rate if farmgate_price is not None and exchange_rate is not None else None),
+            ("Break-Even Quantity (Bags)", 
+            lambda: break_even_quantity / bag_weight if break_even_quantity and bag_weight else None),
+            ("Break-Even Quantity (Kg)", 
+            lambda: break_even_quantity),
+            (f"Break-Even Price ({currency})", 
+            lambda: required_price_to_break_even),
+            (f"Gross Margin ({currency})", 
+            lambda: gross_margin),
+            (f"Gross Output ({currency})", 
+            lambda: gross_output),
+        ]
+        
+        # Create data using safe_calculate for formatting
+        data = [
+            {"Indicator": indicator, "Value": safe_calculate(calc(), unit=(currency if "Price" in indicator or "Margin" in indicator or "Output" in indicator else ""))}
+            for indicator, calc in indicators
+        ]
+        
+        # Return as DataFrame
+        return pd.DataFrame(data)
 
+    
     def plot_break_even(self, fixed_costs, variable_cost_per_unit, selling_price_per_unit):
         """Generate a break-even analysis plot."""
         units = list(range(0, 2000, 10))
