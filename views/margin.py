@@ -66,7 +66,12 @@ def margin():
     required_price_to_break_even = (fixed_costs + variable_costs) / yield_kg 
 
     # Display Results
-    st.header("Gross Margin Calculator")
+    st.markdown(
+        """
+        <div class="cost-breakdown-title">Cost Breakdown</div>
+        """,
+        unsafe_allow_html=True
+    )
 
     # Display Metrics
     st.dataframe(adjusted_costs)
