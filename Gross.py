@@ -426,6 +426,8 @@ grid_options_builder.configure_column(
     cellEditorParams={"values": ["Fixed Cost", "Variable Cost", "Other Cost"]},
 )
 
+
+
 # Build the grid options
 grid_options = grid_options_builder.build()
 
