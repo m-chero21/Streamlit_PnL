@@ -232,6 +232,12 @@ st.markdown("""
 
 # Sidebar Inputs
 st.sidebar.header("Global Inputs")
+country = ["Kenya", "Nigeria"]
+selected_value_chain = st.sidebar.selectbox("Country:", country)
+
+year = ["2028","2027","2026", "2025", "2024"]
+selected_value_chain = st.sidebar.selectbox("Year:", year)
+
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
 #_______________________________________________________________________
 st.markdown("""
@@ -370,7 +376,7 @@ def update_combined_summary_metrics():
             f"{opv_seed_2028_national:,.0f}",
             f"{hybrid_seed_2028_national:,.0f}",
         ],
-        "Sub-National": [
+        "Sub-National":[
             f"{total_hectares_sub:,.0f}" if total_hectares_sub > 0 else "N/A",
             f"{total_biotech_hectares_2028_sub:,.0f}" if total_biotech_hectares_2028_sub > 0 else "N/A",
             f"{percent_national_hectares_sub:.1f}%" if total_hectares_sub > 0 else "N/A",
@@ -397,7 +403,7 @@ def update_combined_summary_metrics():
         unsafe_allow_html=True,
     )
 
-    st.markdown(f"""
+    st.sidebar.markdown(f"""
     <div style="text-align: center; background-color: #a4343a; color: white; padding: 10px; border-radius: 5px;">
         <b>Updated {', '.join(selected_counties)} , the 2028 Biotech  for the selected county/ies is now: {new_biotech_percentage} %</b>
     </div>

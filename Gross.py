@@ -215,6 +215,10 @@ df, cost = load_data()
 
 # Sidebar - Global Parameters
 st.sidebar.header("Global Inputs")
+country = ["Kenya", "Nigeria"]
+selected_value_chain = st.sidebar.selectbox("Country:", country)
+
+
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
@@ -392,7 +396,90 @@ if st.session_state.add_item_expanded:
             
             cost_df = st.session_state.cost_df
             st.success(f"Item '{new_item}' added successfully!")
+#_________________________________________________________________________________________________
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 
+# Function to calculate Confidence Interval
+def calculate_confidence_interval(cost_per_unit, fluctuation_level, quantity):
+    # Calculate standard deviation with quantity and fluctuation level
+    std_dev = cost_per_unit * quantity * (0.01 * fluctuation_level)  # Standard deviation
+    lower_bound = round(cost_per_unit * quantity - 1.96 * std_dev)  # 95% CI lower bound
+    upper_bound = round(cost_per_unit * quantity + 1.96 * std_dev)  # 95% CI upper bound
+    return f"[{lower_bound}, {upper_bound}]"
+
+# Exclude Confidence Interval from the editable table
+editable_df = cost_df.drop(columns=["Confidence Interval"])  # Remove Confidence Interval for editing
+
+# Collapsible section for editing
+with st.expander("Update Costs", expanded=False):
+    # Initialize AgGrid with the modified editable dataframe
+    grid_options_builder = GridOptionsBuilder.from_dataframe(editable_df)
+
+    # Configure default columns to be editable
+    grid_options_builder.configure_default_column(editable=True)
+
+    # Configure "Category" column as a dropdown
+    grid_options_builder.configure_column(
+        "Category",
+        editable=True,
+        cellEditor="agSelectCellEditor",
+        cellEditorParams={"values": ["Fixed Cost", "Variable Cost", "Other Cost"]},
+    )
+
+    # Build the grid options
+    grid_options = grid_options_builder.build()
+
+    # Render the editable AgGrid table
+    response = AgGrid(
+        editable_df,
+        gridOptions=grid_options,
+        update_mode=GridUpdateMode.MODEL_CHANGED,  # Track changes in the table
+        fit_columns_on_grid_load=True,
+        theme="balham",
+    )
+
+    # Update the dataframe directly with edited values
+    if response['data'] is not None:
+        # Update editable_df with the edited table
+        updated_df = pd.DataFrame(response['data'])
+
+        # Merge back the Confidence Interval column
+        cost_df.update(updated_df)
+
+        # Recalculate Confidence Interval for updated rows
+        fluctuation_level = fluctuation_levels[selected_fluctuation]
+        cost_df["Confidence Interval"] = cost_df.apply(
+            lambda row: calculate_confidence_interval(
+                row["Cost Per Unit"],
+                fluctuation_level,
+                row["Quantity"]
+            ),
+            axis=1
+        )
+
+        # Update session state with the new table
+        st.session_state.cost_df = cost_df
+
+# Display the updated table outside the expander for reference
+st.markdown(
+    """
+    <style>
+    .custom-table-container {
+        max-height: 400px; /* Limit table height */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown('<div class="custom-table-container">', unsafe_allow_html=True)
+# st.dataframe(cost_df)  # Display the updated table for reference
+st.markdown('</div>', unsafe_allow_html=True)
+
+
+
+#_________________________________________________________________________________________________
         
 # Display the Updated Cost Breakdown Table
 
