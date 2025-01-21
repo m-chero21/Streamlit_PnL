@@ -407,6 +407,8 @@ def calculate_confidence_interval(cost_per_unit, fluctuation_level, quantity):
     upper_bound = round(cost_per_unit * quantity + 1.96 * std_dev)  # 95% CI upper bound
     return f"[{lower_bound}, {upper_bound}]"
 
+
+
 # Exclude Confidence Interval from the editable table
 editable_df = cost_df.drop(columns=["Confidence Interval"])  # Remove Confidence Interval for editing
 
