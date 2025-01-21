@@ -404,65 +404,61 @@ def calculate_confidence_interval(cost_per_unit, fluctuation_level, quantity):
     # Calculate standard deviation with quantity and fluctuation level
     std_dev = cost_per_unit * quantity * (0.01 * fluctuation_level)  # Standard deviation
     lower_bound = round(cost_per_unit * quantity - 1.96 * std_dev)  # 95% CI lower bound
-    upper_bound = round(cost_per_unit * quantity + 1.96 * std_dev)  # 95% CI upper bound
+    upper_bound = round(cost_per_unit* quantity + 1.96 * std_dev)  # 95% CI upper bound
     return f"[{lower_bound}, {upper_bound}]"
 
 
 
-# Exclude Confidence Interval from the editable table
-editable_df = cost_df.drop(columns=["Confidence Interval"])  # Remove Confidence Interval for editing
+# Create a temporary DataFrame without the "Confidence Interval" column for display
+temp_df = cost_df.drop(columns=["Confidence Interval"])
 
-# Collapsible section for editing
-with st.expander("Update Costs", expanded=False):
-    # Initialize AgGrid with the modified editable dataframe
-    grid_options_builder = GridOptionsBuilder.from_dataframe(editable_df)
+# Build grid options for the temporary DataFrame
+grid_options_builder = GridOptionsBuilder.from_dataframe(temp_df)
 
-    # Configure default columns to be editable
-    grid_options_builder.configure_default_column(editable=True)
+# Configure default columns to be editable
+grid_options_builder.configure_default_column(editable=True)
 
-    # Configure "Category" column as a dropdown
-    grid_options_builder.configure_column(
-        "Category",
-        editable=True,
-        cellEditor="agSelectCellEditor",
-        cellEditorParams={"values": ["Fixed Cost", "Variable Cost", "Other Cost"]},
-    )
+# Configure "Category" column as a dropdown
+grid_options_builder.configure_column(
+    "Category",
+    editable=True,
+    cellEditor="agSelectCellEditor",
+    cellEditorParams={"values": ["Fixed Cost", "Variable Cost", "Other Cost"]},
+)
 
-    # Build the grid options
-    grid_options = grid_options_builder.build()
+# Build the grid options
+grid_options = grid_options_builder.build()
 
-    # Render the editable AgGrid table
+
+# Render the editable AgGrid table inside an expander
+with st.expander("Edit Costs", expanded=True):
     response = AgGrid(
-        editable_df,
+        temp_df,
         gridOptions=grid_options,
         update_mode=GridUpdateMode.MODEL_CHANGED,  # Track changes in the table
         fit_columns_on_grid_load=True,
         theme="balham",
     )
+# Update the dataframe directly with edited values
+if response['data'] is not None:
+    # Update cost_df directly with the edited table
+    cost_df = pd.DataFrame(response['data'])
 
-    # Update the dataframe directly with edited values
-    if response['data'] is not None:
-        # Update editable_df with the edited table
-        updated_df = pd.DataFrame(response['data'])
+    # Recalculate Confidence Interval for updated rows
+    fluctuation_level = fluctuation_levels[selected_fluctuation]
+    cost_df["Confidence Interval"] = cost_df.apply(
+        lambda row: calculate_confidence_interval(
+            row["Cost Per Unit"],
+            fluctuation_level,
+            row["Quantity"]
+        ),
+        axis=1
+    )
 
-        # Merge back the Confidence Interval column
-        cost_df.update(updated_df)
+    # Update session state with the new table
+    st.session_state.cost_df = cost_df
 
-        # Recalculate Confidence Interval for updated rows
-        fluctuation_level = fluctuation_levels[selected_fluctuation]
-        cost_df["Confidence Interval"] = cost_df.apply(
-            lambda row: calculate_confidence_interval(
-                row["Cost Per Unit"],
-                fluctuation_level,
-                row["Quantity"]
-            ),
-            axis=1
-        )
-
-        # Update session state with the new table
-        st.session_state.cost_df = cost_df
-
-# Display the updated table outside the expander for reference
+# Display the updated table in real-time
 st.markdown(
     """
     <style>
@@ -476,7 +472,7 @@ st.markdown(
 )
 
 st.markdown('<div class="custom-table-container">', unsafe_allow_html=True)
-# st.dataframe(cost_df)  # Display the updated table for reference
+# st.dataframe(cost_df)
 st.markdown('</div>', unsafe_allow_html=True)
 
 
