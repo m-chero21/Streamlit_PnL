@@ -544,11 +544,12 @@ best_case_gross_margin = gross_margin + 1.96 * std_dev
 worst_case_gross_margin = gross_margin - 1.96 * std_dev
 
 # Break-Even Analysis
-def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, total_costs, required_price_to_break_even):
+def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, total_costs, break_even_point):
     if selling_price_per_unit > variable_cost_per_unit:
         # break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit - other_costs)
-        break_even_quantity = total_costs / required_price_to_break_even
-        break_even_revenue = break_even_quantity * selling_price_per_unit
+        break_even_quantity = (total_costs / selling_price_per_unit) * exchange_rate
+        break_even_revenue = break_even_quantity * selling_price_per_unit * exchange_rate
+        
 
         
         break_even_quantity_std_dev = break_even_quantity * (0.01 * fluctuation_levels[selected_fluctuation])
@@ -577,9 +578,15 @@ import plotly.graph_objects as go
 # Break-Even Plot Function
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
     units = np.arange(0, 7000, 10)
-    total_costs = exchange_rate*fixed_costs + variable_cost_per_unit * units 
+    total_costs = fixed_costs + variable_cost_per_unit * exchange_rate * units 
     total_revenue = selling_price_per_unit * units * exchange_rate
     
+
+    # Calculate the break-even point
+    break_even_index = np.where(total_costs <= total_revenue)[0][0]  # Find the first point where costs <= revenue
+    break_even_units = units[break_even_index]
+    break_even_revenue = total_revenue[break_even_index]
+    break_even_point = (break_even_units, break_even_revenue)
     
     fig = go.Figure()
 
@@ -608,11 +615,11 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
   
     fig.add_trace(
         go.Scatter(
-            x=[break_even_quantity, break_even_quantity],
-            y=[0, max(total_costs.max(), total_revenue.max())],
-            mode='lines',
+            x=[break_even_units],
+            y=[break_even_revenue],
+            mode='markers',
             name='Break-Even Point',
-            line=dict(color='#000000', dash='dash')
+            marker=dict(color='#000000', size=10, symbol='x')
         )
     )
 
@@ -626,8 +633,78 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         height=600   # 
     )
 
-    return fig, total_costs, total_revenue
-fig, total_costs, total_revenue = plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
+    return fig, total_costs, total_revenue, break_even_point 
+fig, total_costs, total_revenue, break_even_point  = plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
+
+
+# def plot_break_even_dynamic(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
+#     # Generate units and calculate costs/revenues
+#     units = np.arange(0, 7000, 10)
+#     total_costs = fixed_costs + variable_cost_per_unit * exchange_rate * units
+#     total_revenue = selling_price_per_unit * units * exchange_rate
+    
+#     # Calculate break-even point dynamically
+#     if selling_price_per_unit > variable_cost_per_unit:
+#         break_even_quantity = total_costs/(selling_price_per_unit - variable_cost_per_unit)
+#         break_even_revenue = selling_price_per_unit * break_even_quantity * exchange_rate
+#     else:
+#         break_even_quantity = None
+#         break_even_revenue = None
+
+#     # Create the plot
+#     fig = go.Figure()
+
+#     # Add Total Costs Line
+#     fig.add_trace(
+#         go.Scatter(
+#             x=units,
+#             y=total_costs,
+#             mode='lines',
+#             name='Total Costs',
+#             line=dict(color='#a4343a', width=2)
+#         )
+#     )
+
+#     # Add Total Revenue Line
+#     fig.add_trace(
+#         go.Scatter(
+#             x=units,
+#             y=total_revenue,
+#             mode='lines',
+#             name='Total Revenue',
+#             line=dict(color='#37B7C3', width=2)
+#         )
+#     )
+
+#     # Add Break-Even Point Line if break-even is valid
+#     if break_even_quantity is not None:
+#         fig.add_trace(
+#             go.Scatter(
+#                 x=[break_even_quantity, break_even_quantity],
+#                 y=[0, max(total_costs.max(), total_revenue.max())],
+#                 mode='lines',
+#                 name='Break-Even Point',
+#                 line=dict(color='#000000', dash='dash')
+#             )
+#         )
+
+#     # Update layout
+#     fig.update_layout(
+#         xaxis_title='Units Produced/Sold',
+#         yaxis_title='Cost/Revenue',
+#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+#         template="seaborn",
+#         width=700,
+#         height=600
+#     )
+
+#     return fig, total_costs, total_revenue, break_even_quantity, break_even_revenue
+
+# fig, total_costs, total_revenue, break_even_quantity, break_even_revenue = plot_break_even_dynamic(
+#     fixed_costs, variable_cost_per_unit, farmgate_price
+# )
+
+
 
 # Cost and Revenue Distribution Plot Function
 def plot_cost_and_revenue_distribution(categories, values, currency):
