@@ -10,6 +10,8 @@ st.set_page_config(
     page_icon= "logo2.png",
     layout="wide"
 )
+
+
 st.markdown(
     """
     <style>
