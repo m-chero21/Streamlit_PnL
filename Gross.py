@@ -433,7 +433,7 @@ grid_options = grid_options_builder.build()
 
 
 # Render the editable AgGrid table inside an expander
-with st.expander("Edit Costs", expanded=True):
+with st.expander("Edit Costs", expanded=False):
     response = AgGrid(
         temp_df,
         gridOptions=grid_options,
