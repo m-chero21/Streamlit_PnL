@@ -216,11 +216,24 @@ df, cost = load_data()
 # Sidebar - Global Parameters
 st.sidebar.header("Global Inputs")
 country = ["Kenya", "Nigeria"]
-selected_value_chain = st.sidebar.selectbox("Country:", country)
+selected_country = st.sidebar.selectbox("Country:", country)
 
-year = ["2028","2027","2026", "2025", "2024"]
+# Reset everything to zero if Nigeria is selected
+if selected_country == "Nigeria":
+    total_production = 0
+    total_area = 0
+    yield_kg = 0
+    gross_output = 0
+    net_output = 0
+    gross_margin = 0
+    real_g_margin = 0
+    break_even_quantity = 0
+    break_even_revenue = 0
+    cost_df = pd.DataFrame(columns=["Item", "Category", "Quantity", "Cost Per Unit", "Confidence Interval"])
+    st.session_state.cost_df = cost_df
+
+year = ["2023","2024","2025", "2026"," 2027", "2028"]
 selected_value_chain = st.sidebar.selectbox("Year:", year)
-
 
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)

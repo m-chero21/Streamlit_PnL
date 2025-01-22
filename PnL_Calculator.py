@@ -255,7 +255,7 @@ if selected_country == "Nigeria":
     df["Production Volume 2023"] = 0
     df["Production Volume 2028"] = 0
 
-year = ["2028","2027","2026", "2025", "2024"]
+year = ["2023","2024","2025", "2026"," 2027", "2028"]
 selected_value_chain = st.sidebar.selectbox("Year:", year)
 
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
