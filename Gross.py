@@ -222,6 +222,9 @@ selected_value_chain = st.sidebar.selectbox("Country:", country)
 counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
+year = ["2028","2027","2026", "2025", "2024"]
+selected_value_chain = st.sidebar.selectbox("Year:", year)
+
 value_chains = ["Maize", "Irish Potatoes", "Coffee"]
 selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
 
