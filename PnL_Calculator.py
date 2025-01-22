@@ -232,8 +232,28 @@ st.markdown("""
 
 # Sidebar Inputs
 st.sidebar.header("Global Inputs")
+
 country = ["Kenya", "Nigeria"]
-selected_value_chain = st.sidebar.selectbox("Country:", country)
+selected_country = st.sidebar.selectbox("Country:", country)
+
+if selected_country == "Nigeria":
+    # Reset all relevant columns to zero
+    df["Hectares 2023"] = 0
+    df["Hectares 2028"] = 0
+    df["2023 % of OPV"] = 0
+    df["2023 % of Hybrid"] = 0
+    df["2023 % of Biotech"] = 0
+    df["2028 % of OPV"] = 0
+    df["2028 % of Hybrid"] = 0
+    df["2028 % of Biotech"] = 0
+    df["2023 kg seed OPV"] = 0
+    df["2023 kg seed Hybrid"] = 0
+    df["2023 kg seed Biotech"] = 0
+    df["2028 kg seed OPV"] = 0
+    df["2028 kg seed Hybrid"] = 0
+    df["2028 kg seed Biotech"] = 0
+    df["Production Volume 2023"] = 0
+    df["Production Volume 2028"] = 0
 
 year = ["2028","2027","2026", "2025", "2024"]
 selected_value_chain = st.sidebar.selectbox("Year:", year)
