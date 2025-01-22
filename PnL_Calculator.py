@@ -337,6 +337,8 @@ def update_combined_summary_metrics():
     )
     commercial_seed_2028_national = df["2028 kg seed Biotech"].sum()
 
+
+
     if selected_counties:
         filtered_df = df[df["County"].isin(selected_counties)]
         total_hectares_sub = filtered_df["Hectares 2023"].sum()
