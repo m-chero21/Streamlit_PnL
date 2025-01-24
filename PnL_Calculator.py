@@ -488,6 +488,8 @@ for col in formatted_df.columns:
     if col not in columns_to_round and pd.api.types.is_numeric_dtype(formatted_df[col]):
         formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else x)
 
+# Render table without showing the "Country" column
+columns_to_display = [col for col in formatted_df.columns if col != "Country"]
 
 table_style = """
 <style>
@@ -530,9 +532,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# Render the table
 st.markdown(
     table_style.format(
-        table_html=formatted_df.to_html(index=False, escape=False)
+        table_html=formatted_df[columns_to_display].to_html(index=False, escape=False)
     ),
     unsafe_allow_html=True
 )
