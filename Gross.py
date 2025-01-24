@@ -239,27 +239,60 @@ counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
 
-value_chains = ["Maize", "Irish Potatoes", "Coffee"]
-selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
+# value_chains = ["Maize", "Irish Potatoes", "Coffee"]
+# selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
 
-scale_options = ["Small-scale", "Large-scale"]
-selected_scale = st.sidebar.selectbox("Scale of Production:", scale_options)
+# scale_options = ["Small-scale", "Large-scale"]
+# selected_scale = st.sidebar.selectbox("Scale of Production:", scale_options)
 
-subsidy_options = ["With Subsidy", "Without Subsidy"]
-selected_subsidy = st.sidebar.selectbox("Fertilizer Subsidy:", subsidy_options)
+# subsidy_options = ["With Subsidy", "Without Subsidy"]
+# selected_subsidy = st.sidebar.selectbox("Fertilizer Subsidy:", subsidy_options)
 
-fluctuation_levels = {"Low": 1, "Moderate": 2, "High": 3}
-selected_fluctuation = st.sidebar.selectbox("Fluctuation Level:", list(fluctuation_levels.keys()))
+# fluctuation_levels = {"Low": 1, "Moderate": 2, "High": 3}
+# selected_fluctuation = st.sidebar.selectbox("Fluctuation Level:", list(fluctuation_levels.keys()))
 
-currency = st.sidebar.selectbox("Currency:", ["KES", "USD", "Euro"])
-exchange_rate = st.sidebar.number_input(
-    "Exchange Rate:",
-    value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
-    step=0.001,
-    format="%.3f"
-)
+# Collapsible section for all cost-related parameters
+with st.sidebar.expander("Production Variables", expanded=False):
 
-bag_weight = st.sidebar.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
+    # Value Chain
+    value_chains = ["Maize", "Irish Potatoes", "Coffee"]
+    selected_value_chain = st.selectbox("Value Chain:", value_chains)
+
+    # Scale of Production
+    scale_options = ["Small-scale", "Large-scale"]
+    selected_scale = st.selectbox("Scale of Production:", scale_options)
+
+    # Fertilizer Subsidy
+    subsidy_options = ["With Subsidy", "Without Subsidy"]
+    selected_subsidy = st.selectbox("Fertilizer Subsidy:", subsidy_options)
+
+    # Fluctuation Levels
+    fluctuation_levels = {"Low": 1, "Moderate": 2, "High": 3}
+    selected_fluctuation = st.selectbox("Fluctuation Level:", list(fluctuation_levels.keys()))
+
+    # Bag Weight
+    bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
+
+
+# currency = st.sidebar.selectbox("Currency:", ["KES", "USD", "Euro"])
+# exchange_rate = st.sidebar.number_input(
+#     "Exchange Rate:",
+#     value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
+#     step=0.001,
+#     format="%.3f"
+# )
+
+# Adding a collapsible sidebar section for currency and exchange rate
+with st.sidebar.expander("Currency", expanded=False):
+    currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])
+    exchange_rate = st.number_input(
+        "Exchange Rate:",
+        value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
+        step=0.001,
+        format="%.3f"
+    )
+
+
 farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=38.89, step=1.0)
 loss_percentage = st.sidebar.slider("Post-Harvest Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Own Consumption %:", 0, 50, 10)
@@ -515,7 +548,7 @@ table_style = """
     }}
     .custom-table-container table th, 
     .custom-table-container table td {{
-        font-size: 11px; /* Decrease header and cell text size */
+        font-size: 14px; /* Decrease header and cell text size */
         padding: 5px; /* Adjust padding for a compact look */
         text-align: center; /* Center-align text */
         border: 1px solid #ddd; /* Add borders to cells */
