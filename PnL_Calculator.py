@@ -158,49 +158,50 @@ st.markdown(
 )
 
 #___________________________________________________________________________________________________________
-# Define Kenyan counties
-kenyan_counties = [
-    "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu",
-    "Garissa", "Homa Bay", "Isiolo", "Kajiado", "Kakamega", "Kericho",
-    "Kiambu", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui",
-    "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera",
-    "Meru", "Migori", "Marsabit", "Mombasa", "Murang'a", "Nairobi",
-    "Nakuru", "Nandi", "Narok", "Nyamira", "Nyandarua", "Nyeri",
-    "Samburu", "Siaya", "Taita-Taveta", "Tana River", "Tharaka Nithi",
-    "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
-]
+# # Define Kenyan counties
+# kenyan_counties = [
+#     "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu",
+#     "Garissa", "Homa Bay", "Isiolo", "Kajiado", "Kakamega", "Kericho",
+#     "Kiambu", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui",
+#     "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera",
+#     "Meru", "Migori", "Marsabit", "Mombasa", "Murang'a", "Nairobi",
+#     "Nakuru", "Nandi", "Narok", "Nyamira", "Nyandarua", "Nyeri",
+#     "Samburu", "Siaya", "Taita-Taveta", "Tana River", "Tharaka Nithi",
+#     "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
+# ]
 
-data = {
-    "County": kenyan_counties,
-    "Hectares 2023": [
-        42501, 27250, 92847, 44097, 43133, 34500, 142, 78795, 256, 33241, 87532, 40643,
-        30537, 95674, 38467, 66221, 62195, 83618, 60518, 29596, 45800, 138830, 136912,
-        3209, 142379, 78567, 2184, 876, 68399, 758, 71470, 67429, 132396, 48175, 20716,
-        31317, 6448, 77550, 13596, 5734, 26617, 125065, 1750, 117923, 24921, 132, 49097
-    ],
-    "G% Hectares (2023-Projected)": [0] * len(kenyan_counties),
-    "2023 % of OPV": [30] * len(kenyan_counties),
-    "2023 % of Hybrid": [70] * len(kenyan_counties),
-    "2023 % of Biotech": [0] * len(kenyan_counties),
-    "Projected % of OPV": [30] * len(kenyan_counties),
-    "Projected % of Hybrid": [70] * len(kenyan_counties),
-    "Projected % of Biotech": [0] * len(kenyan_counties),
-    "Avg Yield OPV": [
-        0.67, 0.70, 0.72, 0.48, 1.04, 0.36, 0.28, 0.44, 0.21, 0.37, 0.45, 0.82,
-        0.29, 0.26, 0.39, 0.54, 0.51, 0.13, 0.30, 0.45, 0.49, 0.38, 0.18, 0.26,
-        0.05, 0.32, 0.39, 0.30, 0.25, 0.27, 0.90, 0.71, 0.71, 0.39, 0.68, 0.34,
-        0.71, 0.45, 0.27, 0.31, 0.38, 1.07, 0.23, 1.21, 0.36, 0.08, 0.59
-    ],
-    "Avg Yield Hybrid": [
-        1.56, 1.62, 1.68, 1.13, 2.44, 0.84, 0.65, 1.03, 0.48, 0.86, 1.06, 1.91,
-        0.68, 0.60, 0.90, 1.26, 1.18, 0.30, 0.71, 1.05, 1.14, 0.88, 0.42, 0.60,
-        0.11, 0.74, 0.90, 0.70, 0.58, 0.62, 2.11, 1.66, 1.66, 0.92, 1.58, 0.79,
-        1.66, 1.04, 0.64, 0.72, 0.89, 2.51, 0.53, 2.83, 0.83, 0.18, 1.37
-    ],
-    "Avg Yield Biotech": [0] * len(kenyan_counties),
-}
+# data = {
+#     "County": kenyan_counties,
+#     "Hectares 2023": [
+#         42501, 27250, 92847, 44097, 43133, 34500, 142, 78795, 256, 33241, 87532, 40643,
+#         30537, 95674, 38467, 66221, 62195, 83618, 60518, 29596, 45800, 138830, 136912,
+#         3209, 142379, 78567, 2184, 876, 68399, 758, 71470, 67429, 132396, 48175, 20716,
+#         31317, 6448, 77550, 13596, 5734, 26617, 125065, 1750, 117923, 24921, 132, 49097
+#     ],
+#     "G% Hectares (2023-2028)": [0] * len(kenyan_counties),
+#     "2023 % of OPV": [30] * len(kenyan_counties),
+#     "2023 % of Hybrid": [70] * len(kenyan_counties),
+#     "2023 % of Biotech": [0] * len(kenyan_counties),
+#     "2028 % of OPV": [30] * len(kenyan_counties),
+#     "2028 % of Hybrid": [70] * len(kenyan_counties),
+#     "2028 % of Biotech": [0] * len(kenyan_counties),
+#     "Avg Yield OPV": [
+#         0.67, 0.70, 0.72, 0.48, 1.04, 0.36, 0.28, 0.44, 0.21, 0.37, 0.45, 0.82,
+#         0.29, 0.26, 0.39, 0.54, 0.51, 0.13, 0.30, 0.45, 0.49, 0.38, 0.18, 0.26,
+#         0.05, 0.32, 0.39, 0.30, 0.25, 0.27, 0.90, 0.71, 0.71, 0.39, 0.68, 0.34,
+#         0.71, 0.45, 0.27, 0.31, 0.38, 1.07, 0.23, 1.21, 0.36, 0.08, 0.59
+#     ],
+#     "Avg Yield Hybrid": [
+#         1.56, 1.62, 1.68, 1.13, 2.44, 0.84, 0.65, 1.03, 0.48, 0.86, 1.06, 1.91,
+#         0.68, 0.60, 0.90, 1.26, 1.18, 0.30, 0.71, 1.05, 1.14, 0.88, 0.42, 0.60,
+#         0.11, 0.74, 0.90, 0.70, 0.58, 0.62, 2.11, 1.66, 1.66, 0.92, 1.58, 0.79,
+#         1.66, 1.04, 0.64, 0.72, 0.89, 2.51, 0.53, 2.83, 0.83, 0.18, 1.37
+#     ],
+#     "Avg Yield Biotech": [0] * len(kenyan_counties),
+# }
 
-df = pd.DataFrame(data)
+df = pd.read_csv('country_data.csv')
+
 
 st.markdown("""
     <style>
@@ -233,29 +234,16 @@ st.markdown("""
 # Sidebar Inputs
 st.sidebar.header("Global Inputs")
 
-country = ["Kenya", "Nigeria"]
+df['Country'] = df['Country'].dropna().str.strip()
+country = df['Country'].unique() 
 selected_country = st.sidebar.selectbox("Country:", country)
 
-if selected_country == "Nigeria":
-    # Reset all relevant columns to zero
-    df["Hectares 2023"] = 0
-    df["Hectares Projected"] = 0
-    df["2023 % of OPV"] = 0
-    df["2023 % of Hybrid"] = 0
-    df["2023 % of Biotech"] = 0
-    df["Projected % of OPV"] = 0
-    df["Projected % of Hybrid"] = 0
-    df["Projected % of Biotech"] = 0
-    df["2023 kg seed OPV"] = 0
-    df["2023 kg seed Hybrid"] = 0
-    df["2023 kg seed Biotech"] = 0
-    df["Projected kg seed OPV"] = 0
-    df["Projected kg seed Hybrid"] = 0
-    df["Projected kg seed Biotech"] = 0
-    df["Production Volume 2023"] = 0
-    df["Production Volume Projected"] = 0
 
-year = ["2023","2024","2025", "2026"," 2027", "Projected"]
+# Filter the DataFrame based on the selected country
+filtered_c_df = df[df['Country'] == selected_country]
+
+
+year = ["2023","2024","2025", "2026", "2027", "2028"]
 selected_value_chain = st.sidebar.selectbox("Year:", year)
 
 seed_rate = st.sidebar.number_input("Seed Rate (kg/h):", value=25.0, step=1.0)
@@ -291,10 +279,10 @@ st.markdown("""
 #________________________________________________________________________
 with st.sidebar.expander("Select OPV %", expanded=False):
     default_opv_2023 = st.number_input("2023 OPV %", min_value=0, max_value=100, value=30, step=1)
-    default_opv_Projected = st.number_input("Projected OPV %", min_value=0, max_value=100, value=30, step=1)
+    default_opv_2028 = st.number_input("2028 OPV %", min_value=0, max_value=100, value=30, step=1)
     
 biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
-biotech_Projected = st.sidebar.slider("Projected Biotech %", 0, 100, 0)
+biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
 # Function to dynamically adjust percentages
 def adjust_percentages(biotech, opv):
@@ -304,107 +292,109 @@ def adjust_percentages(biotech, opv):
     return adjusted_opv, adjusted_hybrid
 
 opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023)
-opv_Projected, hybrid_Projected = adjust_percentages(biotech_Projected, default_opv_Projected)
+opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028)
 
-df["2023 % of OPV"] = [opv_2023] * len(df)
-df["2023 % of Hybrid"] = [hybrid_2023] * len(df)
-df["2023 % of Biotech"] = [biotech_2023] * len(df)
-df["Projected % of OPV"] = [opv_Projected] * len(df)
-df["Projected % of Hybrid"] = [hybrid_Projected] * len(df)
-df["Projected % of Biotech"] = [biotech_Projected] * len(df)
+filtered_c_df["2023 % of OPV"] = [opv_2023] * len(filtered_c_df)
+filtered_c_df["2023 % of Hybrid"] = [hybrid_2023] * len(filtered_c_df)
+filtered_c_df["2023 % of Biotech"] = [biotech_2023] * len(filtered_c_df)
+filtered_c_df["2028 % of OPV"] = [opv_2028] * len(filtered_c_df)
+filtered_c_df["2028 % of Hybrid"] = [hybrid_2028] * len(filtered_c_df)
+filtered_c_df["2028 % of Biotech"] = [biotech_2028] * len(filtered_c_df)
 
 # Add calculated columns
-df["Hectares Projected"] = (df["Hectares 2023"] * (1 + df["G% Hectares (2023-Projected)"] / 100)).round(1)
-df["2023 kg seed OPV"] = (df["Hectares 2023"] * df["2023 % of OPV"] / 100 * seed_rate).round(1)
-df["2023 kg seed Hybrid"] =(df["Hectares 2023"] * df["2023 % of Hybrid"] / 100 * seed_rate).round(1)
-df["2023 kg seed Biotech"] = (df["Hectares 2023"] * df["2023 % of Biotech"] / 100 * seed_rate).round(1)
-df["Projected kg seed OPV"] = (df["Hectares Projected"] * df["Projected % of OPV"] / 100 * seed_rate).round(1)
-df["Projected kg seed Hybrid"] = (df["Hectares Projected"] * df["Projected % of Hybrid"] / 100 * seed_rate).round(1)
-df["Projected kg seed Biotech"] = (df["Hectares Projected"] * df["Projected % of Biotech"] / 100 * seed_rate).round(1)
+filtered_c_df["Hectares 2028"] = (filtered_c_df["Hectares 2023"] * (1 + filtered_c_df["G% Hectares (2023-2028)"] / 100)).round(1)
+filtered_c_df["2023 kg seed OPV"] = (filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of OPV"] / 100 * seed_rate).round(1)
+filtered_c_df["2023 kg seed Hybrid"] =(filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Hybrid"] / 100 * seed_rate).round(1)
+filtered_c_df["2023 kg seed Biotech"] = (filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Biotech"] / 100 * seed_rate).round(1)
+filtered_c_df["2028 kg seed OPV"] = (filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of OPV"] / 100 * seed_rate).round(1)
+filtered_c_df["2028 kg seed Hybrid"] = (filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Hybrid"] / 100 * seed_rate).round(1)
+filtered_c_df["2028 kg seed Biotech"] = (filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100 * seed_rate).round(1)
 
-df["Production Volume 2023"] = (
-    df["Avg Yield OPV"] * df["Hectares 2023"] * df["2023 % of OPV"] / 100 +
-    df["Avg Yield Hybrid"] * df["Hectares 2023"] * df["2023 % of Hybrid"] / 100+
-    df["Avg Yield Biotech"] * df["Hectares Projected"] * df["Projected % of Biotech"] / 100
+filtered_c_df["Production Volume 2023"] = (
+    filtered_c_df["Avg Yield OPV"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of OPV"] / 100 +
+    filtered_c_df["Avg Yield Hybrid"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Hybrid"] / 100+
+    filtered_c_df["Avg Yield Biotech"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100
 ).round(1)
 
-df["Production Volume Projected"] = (
-    df["Avg Yield OPV"] * df["Hectares Projected"] * df["Projected % of OPV"] / 100 +
-    df["Avg Yield Hybrid"] * df["Hectares Projected"] * df["Projected % of Hybrid"] / 100 +
-    df["Avg Yield Biotech"] * df["Hectares Projected"] * df["Projected % of Biotech"] / 100
+filtered_c_df["Production Volume 2028"] = (
+    filtered_c_df["Avg Yield OPV"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of OPV"] / 100 +
+    filtered_c_df["Avg Yield Hybrid"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Hybrid"] / 100 +
+    filtered_c_df["Avg Yield Biotech"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100
 ).round(1)
 
 st.sidebar.header("Scenario Testing")
+# Dynamically get unique counties or states from the DataFrame
+county_options = filtered_c_df['County/State'].unique()
 
 # Use multi-select to select multiple counties
-selected_counties = st.sidebar.multiselect("Counties:", options=kenyan_counties, placeholder="Choose a County")
+selected_counties = st.sidebar.multiselect("County/State:", options=county_options, placeholder="Choose a County/State")
 
-new_biotech_percentage = st.sidebar. number_input("Projected Biotech %:", min_value=0, max_value=100, value=0)
+new_biotech_percentage = st.sidebar. number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
 
 update_button = st.sidebar.button("Update")
 
 def update_combined_summary_metrics():
-    total_hectares_national = df["Hectares 2023"].sum()
-    opv_seed_Projected_national = df["Projected kg seed OPV"].sum()
-    hybrid_seed_Projected_national = df["Projected kg seed Hybrid"].sum()
-    total_biotech_hectares_Projected_national = (
-        (df["Hectares Projected"] * df["Projected % of Biotech"] / 100).sum()
+    total_hectares_national = filtered_c_df["Hectares 2023"].sum()
+    opv_seed_2028_national = filtered_c_df["2028 kg seed OPV"].sum()
+    hybrid_seed_2028_national = filtered_c_df["2028 kg seed Hybrid"].sum()
+    total_biotech_hectares_2028_national = (
+        (filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100).sum()
     )
     percent_national_hectares_national = (
-        (total_biotech_hectares_Projected_national / total_hectares_national * 100)
+        (total_biotech_hectares_2028_national / total_hectares_national * 100)
         if total_hectares_national != 0
         else 0
     )
-    commercial_seed_Projected_national = df["Projected kg seed Biotech"].sum()
+    commercial_seed_2028_national = filtered_c_df["2028 kg seed Biotech"].sum()
 
 
 
     if selected_counties:
-        filtered_df = df[df["County"].isin(selected_counties)]
+        filtered_df = filtered_c_df[filtered_c_df["County/State"].isin(selected_counties)]
         total_hectares_sub = filtered_df["Hectares 2023"].sum()
-        opv_seed_Projected_sub = filtered_df["Projected kg seed OPV"].sum()
-        hybrid_seed_Projected_sub = filtered_df["Projected kg seed Hybrid"].sum()
-        total_biotech_hectares_Projected_sub = (
-            (filtered_df["Hectares Projected"] * filtered_df["Projected % of Biotech"] / 100).sum()
+        opv_seed_2028_sub = filtered_df["2028 kg seed OPV"].sum()
+        hybrid_seed_2028_sub = filtered_df["2028 kg seed Hybrid"].sum()
+        total_biotech_hectares_2028_sub = (
+            (filtered_df["Hectares 2028"] * filtered_df["2028 % of Biotech"] / 100).sum()
         )
         percent_national_hectares_sub = (
-            (total_biotech_hectares_Projected_sub / total_hectares_sub * 100)
+            (total_biotech_hectares_2028_sub / total_hectares_sub * 100)
             if total_hectares_sub != 0
             else 0
         )
-        commercial_seed_Projected_sub = filtered_df["Projected kg seed Biotech"].sum()
+        commercial_seed_2028_sub = filtered_df["2028 kg seed Biotech"].sum()
     else:
         total_hectares_sub = 0
-        opv_seed_Projected_sub = 0
-        hybrid_seed_Projected_sub = 0
-        total_biotech_hectares_Projected_sub = 0
+        opv_seed_2028_sub = 0
+        hybrid_seed_2028_sub = 0
+        total_biotech_hectares_2028_sub = 0
         percent_national_hectares_sub = 0
-        commercial_seed_Projected_sub = 0
+        commercial_seed_2028_sub = 0
 
     summary_data = {
         "Indicator": [
             "Area under maize (Ha)",
             "Area under biotech seed (Ha)",
             "Area under biotech seed (%)",
-            "Biotech seed requirement Projected (Kg)",
-            "OPV seed requirement Projected (Kg)",
-            "Hybrid seed requirement Projected (Kg)",
+            "Biotech seed requirement 2028 (Kg)",
+            "OPV seed requirement 2028 (Kg)",
+            "Hybrid seed requirement 2028 (Kg)",
         ],
         "National": [
             f"{total_hectares_national:,.0f}",
-            f"{total_biotech_hectares_Projected_national:,.0f}",
+            f"{total_biotech_hectares_2028_national:,.0f}",
             f"{percent_national_hectares_national:.1f}%",
-            f"{commercial_seed_Projected_national:,.0f}",
-            f"{opv_seed_Projected_national:,.0f}",
-            f"{hybrid_seed_Projected_national:,.0f}",
+            f"{commercial_seed_2028_national:,.0f}",
+            f"{opv_seed_2028_national:,.0f}",
+            f"{hybrid_seed_2028_national:,.0f}",
         ],
         "Sub-National":[
             f"{total_hectares_sub:,.0f}" if total_hectares_sub > 0 else "N/A",
-            f"{total_biotech_hectares_Projected_sub:,.0f}" if total_biotech_hectares_Projected_sub > 0 else "N/A",
+            f"{total_biotech_hectares_2028_sub:,.0f}" if total_biotech_hectares_2028_sub > 0 else "N/A",
             f"{percent_national_hectares_sub:.1f}%" if total_hectares_sub > 0 else "N/A",
-            f"{commercial_seed_Projected_sub:,.0f}" if commercial_seed_Projected_sub > 0 else "N/A",
-            f"{opv_seed_Projected_sub:,.0f}" if opv_seed_Projected_sub > 0 else "N/A",
-            f"{hybrid_seed_Projected_sub:,.0f}" if hybrid_seed_Projected_sub > 0 else "N/A",
+            f"{commercial_seed_2028_sub:,.0f}" if commercial_seed_2028_sub > 0 else "N/A",
+            f"{opv_seed_2028_sub:,.0f}" if opv_seed_2028_sub > 0 else "N/A",
+            f"{hybrid_seed_2028_sub:,.0f}" if hybrid_seed_2028_sub > 0 else "N/A",
         ],
     }
 
@@ -427,7 +417,7 @@ def update_combined_summary_metrics():
 
     st.sidebar.markdown(f"""
     <div style="text-align: center; background-color: #a4343a; color: white; padding: 10px; border-radius: 5px;">
-        <b>Updated {', '.join(selected_counties)} , the Projected Biotech  for the selected county/ies is now: {new_biotech_percentage} %</b>
+        <b>Updated {', '.join(selected_counties)} , the 2028 Biotech  for the selected county/ies is now: {new_biotech_percentage} %</b>
     </div>
 """, unsafe_allow_html=True)
 
@@ -448,36 +438,36 @@ def update_combined_summary_metrics():
 if update_button:
     for county in selected_counties:
         
-        df.loc[df["County"] == county, "Projected % of Biotech"] = new_biotech_percentage
+        filtered_c_df.loc[df["County/State"] == county, "2028 % of Biotech"] = new_biotech_percentage
         
         remaining_percentage = 100 - new_biotech_percentage
         
    
-        df.loc[df["County"] == county, "Projected % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
-        df.loc[df["County"] == county, "Projected % of Hybrid"] = (
-            100 - new_biotech_percentage - df.loc[df["County"] == county, "Projected % of OPV"]
+        filtered_c_df.loc[df["County/State"] == county, "2028 % of OPV"] = round(30 / (30 + 70) * remaining_percentage)
+        filtered_c_df.loc[df["County/State"] == county, "2028 % of Hybrid"] = (
+            100 - new_biotech_percentage - filtered_c_df.loc[df["County/State"] == county, "2028 % of OPV"]
         )
         
         
-        df.loc[df["County"] == county, "Projected kg seed Biotech"] = (
-            df.loc[df["County"] == county, "Hectares Projected"] *
-            df.loc[df["County"] == county, "Projected % of Biotech"] / 100 * seed_rate
+        filtered_c_df.loc[df["County/State"] == county, "2028 kg seed Biotech"] = (
+            filtered_c_df.loc[df["County/State"] == county, "Hectares 2028"] *
+            filtered_c_df.loc[df["County/State"] == county, "2028 % of Biotech"] / 100 * seed_rate
         )
         
         
-        df.loc[df["County"] == county, "Production Volume Projected"] = (
-            df.loc[df["County"] == county, "Avg Yield OPV"] *
-            df.loc[df["County"] == county, "Hectares Projected"] *
-            df.loc[df["County"] == county, "Projected % of OPV"] / 100 +
-            df.loc[df["County"] == county, "Avg Yield Hybrid"] *
-            df.loc[df["County"] == county, "Hectares Projected"] *
-            df.loc[df["County"] == county, "Projected % of Hybrid"] / 100 +
-            df.loc[df["County"] == county, "Avg Yield Biotech"] *
-            df.loc[df["County"] == county, "Hectares Projected"] *
-            df.loc[df["County"] == county, "Projected % of Biotech"] / 100
+        filtered_c_df.loc[df["County/State"] == county, "Production Volume 2028"] = (
+            filtered_c_df.loc[df["County/State"] == county, "Avg Yield OPV"] *
+            filtered_c_df.loc[df["County/State"] == county, "Hectares 2028"] *
+            filtered_c_df.loc[df["County/State"] == county, "2028 % of OPV"] / 100 +
+            filtered_c_df.loc[df["County/State"] == county, "Avg Yield Hybrid"] *
+            filtered_c_df.loc[df["County/State"] == county, "Hectares 2028"] *
+            filtered_c_df.loc[df["County/State"] == county, "2028 % of Hybrid"] / 100 +
+            filtered_c_df.loc[df["County/State"] == county, "Avg Yield Biotech"] *
+            filtered_c_df.loc[df["County/State"] == county, "Hectares 2028"] *
+            filtered_c_df.loc[df["County/State"] == county, "2028 % of Biotech"] / 100
         )
     
-formatted_df = df.copy()
+formatted_df = filtered_c_df.copy()
 
 columns_to_round = ["Avg Yield OPV", "Avg Yield Hybrid", "Avg Yield Biotech"]
 for col in columns_to_round:
