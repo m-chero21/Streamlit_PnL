@@ -277,6 +277,16 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 #________________________________________________________________________
+# Function to dynamically adjust percentages
+def adjust_percentages(biotech, opv, country):
+    if country == "Nigeria":
+        opv = 90 
+    remaining = 100 - biotech 
+    adjusted_opv = min(opv, remaining) 
+    adjusted_hybrid = remaining - adjusted_opv
+    return adjusted_opv, adjusted_hybrid
+
+
 with st.sidebar.expander("Select OPV %", expanded=False):
     default_opv_2023 = st.number_input("2023 OPV %", min_value=0, max_value=100, value=30, step=1)
     default_opv_2028 = st.number_input("2028 OPV %", min_value=0, max_value=100, value=30, step=1)
@@ -284,15 +294,13 @@ with st.sidebar.expander("Select OPV %", expanded=False):
 biotech_2023 = st.sidebar.slider("2023 Biotech %", 0, 100, 0)
 biotech_2028 = st.sidebar.slider("2028 Biotech %", 0, 100, 0)
 
-# Function to dynamically adjust percentages
-def adjust_percentages(biotech, opv):
-    remaining = 100 - biotech 
-    adjusted_opv = min(opv, remaining) 
-    adjusted_hybrid = remaining - adjusted_opv  
-    return adjusted_opv, adjusted_hybrid
 
-opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023)
-opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028)
+
+opv_2023, hybrid_2023 = adjust_percentages(biotech_2023, default_opv_2023, selected_country)
+opv_2028, hybrid_2028 = adjust_percentages(biotech_2028, default_opv_2028, selected_country)
+
+
+
 
 filtered_c_df["2023 % of OPV"] = [opv_2023] * len(filtered_c_df)
 filtered_c_df["2023 % of Hybrid"] = [hybrid_2023] * len(filtered_c_df)
