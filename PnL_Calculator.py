@@ -329,6 +329,7 @@ county_options = filtered_c_df['County/State'].unique()
 # Use multi-select to select multiple counties
 selected_counties = st.sidebar.multiselect("County/State:", options=county_options, placeholder="Choose a County/State")
 
+
 new_biotech_percentage = st.sidebar. number_input("2028 Biotech %:", min_value=0, max_value=100, value=0)
 
 update_button = st.sidebar.button("Update")
