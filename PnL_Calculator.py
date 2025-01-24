@@ -318,11 +318,18 @@ filtered_c_df["2028 kg seed OPV"] = (filtered_c_df["Hectares 2028"] * filtered_c
 filtered_c_df["2028 kg seed Hybrid"] = (filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Hybrid"] / 100 * seed_rate).round(1)
 filtered_c_df["2028 kg seed Biotech"] = (filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100 * seed_rate).round(1)
 
+# filtered_c_df["Production Volume 2023"] = (
+#     filtered_c_df["Avg Yield OPV"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of OPV"] / 100 +
+#     filtered_c_df["Avg Yield Hybrid"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Hybrid"] / 100 +
+#     filtered_c_df["Avg Yield Biotech"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100
+# ).round(1)
+
 filtered_c_df["Production Volume 2023"] = (
     filtered_c_df["Avg Yield OPV"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of OPV"] / 100 +
-    filtered_c_df["Avg Yield Hybrid"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Hybrid"] / 100+
-    filtered_c_df["Avg Yield Biotech"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of Biotech"] / 100
+    filtered_c_df["Avg Yield Hybrid"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Hybrid"] / 100 +
+    (filtered_c_df["Avg Yield Biotech"] * filtered_c_df["Hectares 2023"] * filtered_c_df["2023 % of Biotech"] / 100).fillna(0)
 ).round(1)
+
 
 filtered_c_df["Production Volume 2028"] = (
     filtered_c_df["Avg Yield OPV"] * filtered_c_df["Hectares 2028"] * filtered_c_df["2028 % of OPV"] / 100 +
