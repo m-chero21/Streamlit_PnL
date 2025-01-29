@@ -228,7 +228,7 @@ filtered_c_df = df[df['Country'] == selected_country]
 # year = ["2023","2024","2025", "2026"," 2027", "2028"]
 # selected_value_chain = st.sidebar.selectbox("Year:", year)
 
-counties = ["All"] + sorted(filtered_c_df["County"].unique().tolist())
+counties = ["All"] + sorted(df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
 
@@ -252,7 +252,7 @@ with st.sidebar.expander("Production Variables", expanded=False):
     selected_value_chain = st.selectbox("Value Chain:", value_chains)
 
     # Scale of Production
-    scale_options = cost["Scale of Production"]
+    scale_options = ["Small-scale", "Large-scale"]
     selected_scale = st.selectbox("Scale of Production:", scale_options)
 
     # Fertilizer Subsidy
@@ -294,7 +294,7 @@ selling_price_per_unit = farmgate_price
 
 # Filter Data
 
-filtered_df = filtered_c_df.copy()
+filtered_df = df.copy()
 if selected_county != "All":
     filtered_df = filtered_df[filtered_df["County"] == selected_county]
 if selected_value_chain != "All":
@@ -338,8 +338,7 @@ filtered_costs = cost[
     (cost["Scale of Production"] == selected_scale) &
     (cost["Fertilizer Subsidy"] == selected_subsidy)
 ]
-from tabulate import tabulate
-print(tabulate(filtered_costs, headers = filtered_costs.columns, tablefmt = "grid"))
+
 # Cost Data Preparation
 category_mapping = {
     "Seed Cost (KES)": "Variable Cost",
