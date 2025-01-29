@@ -209,33 +209,26 @@ def load_data():
 
 # Create the DataFrame
     cost = pd.DataFrame(cost_data, columns=columns)
+    # cost = pd.read_excel("cost.xlsx")
     return df, cost
 
 df, cost = load_data()
 
 # Sidebar - Global Parameters
 st.sidebar.header("Global Inputs")
-country = ["Kenya", "Nigeria"]
+
+country = df['Country'].unique() 
 selected_country = st.sidebar.selectbox("Country:", country)
 
-# Reset everything to zero if Nigeria is selected
-if selected_country == "Nigeria":
-    total_production = 0
-    total_area = 0
-    yield_kg = 0
-    gross_output = 0
-    net_output = 0
-    gross_margin = 0
-    real_g_margin = 0
-    break_even_quantity = 0
-    break_even_revenue = 0
-    cost_df = pd.DataFrame(columns=["Item", "Category", "Quantity", "Cost Per Unit", "Confidence Interval"])
-    st.session_state.cost_df = cost_df
+# Filter the DataFrame based on the selected country
+filtered_c_df = df[df['Country'] == selected_country]
 
-year = ["2023","2024","2025", "2026"," 2027", "2028"]
-selected_value_chain = st.sidebar.selectbox("Year:", year)
 
-counties = ["All"] + sorted(df["County"].unique().tolist())
+
+# year = ["2023","2024","2025", "2026"," 2027", "2028"]
+# selected_value_chain = st.sidebar.selectbox("Year:", year)
+
+counties = ["All"] + sorted(filtered_c_df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
 
@@ -259,11 +252,11 @@ with st.sidebar.expander("Production Variables", expanded=False):
     selected_value_chain = st.selectbox("Value Chain:", value_chains)
 
     # Scale of Production
-    scale_options = ["Small-scale", "Large-scale"]
+    scale_options = cost["Scale of Production"]
     selected_scale = st.selectbox("Scale of Production:", scale_options)
 
     # Fertilizer Subsidy
-    subsidy_options = ["With Subsidy", "Without Subsidy"]
+    subsidy_options = cost["Fertilizer Subsidy"].unique()
     selected_subsidy = st.selectbox("Fertilizer Subsidy:", subsidy_options)
 
     # Fluctuation Levels
@@ -301,7 +294,7 @@ selling_price_per_unit = farmgate_price
 
 # Filter Data
 
-filtered_df = df.copy()
+filtered_df = filtered_c_df.copy()
 if selected_county != "All":
     filtered_df = filtered_df[filtered_df["County"] == selected_county]
 if selected_value_chain != "All":
@@ -345,7 +338,8 @@ filtered_costs = cost[
     (cost["Scale of Production"] == selected_scale) &
     (cost["Fertilizer Subsidy"] == selected_subsidy)
 ]
-
+from tabulate import tabulate
+print(tabulate(filtered_costs, headers = filtered_costs.columns, tablefmt = "grid"))
 # Cost Data Preparation
 category_mapping = {
     "Seed Cost (KES)": "Variable Cost",
@@ -382,6 +376,7 @@ for col, category in category_mapping.items():
         })
 
 cost_df = pd.DataFrame(cost_parameters)
+
 
 
 
@@ -524,7 +519,7 @@ st.markdown(
 )
 
 st.markdown('<div class="custom-table-container">', unsafe_allow_html=True)
-# st.dataframe(cost_df)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -575,87 +570,6 @@ total_costs_display = cost_df["Cost Per Unit"].sum()
 # Print the total costs
 st.write(f"The total costs are **{currency} {total_costs_display:,.2f}**")
 
-#___________________________________________________________________________________________
-
-# # Define a function to delete an item
-# def delete_item(index):
-#     st.session_state.cost_df = st.session_state.cost_df.drop(index).reset_index(drop=True)
-#     st.success("Item deleted successfully!")
-
-
-
-# cost_df = st.session_state.cost_df
-
-# # Render the table header
-
-# st.markdown(
-#     """
-#     <style>
-#         table {
-#             border-collapse: collapse;
-#             width: 100%;
-#         }
-#         th, td {
-#             border: 1px solid #ddd;
-#             padding: 8px;
-#             text-align: center;
-#         }
-#         th {
-#             background-color: #007278;
-#             color: white;
-#         }
-#         .delete-button {
-#             background-color: #f44336;
-#             color: white;
-#             border: none;
-#             padding: 5px 10px;
-#             text-align: center;
-#             font-size: 12px;
-#             cursor: pointer;
-#             border-radius: 4px;
-#         }
-#     </style>
-#     """,
-#     unsafe_allow_html=True
-# )
-
-# # Render the table with delete buttons
-# st.markdown("<table><thead><tr>", unsafe_allow_html=True)
-
-# # Add column headers
-# columns = cost_df.columns.tolist() + ["Delete"]
-# st.markdown("".join(f"<th>{col}</th>" for col in columns), unsafe_allow_html=True)
-
-# st.markdown("</tr></thead><tbody>", unsafe_allow_html=True)
-
-# # Add rows
-# for i, row in cost_df.iterrows():
-#     st.markdown("<tr>", unsafe_allow_html=True)
-    
-#     # Add data cells
-#     for col in cost_df.columns:
-#         st.markdown(f"<td>{row[col]}</td>", unsafe_allow_html=True)
-
-#     # Add a delete button in the last column
-#     delete_button_key = f"delete_{i}"
-#     if st.button("Delete", key=delete_button_key):
-#         delete_item(i)
-
-#     st.markdown("</tr>", unsafe_allow_html=True)
-
-# st.markdown("</tbody></table>", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-#____________________________________________________________________
-
 # Gross Margin Calculation
 def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
     gross_output = yield_kg * farmgate_price * exchange_rate
@@ -668,9 +582,6 @@ def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, o
     real_g_margin= total_costs-gross_output
     return gross_output, net_output, gross_margin, real_g_margin
 
-# gross_output, net_output, gross_margin = calculate_gross_margin(
-#     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
-# )
 gross_output, net_output, gross_margin, real_g_margin = calculate_gross_margin(
     cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage
 )
@@ -684,19 +595,21 @@ worst_case_gross_margin = gross_margin - 1.96 * std_dev
 
 # Break-Even Analysis
 def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, total_costs, break_even_point):
-    if selling_price_per_unit > variable_cost_per_unit:
-        # break_even_quantity = fixed_costs / (selling_price_per_unit - variable_cost_per_unit - other_costs)
-        break_even_quantity = (total_costs / selling_price_per_unit) * exchange_rate
-        break_even_revenue = break_even_quantity * selling_price_per_unit * exchange_rate
+   
+        
+    break_even_quantity = (total_costs / selling_price_per_unit) * exchange_rate
+        
+       
+    break_even_revenue = break_even_quantity * selling_price_per_unit * exchange_rate
         
 
         
-        break_even_quantity_std_dev = break_even_quantity * (0.01 * fluctuation_levels[selected_fluctuation])
-        worst_case_quantity = break_even_quantity - 1.96 * break_even_quantity_std_dev
-        best_case_quantity = break_even_quantity + 1.96 * break_even_quantity_std_dev
+    break_even_quantity_std_dev = break_even_quantity * (0.01 * fluctuation_levels[selected_fluctuation])
+    worst_case_quantity = break_even_quantity - 1.96 * break_even_quantity_std_dev
+    best_case_quantity = break_even_quantity + 1.96 * break_even_quantity_std_dev
 
-        return break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
-    return None, None, None, None
+    return break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
+    
 
 fixed_costs = cost_df[cost_df["Category"] == "Fixed Cost"]["Cost Per Unit"].sum() 
 variable_costs = cost_df[cost_df["Category"] == "Variable Cost"]["Cost Per Unit"].sum() 
@@ -715,135 +628,71 @@ break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
 import plotly.graph_objects as go
 
 # Break-Even Plot Function
-def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-    units = np.arange(0, 7000, 10)
+def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, exchange_rate):
+    units = np.arange(0, 8000, 10)
+    
+    # Compute total costs and revenue
     total_costs = fixed_costs + variable_cost_per_unit * exchange_rate * units 
     total_revenue = selling_price_per_unit * units * exchange_rate
-    
 
-    # Calculate the break-even point
-    break_even_index = np.where(total_costs <= total_revenue)[0][0]  # Find the first point where costs <= revenue
-    break_even_units = units[break_even_index]
-    break_even_revenue = total_revenue[break_even_index]
+    # Find break-even point
+    break_even_indices = np.where(total_costs <= total_revenue)[0]
+
+    if break_even_indices.size > 0:
+        break_even_index = break_even_indices[0]
+        break_even_units = units[break_even_index]
+        break_even_revenue = total_revenue[break_even_index]
+    else:
+        break_even_units = None
+        break_even_revenue = None
+
     break_even_point = (break_even_units, break_even_revenue)
     
+    # Create Plotly figure
     fig = go.Figure()
 
+    fig.add_trace(go.Scatter(
+        x=units,
+        y=total_costs,
+        mode='lines',
+        name='Total Costs',
+        line=dict(color='#a4343a', width=2)
+    ))
 
-    fig.add_trace(
-        go.Scatter(
-            x=units,
-            y=total_costs,
-            mode='lines',
-            name='Total Costs',
-            line=dict(color='#a4343a', width=2)
-        )
-    )
+    fig.add_trace(go.Scatter(
+        x=units,
+        y=total_revenue,
+        mode='lines',
+        name='Total Revenue',
+        line=dict(color='#37B7C3', width=2)
+    ))
 
-    
-    fig.add_trace(
-        go.Scatter(
-            x=units,
-            y=total_revenue,
-            mode='lines',
-            name='Total Revenue',
-            line=dict(color='#37B7C3', width=2)
-        )
-    )
-
-  
-    fig.add_trace(
-        go.Scatter(
+    # Plot break-even point if it exists
+    if break_even_units is not None and break_even_revenue is not None:
+        fig.add_trace(go.Scatter(
             x=[break_even_units],
             y=[break_even_revenue],
             mode='markers',
             name='Break-Even Point',
             marker=dict(color='#000000', size=10, symbol='x')
-        )
-    )
+        ))
 
-
+    # Update figure layout
     fig.update_layout(
         xaxis_title='Units Produced/Sold',
         yaxis_title='Cost/Revenue',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="seaborn",
         width=700,  
-        height=600   # 
+        height=600
     )
 
     return fig, total_costs, total_revenue, break_even_point 
-fig, total_costs, total_revenue, break_even_point  = plot_break_even(fixed_costs, variable_cost_per_unit, farmgate_price)
 
-
-# def plot_break_even_dynamic(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
-#     # Generate units and calculate costs/revenues
-#     units = np.arange(0, 7000, 10)
-#     total_costs = fixed_costs + variable_cost_per_unit * exchange_rate * units
-#     total_revenue = selling_price_per_unit * units * exchange_rate
-    
-#     # Calculate break-even point dynamically
-#     if selling_price_per_unit > variable_cost_per_unit:
-#         break_even_quantity = total_costs/(selling_price_per_unit - variable_cost_per_unit)
-#         break_even_revenue = selling_price_per_unit * break_even_quantity * exchange_rate
-#     else:
-#         break_even_quantity = None
-#         break_even_revenue = None
-
-#     # Create the plot
-#     fig = go.Figure()
-
-#     # Add Total Costs Line
-#     fig.add_trace(
-#         go.Scatter(
-#             x=units,
-#             y=total_costs,
-#             mode='lines',
-#             name='Total Costs',
-#             line=dict(color='#a4343a', width=2)
-#         )
-#     )
-
-#     # Add Total Revenue Line
-#     fig.add_trace(
-#         go.Scatter(
-#             x=units,
-#             y=total_revenue,
-#             mode='lines',
-#             name='Total Revenue',
-#             line=dict(color='#37B7C3', width=2)
-#         )
-#     )
-
-#     # Add Break-Even Point Line if break-even is valid
-#     if break_even_quantity is not None:
-#         fig.add_trace(
-#             go.Scatter(
-#                 x=[break_even_quantity, break_even_quantity],
-#                 y=[0, max(total_costs.max(), total_revenue.max())],
-#                 mode='lines',
-#                 name='Break-Even Point',
-#                 line=dict(color='#000000', dash='dash')
-#             )
-#         )
-
-#     # Update layout
-#     fig.update_layout(
-#         xaxis_title='Units Produced/Sold',
-#         yaxis_title='Cost/Revenue',
-#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-#         template="seaborn",
-#         width=700,
-#         height=600
-#     )
-
-#     return fig, total_costs, total_revenue, break_even_quantity, break_even_revenue
-
-# fig, total_costs, total_revenue, break_even_quantity, break_even_revenue = plot_break_even_dynamic(
-#     fixed_costs, variable_cost_per_unit, farmgate_price
-# )
-
-
+# Example function call (ensure exchange_rate is defined)
+fig, total_costs, total_revenue, break_even_point = plot_break_even(
+    fixed_costs, variable_cost_per_unit, farmgate_price, exchange_rate
+)
 
 # Cost and Revenue Distribution Plot Function
 def plot_cost_and_revenue_distribution(categories, values, currency):
@@ -893,9 +742,8 @@ st.markdown(
 )
 
 import numpy as np
-break_even_bags = break_even_quantity / bag_weight
 
-
+print("Break even is: ", break_even_quantity)
 
 summary_data = [
     {
@@ -908,8 +756,8 @@ summary_data = [
     {
         "Indicator": "Break-Even Quantity (Bags)",
         "Value": (
-            f"{(break_even_bags):,.2f}"
-            if isinstance(break_even_bags, (int, float, np.number)) and isinstance(bag_weight, (int, float, np.number))
+            f"{(break_even_quantity / bag_weight):,.2f}"
+            if isinstance(break_even_quantity / bag_weight, (int, float, np.number)) and isinstance(bag_weight, (int, float, np.number))
             else "N/A"
         ),
     },
@@ -988,19 +836,37 @@ with col1:
         unsafe_allow_html=True,
     )
 
+
 with col2:
     st.markdown(
         f"""
         <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
-        At the farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b>, 
-        the break-even quantity is estimated at <b> {f"{break_even_bags:,.2f}" if break_even_quantity is not None else "N/A"} bags</b> 
-        To break even, the required price is 
-        <b>{required_price_to_break_even:,.2f} {currency}</b>. The gross margin stands at 
-        <b>{gross_margin:,.2f} {currency}</b>, while the gross output is <b>{gross_output:,.2f} {currency}</b>.
+        <b>Breaking Even: The Path to Sustainability</b><br><br>
+        To achieve a break-even point, the farmer needs to produce <b>{break_even_quantity / bag_weight:,.2f} bags</b> 
+        (equivalent to <b>{break_even_quantity:,.2f} kg</b>) at the current farmgate price of 
+        <b>{farmgate_price*exchange_rate:,.2f} {currency}</b> per kg. Alternatively, with the current yield of <b>{yield_kg:,.2f} kg/ha</b>, the minimum farmgate price 
+        required to break even is <b>{required_price_to_break_even:,.2f} {currency}</b> per kg.
+        Currently, the farmer faces a gross margin of <b>{gross_margin:,.2f} {currency}</b>, with a total 
+        gross output of <b>{gross_output:,.2f} {currency}</b>, emphasizing the need to optimize production 
+        or adjust pricing strategies to move toward profitability.
         </div>
         """,
         unsafe_allow_html=True
     )
+
+# with col2:
+#     st.markdown(
+#         f"""
+#         <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
+#         At the farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b>, 
+#         the break-even quantity is estimated at <b> {f"{break_even_bags:,.2f}" if break_even_quantity is not None else "N/A"} bags</b> 
+#         To break even, the required price is 
+#         <b>{required_price_to_break_even:,.2f} {currency}</b>. The gross margin stands at 
+#         <b>{gross_margin:,.2f} {currency}</b>, while the gross output is <b>{gross_output:,.2f} {currency}</b>.
+#         </div>
+#         """,
+#         unsafe_allow_html=True
+#     )
 
 
 
