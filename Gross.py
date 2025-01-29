@@ -228,7 +228,7 @@ filtered_c_df = df[df['Country'] == selected_country]
 # year = ["2023","2024","2025", "2026"," 2027", "2028"]
 # selected_value_chain = st.sidebar.selectbox("Year:", year)
 
-counties = ["All"] + sorted(df["County"].unique().tolist())
+counties = ["All"] + sorted(filtered_c_df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
 
@@ -294,7 +294,7 @@ selling_price_per_unit = farmgate_price
 
 # Filter Data
 
-filtered_df = df.copy()
+filtered_df = filtered_c_df.copy()
 if selected_county != "All":
     filtered_df = filtered_df[filtered_df["County"] == selected_county]
 if selected_value_chain != "All":
