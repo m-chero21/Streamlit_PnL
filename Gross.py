@@ -235,15 +235,31 @@ with st.sidebar.expander("Production Variables", expanded=False):
     bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
 
 
+# # Adding a collapsible sidebar section for currency and exchange rate
+# with st.sidebar.expander("Currency", expanded=False):
+#     currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])
+#     exchange_rate = st.number_input(
+#         "Exchange Rate:",
+#         value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
+#         step=0.001,
+#         format="%.3f"
+#     )
+
+
 # Adding a collapsible sidebar section for currency and exchange rate
 with st.sidebar.expander("Currency", expanded=False):
-    currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])
-    exchange_rate = st.number_input(
-        "Exchange Rate:",
-        value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
-        step=0.001,
-        format="%.3f"
-    )
+    # Default currency and exchange rate based on selected country
+    if selected_country == "Nigeria":
+        currency = "NGN"
+        exchange_rate = 11.6
+    else:
+        currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])
+        exchange_rate = st.number_input(
+            "Exchange Rate:",
+            value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
+            step=0.001,
+            format="%.3f"
+        )
 
 
 farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=38.89, step=1.0)
@@ -296,8 +312,7 @@ st.sidebar.table(metrics_df)
 # Filter Cost Data
 filtered_costs = f_cost[
     (f_cost["Scale of Production"] == selected_scale) &
-    (f_cost["Fertilizer Subsidy"] == selected_subsidy) &
-    (f_cost['Country'] == selected_country)
+    (f_cost["Fertilizer Subsidy"] == selected_subsidy) 
 ]
 
 # Cost Data Preparation
