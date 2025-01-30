@@ -191,25 +191,7 @@ st.markdown(
 @st.cache_data
 def load_data():
     df = pd.read_excel("aggregate_farm_data_template.xlsx")
-    cost_data = [
-    ["Large-scale", "With Subsidy", 23, 2400, 9600, 1800, 1000, 9750, 6125, 15000, 2557, 48232, 2144, 1],
-    ["Large-scale", "Without Subsidy", 23, 2400, 14250, 1800, 1000, 9750, 6125, 15000, 2962, 53287, 2368, 1],
-    ["Small-scale", "With Subsidy", 18, 2400, 7100, 1500, 0, 7050, 12000, 10000, 2379, 42429, 2357, 1],
-    ["Small-scale", "Without Subsidy", 18, 2400, 11500, 1500, 0, 7050, 12000, 10000, 2628, 47078, 2615, 1],
-]
-
-# Define column names
-    columns = [
-    "Scale of Production", "Fertilizer Subsidy", "Average Yield (90kg bags/acre)",
-    "Seed Cost (KES)", "Fertilizer Cost (KES)", "Pesticides Cost",
-    "Herbicides Cost (KES)", "Machinery Cost (KES)", "Labour Cost (KES)",
-    "Landrent Cost (KES)", "Other Costs (KES)", "Total Cost/Acre (KES)",
-    "Total Cost/Bag (KES)", "Quantity"
-]
-
-# Create the DataFrame
-    cost = pd.DataFrame(cost_data, columns=columns)
-    # cost = pd.read_excel("cost.xlsx")
+    cost = pd.read_excel("cost.xlsx")
     return df, cost
 
 df, cost = load_data()
@@ -217,32 +199,18 @@ df, cost = load_data()
 # Sidebar - Global Parameters
 st.sidebar.header("Global Inputs")
 
-country = df['Country'].unique() 
+country =sorted(set(df['Country']).union(set(cost['Country'])))
 selected_country = st.sidebar.selectbox("Country:", country)
+cost['Country'] = cost['Country'].astype(str).str.strip()
 
 # Filter the DataFrame based on the selected country
 filtered_c_df = df[df['Country'] == selected_country]
+f_cost=  cost[cost['Country'] == selected_country]
 
-
-
-# year = ["2023","2024","2025", "2026"," 2027", "2028"]
-# selected_value_chain = st.sidebar.selectbox("Year:", year)
 
 counties = ["All"] + sorted(filtered_c_df["County"].unique().tolist())
 selected_county = st.sidebar.selectbox("County:", counties)
 
-
-# value_chains = ["Maize", "Irish Potatoes", "Coffee"]
-# selected_value_chain = st.sidebar.selectbox("Value Chain:", value_chains)
-
-# scale_options = ["Small-scale", "Large-scale"]
-# selected_scale = st.sidebar.selectbox("Scale of Production:", scale_options)
-
-# subsidy_options = ["With Subsidy", "Without Subsidy"]
-# selected_subsidy = st.sidebar.selectbox("Fertilizer Subsidy:", subsidy_options)
-
-# fluctuation_levels = {"Low": 1, "Moderate": 2, "High": 3}
-# selected_fluctuation = st.sidebar.selectbox("Fluctuation Level:", list(fluctuation_levels.keys()))
 
 # Collapsible section for all cost-related parameters
 with st.sidebar.expander("Production Variables", expanded=False):
@@ -252,11 +220,11 @@ with st.sidebar.expander("Production Variables", expanded=False):
     selected_value_chain = st.selectbox("Value Chain:", value_chains)
 
     # Scale of Production
-    scale_options = ["Small-scale", "Large-scale"]
+    scale_options = f_cost["Scale of Production"].unique()
     selected_scale = st.selectbox("Scale of Production:", scale_options)
 
     # Fertilizer Subsidy
-    subsidy_options = cost["Fertilizer Subsidy"].unique()
+    subsidy_options = f_cost["Fertilizer Subsidy"].unique()
     selected_subsidy = st.selectbox("Fertilizer Subsidy:", subsidy_options)
 
     # Fluctuation Levels
@@ -266,14 +234,6 @@ with st.sidebar.expander("Production Variables", expanded=False):
     # Bag Weight
     bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
 
-
-# currency = st.sidebar.selectbox("Currency:", ["KES", "USD", "Euro"])
-# exchange_rate = st.sidebar.number_input(
-#     "Exchange Rate:",
-#     value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
-#     step=0.001,
-#     format="%.3f"
-# )
 
 # Adding a collapsible sidebar section for currency and exchange rate
 with st.sidebar.expander("Currency", expanded=False):
@@ -334,9 +294,10 @@ st.sidebar.table(metrics_df)
 
 
 # Filter Cost Data
-filtered_costs = cost[
-    (cost["Scale of Production"] == selected_scale) &
-    (cost["Fertilizer Subsidy"] == selected_subsidy)
+filtered_costs = f_cost[
+    (f_cost["Scale of Production"] == selected_scale) &
+    (f_cost["Fertilizer Subsidy"] == selected_subsidy) &
+    (f_cost['Country'] == selected_country)
 ]
 
 # Cost Data Preparation
