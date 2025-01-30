@@ -246,14 +246,16 @@ with st.sidebar.expander("Production Variables", expanded=False):
 #     )
 
 
-# Adding a collapsible sidebar section for currency and exchange rate
 with st.sidebar.expander("Currency", expanded=False):
     # Default currency and exchange rate based on selected country
     if selected_country == "Nigeria":
-        currency = "NGN"
-        exchange_rate = 11.6
+        currency = st.selectbox("Currency:", ["NGN", "USD"])  # Restrict to NGN & USD
+        if currency == "NGN":
+            exchange_rate = 11.6
+        elif currency == "USD":
+            exchange_rate = 11.6 * 0.00066  # Apply 0.85 multiplier
     else:
-        currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])
+        currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])  # Default options for other countries
         exchange_rate = st.number_input(
             "Exchange Rate:",
             value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
@@ -828,21 +830,6 @@ with col2:
         """,
         unsafe_allow_html=True
     )
-
-# with col2:
-#     st.markdown(
-#         f"""
-#         <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
-#         At the farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b>, 
-#         the break-even quantity is estimated at <b> {f"{break_even_bags:,.2f}" if break_even_quantity is not None else "N/A"} bags</b> 
-#         To break even, the required price is 
-#         <b>{required_price_to_break_even:,.2f} {currency}</b>. The gross margin stands at 
-#         <b>{gross_margin:,.2f} {currency}</b>, while the gross output is <b>{gross_output:,.2f} {currency}</b>.
-#         </div>
-#         """,
-#         unsafe_allow_html=True
-#     )
-
 
 
 categories = ["Gross Output", "Marketed Output", "Total Costs", "Gross Margin"]
