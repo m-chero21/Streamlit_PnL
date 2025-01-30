@@ -15,6 +15,7 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+
     /* Hide Streamlit header, including GitHub icons */
     header {visibility: hidden;}
     </style>
