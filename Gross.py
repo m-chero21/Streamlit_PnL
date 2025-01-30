@@ -232,18 +232,11 @@ with st.sidebar.expander("Production Variables", expanded=False):
     selected_fluctuation = st.selectbox("Fluctuation Level:", list(fluctuation_levels.keys()))
 
     # Bag Weight
-    bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
-
-
-# # Adding a collapsible sidebar section for currency and exchange rate
-# with st.sidebar.expander("Currency", expanded=False):
-#     currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])
-#     exchange_rate = st.number_input(
-#         "Exchange Rate:",
-#         value=1.0 if currency == "KES" else (0.008 if currency == "USD" else 0.007),
-#         step=0.001,
-#         format="%.3f"
-#     )
+    # Set bag weight based on country selection
+    if selected_country == "Nigeria":
+        bag_weight = 1.0
+    else:
+        bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
 
 
 with st.sidebar.expander("Currency", expanded=False):
@@ -345,16 +338,18 @@ for col, category in category_mapping.items():
 
        
         value = round(raw_value * exchange_rate) 
+        
         std_dev = value * (0.01 * fluctuation_levels[selected_fluctuation])
-        lower_bound = round(value - 1.96 * std_dev) 
+        lower_bound = round(value - 1.96 * std_dev)
         upper_bound = round(value + 1.96 * std_dev)  
-
+           
         cost_parameters.append({
             "Item": col.replace(" (KES)", ""),
             "Category": category,
             "Quantity": int(filtered_costs["Quantity"].iloc[0]) if "Quantity" in filtered_costs else 1,
             "Cost Per Unit": value,
             "Confidence Interval": f"[{lower_bound}, {upper_bound}]",
+
         })
 
 cost_df = pd.DataFrame(cost_parameters)
@@ -432,7 +427,7 @@ def calculate_confidence_interval(cost_per_unit, fluctuation_level, quantity):
     std_dev = cost_per_unit * quantity * (0.01 * fluctuation_level)  # Standard deviation
     lower_bound = round(cost_per_unit * quantity - 1.96 * std_dev)  # 95% CI lower bound
     upper_bound = round(cost_per_unit* quantity + 1.96 * std_dev)  # 95% CI upper bound
-    return f"[{lower_bound}, {upper_bound}]"
+    return f"[{lower_bound:,}, {upper_bound:,}]"
 
 
 
@@ -492,7 +487,7 @@ st.markdown(
     """
     <style>
     .custom-table-container {
-        max-height: 400px; /* Limit table height */
+        max-height: 200px; /* Limit table height */
         overflow-y: auto; /* Enable vertical scrolling */
     }
     </style>
@@ -513,7 +508,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 table_style = """
 <style>
     .custom-table-container {{
-        max-height: 300px; /* Desired height */
+        max-height: 600px; /* Desired height */
         overflow-y: auto; /* Enable vertical scrolling */
         overflow-x: auto; /* Enable horizontal scrolling */
         width: 100%;
@@ -559,7 +554,7 @@ def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, o
     own_consumption = gross_output * (own_consumption_percentage / 100)
     net_output = gross_output - (post_harvest_loss + own_consumption)
     
-    total_costs = cost_df["Cost Per Unit"].sum() * exchange_rate
+    total_costs = cost_df["Cost Per Unit"].sum() 
     gross_margin = net_output - total_costs + own_consumption
     real_g_margin= total_costs-gross_output
     return gross_output, net_output, gross_margin, real_g_margin
@@ -579,7 +574,7 @@ worst_case_gross_margin = gross_margin - 1.96 * std_dev
 def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit, total_costs, break_even_point):
    
         
-    break_even_quantity = (total_costs / selling_price_per_unit) * exchange_rate
+    break_even_quantity = total_costs / selling_price_per_unit
         
        
     break_even_revenue = break_even_quantity * selling_price_per_unit * exchange_rate
@@ -599,7 +594,7 @@ other_costs= cost_df[cost_df["Category"] == "Other Cost"]["Cost Per Unit"].sum()
 variable_cost_per_unit = (variable_costs / yield_kg) 
 import numpy as np
 
-total_costs = exchange_rate*(fixed_costs + variable_costs +other_costs)
+total_costs = fixed_costs + variable_costs +other_costs
 required_price_to_break_even = (fixed_costs + variable_costs + other_costs) / yield_kg 
 
 break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity = calculate_break_even(fixed_costs, variable_cost_per_unit, farmgate_price, total_costs, required_price_to_break_even)
@@ -659,16 +654,32 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit,
             marker=dict(color='#000000', size=10, symbol='x')
         ))
 
+    # # Update figure layout
+    # fig.update_layout(
+    #     xaxis_title='Units Produced/Sold',
+    #     yaxis_title='Cost/Revenue',
+    #     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    #     template="seaborn",
+    #     width=700,  
+    #     height=600
+    # )
     # Update figure layout
     fig.update_layout(
         xaxis_title='Units Produced/Sold',
         yaxis_title='Cost/Revenue',
+        xaxis=dict(
+            title_font=dict(color='black', size=14, family='Arial', weight='bold'),
+            tickfont=dict(color='black', size=12)
+        ),
+        yaxis=dict(
+            title_font=dict(color='black', size=14, family='Arial', weight='bold'),
+            tickfont=dict(color='black', size=12)
+        ),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="seaborn",
         width=700,  
         height=600
     )
-
     return fig, total_costs, total_revenue, break_even_point 
 
 # Example function call (ensure exchange_rate is defined)
@@ -696,6 +707,14 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
     fig.update_layout(
         xaxis_title='Category',
         yaxis_title=f'Value ({currency})',
+        xaxis=dict(
+            title_font=dict(color='black', size=14, family='Arial', weight='bold'),
+            tickfont=dict(color='black', size=12)
+        ),
+        yaxis=dict(
+            title_font=dict(color='black', size=14, family='Arial', weight='bold'),
+            tickfont=dict(color='black', size=12)
+        ),
         template="seaborn",
         bargap=0.2,
         width=700,   
@@ -725,7 +744,6 @@ st.markdown(
 
 import numpy as np
 
-print("Break even is: ", break_even_quantity)
 
 summary_data = [
     {
