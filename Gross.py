@@ -264,7 +264,12 @@ with st.sidebar.expander("Currency", expanded=False):
         )
 
 
-farmgate_price = st.sidebar.number_input("Farmgate Price (KES):", value=38.89, step=1.0)
+# Set Farmgate Price dynamically
+default_farmgate_price = 41351.64 if selected_country == "Nigeria" else 38.89
+
+farmgate_price = st.sidebar.number_input(
+    f"Farmgate Price ({currency}):", value=default_farmgate_price, step=1.0
+)
 loss_percentage = st.sidebar.slider("Post-Harvest Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Own Consumption %:", 0, 50, 10)
 
