@@ -234,8 +234,10 @@ with st.sidebar.expander("Production Variables", expanded=False):
 
     # Bag Weight
     # Set bag weight based on country selection
-   
-    bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
+    if selected_country == "Nigeria":
+        bag_weight = 1.0
+    else:
+        bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
 
 
 with st.sidebar.expander("Currency", expanded=False):
