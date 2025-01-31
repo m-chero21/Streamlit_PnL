@@ -280,11 +280,27 @@ st.markdown("""
 # Function to dynamically adjust percentages
 def adjust_percentages(biotech, opv, country):
     if country == "Nigeria":
-        opv = 90 
-    remaining = 100 - biotech 
-    adjusted_opv = min(opv, remaining) 
-    adjusted_hybrid = remaining - adjusted_opv
-    return adjusted_opv, adjusted_hybrid
+        remaining = 100 - biotech  # Remaining percentage after Biotech
+        
+        # Start with OPV at 90%
+        if biotech == 0:
+            adjusted_opv = 90
+            adjusted_hybrid = 10
+        else:
+            adjusted_opv = min(opv, remaining)  # OPV takes as much as possible
+            extra_remaining = remaining - adjusted_opv
+            
+            # Split the remaining percentage in 90:10 ratio
+            adjusted_opv += 0.9 * extra_remaining
+            adjusted_hybrid = 0.1 * extra_remaining
+    else:
+        remaining = 100 - biotech
+        adjusted_opv = min(opv, remaining)
+        adjusted_hybrid = remaining - adjusted_opv
+
+    return round(adjusted_opv), round(adjusted_hybrid)
+
+
 
 
 with st.sidebar.expander("Select OPV %", expanded=False):

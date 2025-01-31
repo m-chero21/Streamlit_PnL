@@ -257,7 +257,7 @@ with st.sidebar.expander("Currency", expanded=False):
 
 
 # Set Farmgate Price dynamically
-default_farmgate_price = 38.1853448276 if selected_country == "Nigeria" else 38.89
+default_farmgate_price = 39.1853448276 if selected_country == "Nigeria" else 38.89
 
 farmgate_price = st.sidebar.number_input(
     f"Farmgate Price ({currency}):", value=default_farmgate_price*exchange_rate, step=1.0
