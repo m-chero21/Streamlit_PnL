@@ -234,10 +234,8 @@ with st.sidebar.expander("Production Variables", expanded=False):
 
     # Bag Weight
     # Set bag weight based on country selection
-    if selected_country == "Nigeria":
-        bag_weight = 1.0
-    else:
-        bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
+    
+    bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
 
 
 with st.sidebar.expander("Currency", expanded=False):
@@ -259,7 +257,7 @@ with st.sidebar.expander("Currency", expanded=False):
 
 
 # Set Farmgate Price dynamically
-default_farmgate_price = 38.19 if selected_country == "Nigeria" else 38.89
+default_farmgate_price = 38.1853448276 if selected_country == "Nigeria" else 38.89
 
 farmgate_price = st.sidebar.number_input(
     f"Farmgate Price ({currency}):", value=default_farmgate_price*exchange_rate, step=1.0
@@ -762,14 +760,14 @@ summary_data = [
             else "N/A"
         ),
     },
-    # {
-    #     "Indicator": "Break-Even Quantity (Kg)",
-    #     "Value": (
-    #         f"{break_even_quantity:,.2f}"
-    #         if isinstance(break_even_quantity, (int, float, np.number))
-    #         else "N/A"
-    #     ),
-    # },
+    {
+        "Indicator": "Break-Even Quantity (Kg)",
+        "Value": (
+            f"{break_even_quantity:,.2f}"
+            if isinstance(break_even_quantity, (int, float, np.number))
+            else "N/A"
+        ),
+    },
     {
         "Indicator": f"Break-Even Price ({currency})",
         "Value": (
