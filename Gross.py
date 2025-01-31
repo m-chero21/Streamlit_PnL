@@ -247,7 +247,7 @@ with st.sidebar.expander("Currency", expanded=False):
         if currency == "NGN":
             exchange_rate = 11.6
         elif currency == "USD":
-            exchange_rate = 11.6 * 0.00066  # Apply 0.85 multiplier
+            exchange_rate = 11.6 * 0.3  # Apply 0.85 multiplier
     else:
         currency = st.selectbox("Currency:", ["KES", "USD", "Euro"])  # Default options for other countries
         exchange_rate = st.number_input(
@@ -262,7 +262,7 @@ with st.sidebar.expander("Currency", expanded=False):
 default_farmgate_price = 41351.64 if selected_country == "Nigeria" else 38.89
 
 farmgate_price = st.sidebar.number_input(
-    f"Farmgate Price ({currency}):", value=default_farmgate_price, step=1.0
+    f"Farmgate Price ({currency}):", value=default_farmgate_price*exchange_rate, step=1.0
 )
 loss_percentage = st.sidebar.slider("Post-Harvest Loss %:", 0, 50, 5)
 own_consumption_percentage = st.sidebar.slider("Own Consumption %:", 0, 50, 10)
@@ -550,7 +550,7 @@ st.write(f"The total costs are **{currency} {total_costs_display:,.2f}**")
 
 # Gross Margin Calculation
 def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage):
-    gross_output = yield_kg * farmgate_price * exchange_rate
+    gross_output = yield_kg * farmgate_price 
     post_harvest_loss = gross_output * (loss_percentage / 100)
     own_consumption = gross_output * (own_consumption_percentage / 100)
     net_output = gross_output - (post_harvest_loss + own_consumption)
@@ -750,7 +750,7 @@ summary_data = [
     {
         "Indicator": f"Farmgate Price ({currency})",
         "Value": (
-            f"{(farmgate_price * exchange_rate):,.2f} {currency}"
+            f"{(farmgate_price):,.2f} {currency}"
         
         ),
     },
@@ -844,7 +844,7 @@ with col2:
         <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
         <b>Breaking Even: The Path to Sustainability</b><br><br>
         To achieve a break-even point, the farmer needs to produce <b>{break_even_quantity / bag_weight:,.2f} bags</b> 
-        at the current farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b> per kg. Alternatively, with the current yield of <b>{yield_kg:,.2f} kg/ha</b>, the minimum farmgate price 
+        at the current farmgate price of <b>{farmgate_price:,.2f} {currency}</b> per kg. Alternatively, with the current yield of <b>{yield_kg:,.2f} kg/ha</b>, the minimum farmgate price 
         required to break even is <b>{required_price_to_break_even:,.2f} {currency}</b> per kg.
         Currently, the farmer faces a gross margin of <b>{gross_margin:,.2f} {currency}</b>, with a total 
         gross output of <b>{gross_output:,.2f} {currency}</b>, emphasizing the need to optimize production 
