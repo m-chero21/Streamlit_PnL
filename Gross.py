@@ -762,14 +762,14 @@ summary_data = [
             else "N/A"
         ),
     },
-    {
-        "Indicator": "Break-Even Quantity (Kg)",
-        "Value": (
-            f"{break_even_quantity:,.2f}"
-            if isinstance(break_even_quantity, (int, float, np.number))
-            else "N/A"
-        ),
-    },
+    # {
+    #     "Indicator": "Break-Even Quantity (Kg)",
+    #     "Value": (
+    #         f"{break_even_quantity:,.2f}"
+    #         if isinstance(break_even_quantity, (int, float, np.number))
+    #         else "N/A"
+    #     ),
+    # },
     {
         "Indicator": f"Break-Even Price ({currency})",
         "Value": (
@@ -844,8 +844,7 @@ with col2:
         <div style="font-size: 20px; line-height: 2.0; text-align: center; padding-top: 40px; ">
         <b>Breaking Even: The Path to Sustainability</b><br><br>
         To achieve a break-even point, the farmer needs to produce <b>{break_even_quantity / bag_weight:,.2f} bags</b> 
-        (equivalent to <b>{break_even_quantity:,.2f} kg</b>) at the current farmgate price of 
-        <b>{farmgate_price*exchange_rate:,.2f} {currency}</b> per kg. Alternatively, with the current yield of <b>{yield_kg:,.2f} kg/ha</b>, the minimum farmgate price 
+        at the current farmgate price of <b>{farmgate_price*exchange_rate:,.2f} {currency}</b> per kg. Alternatively, with the current yield of <b>{yield_kg:,.2f} kg/ha</b>, the minimum farmgate price 
         required to break even is <b>{required_price_to_break_even:,.2f} {currency}</b> per kg.
         Currently, the farmer faces a gross margin of <b>{gross_margin:,.2f} {currency}</b>, with a total 
         gross output of <b>{gross_output:,.2f} {currency}</b>, emphasizing the need to optimize production 
