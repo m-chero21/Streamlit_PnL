@@ -234,10 +234,8 @@ with st.sidebar.expander("Production Variables", expanded=False):
 
     # Bag Weight
     # Set bag weight based on country selection
-    if selected_country == "Nigeria":
-        bag_weight = 1.0
-    else:
-        bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
+   
+    bag_weight = st.number_input("Weight Per Bag (Kg):", value=90.0, step=1.0)
 
 
 with st.sidebar.expander("Currency", expanded=False):
@@ -578,7 +576,7 @@ def calculate_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_
     break_even_quantity = total_costs / selling_price_per_unit
         
        
-    break_even_revenue = break_even_quantity * selling_price_per_unit * exchange_rate
+    break_even_revenue = break_even_quantity * selling_price_per_unit
         
 
         
@@ -610,8 +608,8 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit,
     units = np.arange(0, 8000, 10)
     
     # Compute total costs and revenue
-    total_costs = fixed_costs + variable_cost_per_unit * exchange_rate * units 
-    total_revenue = selling_price_per_unit * units * exchange_rate
+    total_costs = fixed_costs + variable_cost_per_unit * units 
+    total_revenue = selling_price_per_unit * units 
 
     # Find break-even point
     break_even_indices = np.where(total_costs <= total_revenue)[0]
