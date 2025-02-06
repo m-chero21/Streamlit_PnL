@@ -1,63 +1,42 @@
 import streamlit as st
-from views.seed import seed
-from views.margin import margin
-from utils.styling import apply_global_styling
+# Set up page configuration
+st.set_page_config(
+    page_title="Integrated Seed and Gross Margin Calculators",
+    page_icon="assets/images/logos/SAFIC - Dark.png",
+    layout="wide"
+)
 
-class App:
-    def __init__(self):
-        pass
+from views.Seed_Requirement_Calculator import seed
+from views.Gross_Margin_Calculator import margin
+from utils.file_operations import load_css  
 
-    
-    # Navigation Bar
-    def render_navigation_bar(self):
-        """Render an inline navigation bar with clickable links using Streamlit."""
-        # Initialize session state for active button
-        if "active_button" not in st.session_state:
-            st.session_state.active_button = "seed"  # Default active button
+# Initialize session state for page selection
+if "selected_page" not in st.session_state:
+    st.session_state.selected_page = "Seed Requirement Calculator"
 
-        # Centered horizontal buttons with active styling
-        _, col2, _, col4, _ = st.columns([1, 2, 1, 2, 1])  # Side columns for centering
-
-        with col2:  # Center column
-            seed_btn = st.button(
-                    "🌱 Seed Calculator",
-                    key="seed_btn",
-                    help="Go to Seed Calculator",
-                    use_container_width=True
-                )
-
-        with col4:
-            margin_btn = st.button(
-                "💰 Gross Margin Calculator",
-                key="margin_btn",
-                help="Go to Gross Margin Calculator",
-                use_container_width=True
-                )
-
-        # Logic for active button
-        if seed_btn:
-            st.session_state.active_button = "seed"
-        elif margin_btn:
-            st.session_state.active_button = "margin"
+# Function to switch pages
+def switch_page(page_name):
+    st.session_state.selected_page = page_name
 
 
-    def render_page(self):
-        """Render the appropriate page based on session state."""
-        st.set_page_config(layout="wide")
+# Navigation Bar using Buttons (Avoiding Raw HTML Rendering)
+col1, col2 = st.columns([1, 1])
 
-        # Apply Global CSS Styling
-        apply_global_styling()
+with col1:
+    if st.button("Seed Requirement Calculator", key="seed", help="Go to Seed Requirement Calculator",
+                 use_container_width=True):
+        switch_page("Seed Requirement Calculator")
 
-        # Display navigation bar
-        self.render_navigation_bar()
-            
-        if st.session_state.active_button == "margin":
-            margin()
-        else:
-            seed()
+with col2:
+    if st.button("Gross Margin Calculator", key="gross", help="Go to Gross Margin Calculator",
+                 use_container_width=True):
+        switch_page("Gross Margin Calculator")
 
+# Render the selected page
+if st.session_state.selected_page == "Seed Requirement Calculator":
+    seed()
+elif st.session_state.selected_page == "Gross Margin Calculator":
+    margin()
 
-# Run the application
-if __name__ == "__main__":
-    app = App()
-    app.render_page()
+# Load additional CSS if necessary
+load_css()

@@ -1,0 +1,248 @@
+.navbar {
+    position: sticky;
+    top: 0; 
+    z-index: 1000; 
+    background-color: #F4F6FF; 
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.navbar-buttons {
+    display: flex;
+    margin-left: auto;
+    text-decoration: none;
+    gap: 20px;
+}
+.navbar-link {
+    color: black !important;
+    text-decoration: none;
+    font-size: 18px;
+    text-decoration: none; 
+    font-weight: normal;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.navbar-link:hover {
+    background-color: #a4343a; 
+    color: white !important;
+}
+.button {
+    background-color: #007278;
+    text-decoration: none;
+    text-decoration: none;
+    color: white !important;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+.navbar-button:hover {
+    background-color: #a4343a; 
+}
+
+.centered-title {
+    position: sticky; /* Make the title sticky */
+    top: 0; /* Stick to the top of the page */
+    z-index: 1000; /* Ensure it stays above other elements */
+    text-align: center; /* Center the title */
+    font-size: 36px; /* Adjust font size if needed */
+    font-weight: bold;
+    color: black; /* Optional: Change title color */
+    background-color: white; /* Background to prevent content overlap */
+    margin-top: 0; /* Remove extra spacing above */
+    padding-top: 10px; /* Add padding for better appearance */
+    padding-bottom: 10px; /* Add padding below the title */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.streamlit-expander {
+    border: 2px solid #007278 !important; /* Add a border */
+    border-radius: 8px !important; /* Rounded corners */
+    margin-bottom: 10px !important; /* Add spacing */
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
+        
+.streamlit-expanderHeader {
+    background-color: #007278 !important; /* Background color */
+    color: white !important; /* Text color */
+    font-size: 16px !important; /* Font size */
+    font-weight: bold !important; /* Bold text */
+    padding: 10px !important; /* Add padding */
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+}
+        
+.streamlit-expanderHeader svg {
+    fill: white !important; /* Arrow icon color */
+}
+
+.cost-breakdown-title {
+    color: #007278; /* Set text color */
+    font-size: 35px; /* Adjust font size if needed */
+    font-weight: bold;
+    text-align: left; /* Align text to the left */
+    margin-bottom: 10px; /* Add some space below the title */
+}
+.update-county {
+    text-align: center;
+    background-color: #a4343a;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+.custom-table-container {
+    max-height: 300px; /* Desired height */
+    overflow-y: auto; /* Enable scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    width: 100%;
+}
+.custom-table-container table {
+    width: 100%; /* Make table responsive */
+    font-size: 12px; /* Decrease overall text size */
+}
+.custom-table-container table th, 
+.custom-table-container table td {
+    font-size: 11px; /* Decrease header and cell text size */
+    padding: 2px; /* Reduce padding for a compact look */
+    text-align: center; /* Center-align text */
+}
+.cost-breakdown-title {
+    color: #007278; /* Set text color */
+    font-size: 35px; /* Adjust font size if needed */
+    font-weight: bold;
+    text-align: left; /* Align text to the left */
+    margin-bottom: 10px; /* Add some space below the title */
+}
+.text-align-center{
+    text-align: center;
+}
+header {
+    visibility: hidden;
+}
+html, body, [class*="st-"] {
+    font-family: serif;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: serif;
+}
+
+div.stButton > button {
+    float: right; 
+    background-color: #007278; 
+    color: white !important; 
+    font-size: 16px; 
+    font-weight: bold;
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    margin: 10px; 
+}
+div.stButton > button:hover {
+    background-color: #a4343a; 
+    color: white !important; 
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    background-color: #007278;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+}
+
+td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+.custom-table-container {
+    max-height: 200px; /* Limit table height */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+.summary-table {
+    width: 100%; /* Increase the table width */
+}
+
+/* Table Styles */
+.summary-table2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* Table Header */
+.summary-table thead {
+    background-color: #007278;
+    color: white;
+    font-size: 18px;
+}
+
+/* Table Body */
+.summary-table tbody td {
+    font-size: 16px;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd; /* Optional: Add border */
+}
+
+
+.break-even-container {
+    font-size: 20px;
+    line-height: 2.0;
+    text-align: center;
+    padding-top: 40px;
+   
+}
+
+.nav-container {
+    background-color: #f8f9fa;
+    padding: 10px 0;
+    display: flex;
+    justify-content: left;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+}
+
+
+.active {
+    background-color: #005278 !important;
+    color: white !important;
+}
+
+
+.nav-link:hover {
+    background-color: #a4343a;
+    color: white;
+}
