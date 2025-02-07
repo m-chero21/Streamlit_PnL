@@ -86,8 +86,14 @@ def sidebar_gross(df2, cost):
         selected_value_chain = st.selectbox("Value Chain:", value_chains)
 
         # Scale of Production
-        scale_options = f_cost["Scale of Production"].unique()
-        selected_scale = st.selectbox("Scale of Production:", scale_options)
+        # scale_options = f_cost["Scale of Production"].unique()
+        # selected_scale = st.selectbox("Scale of Production:", scale_options)
+        scale_options = sorted(f_cost["Scale of Production"].unique())  # Sort to ensure ordering
+
+        # Ensure "Small-scale" is selected by default
+        default_index = list(scale_options).index("Small-scale") if "Small-scale" in scale_options else 0
+
+        selected_scale = st.selectbox("Scale of Production:", scale_options, index=default_index)
 
         # Fertilizer Subsidy
         subsidy_options = f_cost["Fertilizer Subsidy"].unique()
