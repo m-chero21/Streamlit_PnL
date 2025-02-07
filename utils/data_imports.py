@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-
 @st.cache_data
 def load_csv_data():
     return pd.read_csv("data\country - county - seed - data.csv")
