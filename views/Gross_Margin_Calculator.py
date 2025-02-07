@@ -269,7 +269,6 @@ def margin():
         st.markdown(
             f"""
             <div class="break-even-container ">
-            <b>Breaking Even: The Path to Sustainability</b><br><br>
             To achieve a break-even point, the farmer needs to produce <b>{break_even_quantity / bag_weight:,.2f} bags</b> 
             at the current farmgate price of <b>{farmgate_price:,.2f} {currency}</b> per kg. Alternatively, with the current yield of <b>{yield_kg:,.2f} kg/ha</b>, the minimum farmgate price 
             required to break even is <b>{required_price_to_break_even:,.2f} {currency}</b> per kg.
