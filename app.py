@@ -1,4 +1,5 @@
 import streamlit as st
+
 # Set up page configuration
 st.set_page_config(
     page_title="Integrated Seed and Gross Margin Calculators",
@@ -18,17 +19,16 @@ if "selected_page" not in st.session_state:
 def switch_page(page_name):
     st.session_state.selected_page = page_name
 
-
-# Navigation Bar using Buttons (Avoiding Raw HTML Rendering)
+# Navigation Bar using Buttons (with icons)
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    if st.button("Seed Requirement Calculator", key="seed", help="Go to Seed Requirement Calculator",
+    if st.button("🌱 Seed Requirement Calculator", key="seed", help="Go to Seed Requirement Calculator",
                  use_container_width=True):
         switch_page("Seed Requirement Calculator")
 
 with col2:
-    if st.button("Gross Margin Calculator", key="gross", help="Go to Gross Margin Calculator",
+    if st.button("💰 Gross Margin Calculator", key="gross", help="Go to Gross Margin Calculator",
                  use_container_width=True):
         switch_page("Gross Margin Calculator")
 
