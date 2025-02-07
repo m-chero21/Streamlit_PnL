@@ -60,7 +60,7 @@ def sidebar_seed():
 
 
 def sidebar_gross(df2, cost):
-    LOGO_PATH = "assets/images/logosSAFIC - Light.png"
+    LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
     st.sidebar.image(LOGO_PATH, use_container_width=True)
 
     st.sidebar.header("Global Parameters")
