@@ -4,6 +4,9 @@ from utils.data_imports import df, df2, cost
 from utils.calculations import adjust_percentages
 
 def sidebar_seed():
+    
+    LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
     st.sidebar.header("Global Parameters")
 
     # Load country selection

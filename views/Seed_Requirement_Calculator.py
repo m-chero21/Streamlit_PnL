@@ -10,7 +10,7 @@ def seed():
     LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
     st.sidebar.image(LOGO_PATH, use_container_width=True)
     st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
-    selected_country, filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button = sidebar_seed()
+    filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button = sidebar_seed()
 
     # Add calculated columns
     filtered_c_df["Hectares 2028"] = (filtered_c_df["Hectares 2023"] * (1 + filtered_c_df["G% Hectares (2023-2028)"] / 100)).round(1)
