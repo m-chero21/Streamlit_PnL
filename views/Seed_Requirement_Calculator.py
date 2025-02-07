@@ -7,8 +7,6 @@ from components.sidebar import sidebar_seed
 import pandas as pd
 load_css()
 def seed():
-    LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
-    st.sidebar.image(LOGO_PATH, use_container_width=True)
     st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
     filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button = sidebar_seed()
 
