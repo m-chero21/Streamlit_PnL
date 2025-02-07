@@ -170,4 +170,4 @@ def sidebar_gross(df2, cost):
 
     # Display in Streamlit's sidebar without the index
     st.sidebar.markdown(html_metrics, unsafe_allow_html=True)
-    return bag_weight, selected_fluctuation, loss_percentage, f_cost, yield_kg, own_consumption_percentage, selling_price_per_unit, selected_scale, selected_subsidy, selected_country, selected_county, fluctuation_levels, area_unit, exchange_rate, acre_to_hectare, currency, farmgate_price
+    return bag_weight, selected_fluctuation, loss_percentage, f_cost, yield_kg, own_consumption_percentage, selling_price_per_unit, selected_scale, selected_subsidy, fluctuation_levels, area_unit, exchange_rate, acre_to_hectare, currency, farmgate_price
