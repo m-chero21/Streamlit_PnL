@@ -13,6 +13,7 @@ def load_excel_data():
 def load_cost_data():
     return pd.read_excel("data\country - farmer - costs.xlsx")
 
+
 # Load datasets
 df = load_csv_data()
 df2 = load_excel_data()
