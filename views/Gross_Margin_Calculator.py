@@ -12,7 +12,11 @@ load_css()
 def margin():
     st.markdown('<div class="centered-title">Gross Margin Calculator</div>', unsafe_allow_html=True)
 
+<<<<<<< HEAD
     bag_weight, selected_fluctuation, loss_percentage, f_cost, yield_kg, own_consumption_percentage, selling_price_per_unit, selected_scale, selected_subsidy, fluctuation_levels, area_unit, exchange_rate, acre_to_hectare, currency, farmgate_price = sidebar_gross(df2, cost)
+=======
+    bag_weight, selected_fluctuation, loss_percentage, f_cost, yield_kg, own_consumption_percentage, selling_price_per_unit, selected_scale, selected_subsidy, selected_country, selected_county, fluctuation_levels, area_unit, exchange_rate, acre_to_hectare, currency, farmgate_price = sidebar_gross(df2, cost)
+>>>>>>> front-and-backend-update
 
     # Filter Cost Data
     filtered_costs = f_cost[

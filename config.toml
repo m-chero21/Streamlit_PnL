@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 [theme]
 base="light"
 primaryColor="#007278"
 textColor="#000000"
+=======
+[theme]
+base="light"
+primaryColor="#007278"
+textColor="#000000"
+>>>>>>> front-and-backend-update
 font="serif"
