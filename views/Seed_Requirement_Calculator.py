@@ -7,8 +7,15 @@ from components.sidebar import sidebar_seed
 import pandas as pd
 load_css()
 def seed():
+<<<<<<< HEAD
     st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
     filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button = sidebar_seed()
+=======
+    LOGO_PATH = r"assets\images\logos\SAFIC - Light.png"
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
+    st.markdown('<div class="centered-title">Seed Requirement Calculator</div>', unsafe_allow_html=True)
+    selected_country, filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button = sidebar_seed()
+>>>>>>> front-and-backend-update
 
     # Add calculated columns
     filtered_c_df["Hectares 2028"] = (filtered_c_df["Hectares 2023"] * (1 + filtered_c_df["G% Hectares (2023-2028)"] / 100)).round(1)
