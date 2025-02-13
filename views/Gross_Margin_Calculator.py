@@ -70,15 +70,15 @@ def margin():
 
 
     if "add_item_expanded" not in st.session_state:
-        st.session_state.add_item_expanded = False
+        st.session_state.add_item_expanded = True
 
-    # Button to expand or collapse the Add Item section
-    if st.button("Insert New Cost"):
-        st.session_state.add_item_expanded = not st.session_state.add_item_expanded
+    # # Button to expand or collapse the Add Item section
+    # if st.button("Insert New Cost"):
+    #     st.session_state.add_item_expanded = not st.session_state.add_item_expanded
 
     # Add Item Section
     if st.session_state.add_item_expanded:
-        with st.expander("", expanded=True):
+        with st.popover("Insert New Cost"):
             new_item = st.text_input("Cost Name", "Cost Item")
             new_category = st.selectbox("Category", ["Variable Cost", "Fixed Cost", "Other Cost"])
             new_quantity = st.number_input("Quantity", value=1, min_value=1, step=1)
