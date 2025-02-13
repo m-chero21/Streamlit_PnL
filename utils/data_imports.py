@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-<<<<<<< HEAD
 @st.cache_data
 def load_csv_data():
     return pd.read_csv("data/country - county - seed - data.csv")
@@ -12,21 +11,6 @@ def load_excel_data():
 @st.cache_data
 def load_cost_data():
     return pd.read_excel("data/country - farmer - costs.xlsx")
-=======
-
-@st.cache_data
-def load_csv_data():
-    return pd.read_csv("data\country - county - seed - data.csv")
-
-@st.cache_data
-def load_excel_data():
-    return pd.read_excel("data\country - county - crop - yield.xlsx")
-
-@st.cache_data
-def load_cost_data():
-    return pd.read_excel("data\country - farmer - costs.xlsx")
-
->>>>>>> front-and-backend-update
 
 # Load datasets
 df = load_csv_data()
