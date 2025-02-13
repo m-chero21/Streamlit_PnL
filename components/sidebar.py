@@ -4,12 +4,9 @@ from utils.data_imports import df, df2, cost
 from utils.calculations import adjust_percentages
 
 def sidebar_seed():
-<<<<<<< HEAD
 
     LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
     st.sidebar.image(LOGO_PATH, use_container_width=True)
-=======
->>>>>>> front-and-backend-update
     st.sidebar.header("Global Parameters")
 
     # Load country selection
@@ -59,19 +56,11 @@ def sidebar_seed():
     # Update button
     update_button = st.sidebar.button("Update")
 
-<<<<<<< HEAD
     return filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button
 
 
 def sidebar_gross(df2, cost):
     LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
-=======
-    return selected_country, filtered_c_df, seed_rate, selected_counties, new_biotech_percentage, update_button
-
-
-def sidebar_gross(df2, cost):
-    LOGO_PATH = r"assets\images\logos\SAFIC - Light.png"
->>>>>>> front-and-backend-update
     st.sidebar.image(LOGO_PATH, use_container_width=True)
 
     st.sidebar.header("Global Parameters")
@@ -97,7 +86,6 @@ def sidebar_gross(df2, cost):
         selected_value_chain = st.selectbox("Value Chain:", value_chains)
 
         # Scale of Production
-<<<<<<< HEAD
         # scale_options = f_cost["Scale of Production"].unique()
         # selected_scale = st.selectbox("Scale of Production:", scale_options)
         scale_options = sorted(f_cost["Scale of Production"].unique())  # Sort to ensure ordering
@@ -106,10 +94,6 @@ def sidebar_gross(df2, cost):
         default_index = list(scale_options).index("Small-scale") if "Small-scale" in scale_options else 0
 
         selected_scale = st.selectbox("Scale of Production:", scale_options, index=default_index)
-=======
-        scale_options = f_cost["Scale of Production"].unique()
-        selected_scale = st.selectbox("Scale of Production:", scale_options)
->>>>>>> front-and-backend-update
 
         # Fertilizer Subsidy
         subsidy_options = f_cost["Fertilizer Subsidy"].unique()
@@ -192,8 +176,4 @@ def sidebar_gross(df2, cost):
 
     # Display in Streamlit's sidebar without the index
     st.sidebar.markdown(html_metrics, unsafe_allow_html=True)
-<<<<<<< HEAD
     return bag_weight, selected_fluctuation, loss_percentage, f_cost, yield_kg, own_consumption_percentage, selling_price_per_unit, selected_scale, selected_subsidy, fluctuation_levels, area_unit, exchange_rate, acre_to_hectare, currency, farmgate_price
-=======
-    return bag_weight, selected_fluctuation, loss_percentage, f_cost, yield_kg, own_consumption_percentage, selling_price_per_unit, selected_scale, selected_subsidy, selected_country, selected_county, fluctuation_levels, area_unit, exchange_rate, acre_to_hectare, currency, farmgate_price
->>>>>>> front-and-backend-update
