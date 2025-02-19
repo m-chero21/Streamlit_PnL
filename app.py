@@ -19,6 +19,9 @@ if "selected_page" not in st.session_state:
 def switch_page(page_name):
     st.session_state.selected_page = page_name
 
+
+LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
+st.image(LOGO_PATH, use_container_width=False)
 # Navigation Bar using Buttons (with icons)
 col1, col2 = st.columns([1, 1])
 

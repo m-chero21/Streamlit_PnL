@@ -1,5 +1,6 @@
 import numpy as np
 import plotly.graph_objects as go
+#______________________________Seed Calculator Functions___________________________________________________________
 
 def adjust_percentages(biotech, opv, country):
     remaining = 100 - biotech  # Remaining percentage after Biotech
@@ -7,23 +8,22 @@ def adjust_percentages(biotech, opv, country):
     if country == "Nigeria":
         opv_start = 90
         hybrid_start = 10
-        opv_ratio = 0.9  # 90% of remaining
-        hybrid_ratio = 0.1  # 10% of remaining
+        opv_ratio = 0.9  
+        hybrid_ratio = 0.1 
     else:
         opv_start = 30
         hybrid_start = 70
-        opv_ratio = 0.3  # 30% of remaining
-        hybrid_ratio = 0.7  # 70% of remaining
+        opv_ratio = 0.3 
+        hybrid_ratio = 0.7 
 
-    # Start with the predefined OPV and Hybrid values when Biotech is 0
+  
     if biotech == 0:
         adjusted_opv = opv_start
         adjusted_hybrid = hybrid_start
     else:
-        adjusted_opv = min(opv, remaining)  # OPV takes as much as possible
+        adjusted_opv = min(opv, remaining)  
         extra_remaining = remaining - adjusted_opv
         
-        # Split the extra remaining percentage
         adjusted_opv += opv_ratio * extra_remaining
         adjusted_hybrid = hybrid_ratio * extra_remaining
 
@@ -97,9 +97,7 @@ def update_combined_summary_metrics(filtered_c_df, selected_counties, new_biotec
         unsafe_allow_html=True,
     )
 
-    st.sidebar.markdown(f""" <div class="update-county">
-        <b>Updated {', '.join(selected_counties)} , the 2028 Biotech  for the selected county/ies is now: {new_biotech_percentage} %</b>
-    </div> """, unsafe_allow_html=True)
+
 
     summary_df = pd.DataFrame(summary_data)
 
@@ -114,7 +112,7 @@ def update_combined_summary_metrics(filtered_c_df, selected_counties, new_biotec
 
 
 
-#______________________________Gross Margin Calculator Functions___________________________________
+#______________________________Gross Margin Calculator Functions___________________________________________________________
 
 
 
@@ -132,12 +130,9 @@ def calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, o
 
 # Function to calculate Confidence Interval
 def calculate_confidence_interval(cost_per_unit, std_dev, quantity):
-    # Calculate standard deviation with quantity and fluctuation level
-    lower_bound = round(cost_per_unit * quantity - 1.96 * std_dev)  # 95% CI lower bound
-    upper_bound = round(cost_per_unit* quantity + 1.96 * std_dev)  # 95% CI upper bound
+    lower_bound = round(cost_per_unit * quantity - 1.96 * std_dev) 
+    upper_bound = round(cost_per_unit* quantity + 1.96 * std_dev)  
     return lower_bound, upper_bound 
-
-
 
 # Break-Even Analysis
 def calculate_break_even(selling_price_per_unit, total_costs, fluctuation_levels,selected_fluctuation):       
@@ -150,29 +145,30 @@ def calculate_break_even(selling_price_per_unit, total_costs, fluctuation_levels
 
     return break_even_quantity, break_even_revenue, worst_case_quantity, best_case_quantity
 
-# Break-Even Plot Function
+
+import numpy as np
+import plotly.graph_objects as go
+
 def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
     units = np.arange(0, 8000, 10)
-    # Compute total costs and revenue
-    total_costs = fixed_costs + variable_cost_per_unit * units 
-    total_revenue = selling_price_per_unit * units 
-
-    # Find break-even point
-    break_even_indices = np.where(total_costs <= total_revenue)[0]
-
-    if break_even_indices.size > 0:
-        break_even_index = break_even_indices[0]
-        break_even_units = units[break_even_index]
-        break_even_revenue = total_revenue[break_even_index]
-    else:
-        break_even_units = None
-        break_even_revenue = None
-
-    break_even_point = (break_even_units, break_even_revenue)
     
-    # Create Plotly figure
+    # Calculate total costs and revenue
+    total_costs = fixed_costs + (variable_cost_per_unit * units) 
+    total_revenue = selling_price_per_unit * units  
+
+    # Allow calculation even if selling price < variable cost per unit
+    if selling_price_per_unit <= variable_cost_per_unit:
+        print(f"⚠️ Warning: Unprofitable! Selling price (₦{selling_price_per_unit}) is lower than cost per unit (₦{variable_cost_per_unit}).")
+        break_even_units = None  # No real break-even point
+        break_even_revenue = None
+    else:
+        break_even_units = fixed_costs / (selling_price_per_unit - variable_cost_per_unit)
+        break_even_revenue = break_even_units * selling_price_per_unit
+
+    # Create figure
     fig1 = go.Figure()
 
+    # Add total cost and revenue lines
     fig1.add_trace(go.Scatter(
         x=units,
         y=total_costs,
@@ -189,8 +185,8 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         line=dict(color='#37B7C3', width=2)
     ))
 
-    # Plot break-even point if it exists
-    if break_even_units is not None and break_even_revenue is not None:
+    # If there's a valid break-even point, show it
+    if break_even_units is not None:
         fig1.add_trace(go.Scatter(
             x=[break_even_units],
             y=[break_even_revenue],
@@ -198,8 +194,17 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
             name='Break-Even Point',
             marker=dict(color='#000000', size=10, symbol='x')
         ))
+    else:
+        # No break-even: Add a warning annotation
+        fig1.add_annotation(
+            x=units[len(units)//2],  # Place it in the middle of the graph
+            y=total_costs.max(),  # Position the annotation near the top
+            text="⚠️ No Break-Even: Business is Unprofitable",
+            showarrow=False,
+            font=dict(size=14, color="red")
+        )
 
-    # Update figure layout
+    # Update layout
     fig1.update_layout(
         xaxis_title='Units Produced/Sold',
         yaxis_title='Cost/Revenue',
@@ -216,11 +221,77 @@ def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit)
         width=700,  
         height=600
     )
-    return fig1, total_costs, total_revenue, break_even_point 
+
+    return fig1, total_costs, total_revenue, (break_even_units, break_even_revenue)
+
+# # Break-Even Plot Function
+# def plot_break_even(fixed_costs, variable_cost_per_unit, selling_price_per_unit):
+#     units = np.arange(0, 8000, 10)
+
+#     total_costs = fixed_costs + (variable_cost_per_unit * units) 
+#     total_revenue = selling_price_per_unit * units 
+
+#     break_even_indices = np.where(total_costs <= total_revenue)[0]
+
+#     if break_even_indices.size > 0:
+#         break_even_index = break_even_indices[0]
+#         break_even_units = units[break_even_index]
+#         break_even_revenue = total_revenue[break_even_index]
+#     else:
+#         break_even_units = None
+#         break_even_revenue = None
+
+#     break_even_point = (break_even_units, break_even_revenue)
+
+#     fig1 = go.Figure()
+
+#     fig1.add_trace(go.Scatter(
+#         x=units,
+#         y=total_costs,
+#         mode='lines',
+#         name='Total Costs',
+#         line=dict(color='#a4343a', width=2)
+#     ))
+
+#     fig1.add_trace(go.Scatter(
+#         x=units,
+#         y=total_revenue,
+#         mode='lines',
+#         name='Total Revenue',
+#         line=dict(color='#37B7C3', width=2)
+#     ))
+
+#     if break_even_units is not None and break_even_revenue is not None:
+#         fig1.add_trace(go.Scatter(
+#             x=[break_even_units],
+#             y=[break_even_revenue],
+#             mode='markers',
+#             name='Break-Even Point',
+#             marker=dict(color='#000000', size=10, symbol='x')
+#         ))
+
+ 
+#     fig1.update_layout(
+#         xaxis_title='Units Produced/Sold',
+#         yaxis_title='Cost/Revenue',
+#         xaxis=dict(
+#             title_font=dict(color='black', size=14, family='Arial', weight='bold'),
+#             tickfont=dict(color='black', size=12)
+#         ),
+#         yaxis=dict(
+#             title_font=dict(color='black', size=14, family='Arial', weight='bold'),
+#             tickfont=dict(color='black', size=12)
+#         ),
+#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+#         template="seaborn",
+#         width=700,  
+#         height=600
+#     )
+#     return fig1, total_costs, total_revenue, break_even_point 
 
 
 def plot_cost_and_revenue_distribution(categories, values, currency):
-    # Define colors based on whether the value is negative or not
+
     colors = ['#a4343a' if value < 0 else '#2D9596' for value in values]
 
     fig = go.Figure(
@@ -230,7 +301,7 @@ def plot_cost_and_revenue_distribution(categories, values, currency):
                 y=values,
                 text=[f"{value:,.2f}" for value in values],  
                 textposition='auto',
-                marker=dict(color=colors)  # Use the colors defined based on value
+                marker=dict(color=colors)  
             )
         ]
     )

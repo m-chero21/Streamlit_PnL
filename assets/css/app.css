@@ -47,47 +47,47 @@
 }
 
 .centered-title {
-    position: sticky; /* Make the title sticky */
-    top: 0; /* Stick to the top of the page */
-    z-index: 1000; /* Ensure it stays above other elements */
-    text-align: center; /* Center the title */
-    font-size: 36px; /* Adjust font size if needed */
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    text-align: center; 
+    font-size: 36px;
     font-weight: bold;
-    color: black; /* Optional: Change title color */
-    background-color: white; /* Background to prevent content overlap */
-    margin-top: 0; /* Remove extra spacing above */
-    padding-top: 10px; /* Add padding for better appearance */
-    padding-bottom: 10px; /* Add padding below the title */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    color: black;
+    background-color: white; 
+    margin-top: 0;
+    padding-top: 10px; 
+    padding-bottom: 10px; 
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .streamlit-expander {
-    border: 2px solid #007278 !important; /* Add a border */
-    border-radius: 8px !important; /* Rounded corners */
-    margin-bottom: 10px !important; /* Add spacing */
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    border: 2px solid #007278 !important; 
+    border-radius: 8px !important; 
+    margin-bottom: 10px !important; 
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); 
 }
         
 .streamlit-expanderHeader {
-    background-color: #007278 !important; /* Background color */
-    color: white !important; /* Text color */
-    font-size: 16px !important; /* Font size */
-    font-weight: bold !important; /* Bold text */
-    padding: 10px !important; /* Add padding */
+    background-color: #007278 !important; 
+    color: white !important; 
+    font-size: 16px !important; 
+    font-weight: bold !important; 
+    padding: 10px !important; 
     border-top-left-radius: 8px !important;
     border-top-right-radius: 8px !important;
 }
         
 .streamlit-expanderHeader svg {
-    fill: white !important; /* Arrow icon color */
+    fill: white !important; 
 }
 
 .cost-breakdown-title {
-    color: #007278; /* Set text color */
-    font-size: 35px; /* Adjust font size if needed */
+    color: #007278; 
+    font-size: 35px; 
     font-weight: bold;
-    text-align: left; /* Align text to the left */
-    margin-bottom: 10px; /* Add some space below the title */
+    text-align: left; 
+    margin-bottom: 10px; 
 }
 .update-county {
     text-align: center;
@@ -97,27 +97,29 @@
     border-radius: 5px;
 }
 .custom-table-container {
-    max-height: 300px; /* Desired height */
-    overflow-y: auto; /* Enable scrolling */
-    overflow-x: auto; /* Enable horizontal scrolling */
+    max-height: 900px; 
+    overflow-y: auto; 
+    overflow-x: auto; 
     width: 100%;
 }
 .custom-table-container table {
-    width: 100%; /* Make table responsive */
-    font-size: 12px; /* Decrease overall text size */
+    width: 100%; 
+    max-height: 900px; 
+    font-size: 14px;
 }
 .custom-table-container table th, 
 .custom-table-container table td {
-    font-size: 11px; /* Decrease header and cell text size */
-    padding: 2px; /* Reduce padding for a compact look */
-    text-align: center; /* Center-align text */
+    font-size: 14px; 
+    font-family: serif;
+    padding: 2px; 
+    text-align: center; 
 }
 .cost-breakdown-title {
-    color: #007278; /* Set text color */
-    font-size: 35px; /* Adjust font size if needed */
+    color: #007278; 
+    font-size: 35px; 
     font-weight: bold;
-    text-align: left; /* Align text to the left */
-    margin-bottom: 10px; /* Add some space below the title */
+    text-align: left; 
+    margin-bottom: 10px; 
 }
 .text-align-center{
     text-align: center;
@@ -177,33 +179,34 @@ tr:hover {
     background-color: #f5f5f5;
 }
 .custom-table-container {
-    max-height: 200px; /* Limit table height */
-    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 600px; 
+    font-family: serif;
+    overflow-y: auto; 
 }
 .summary-table {
-    width: 100%; /* Increase the table width */
+    width: 100%; 
 }
 
-/* Table Styles */
+
 .summary-table2 {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
 }
 
-/* Table Header */
+
 .summary-table thead {
     background-color: #007278;
     color: white;
     font-size: 18px;
 }
 
-/* Table Body */
+
 .summary-table tbody td {
     font-size: 16px;
     text-align: center;
     padding: 10px;
-    border: 1px solid #ddd; /* Optional: Add border */
+    border: 1px solid #ddd; 
 }
 
 
@@ -246,3 +249,4 @@ tr:hover {
     background-color: #a4343a;
     color: white;
 }
+

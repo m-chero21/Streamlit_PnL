@@ -72,10 +72,6 @@ def margin():
     if "add_item_expanded" not in st.session_state:
         st.session_state.add_item_expanded = True
 
-    # # Button to expand or collapse the Add Item section
-    # if st.button("Insert New Cost"):
-    #     st.session_state.add_item_expanded = not st.session_state.add_item_expanded
-
     # Add Item Section
     if st.session_state.add_item_expanded:
         with st.popover("Insert New Cost"):
@@ -129,14 +125,19 @@ def margin():
     grid_options = grid_options_builder.build()
 
     # Render the editable AgGrid table inside an expander
-    with st.expander("Edit Costs", expanded=False):
+    with st.expander("Cost Breakdown", expanded=False):
         response = AgGrid(
             temp_df,
             gridOptions=grid_options,
-            update_mode=GridUpdateMode.MODEL_CHANGED,  # Track changes in the table
+            update_mode=GridUpdateMode.MODEL_CHANGED,  
             fit_columns_on_grid_load=True,
             theme="balham",
         )
+        # Calculate the total costs
+        total_costs_display = cost_df["Cost Per Unit"].sum()
+
+        # Print the total costs
+        st.write(f"##### 💰 The total costs are **{currency} {total_costs_display:,.2f}**")
     # Update the dataframe directly with edited values
     if response['data'] is not None:
         # Update cost_df directly with the edited table
@@ -164,20 +165,15 @@ def margin():
             
     # Display the Updated Cost Breakdown Table
 
-    table_style = """
-    <div class="custom-table-container">
-        {table_html}
-    </div>
-    """
+    # table_style = """
+    # <div class="custom-table-container">
+    #     {table_html}
+    # </div>
+    # """
+    
+    # table_html = cost_df.to_html(index=False, escape=False)
+    # st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
 
-    table_html = cost_df.to_html(index=False, escape=False)
-    st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
-
-    # Calculate the total costs
-    total_costs_display = cost_df["Cost Per Unit"].sum()
-
-    # Print the total costs
-    st.write(f"The total costs are **{currency} {total_costs_display:,.2f}**")
 
     gross_output, net_output, gross_margin, real_g_margin = calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage)
 
@@ -306,4 +302,4 @@ def margin():
         unsafe_allow_html=True
     )
         
-        st.plotly_chart(plot_cost_and_revenue_distribution(categories, values, currency), use_container_width=False, key="Cost_Breakdown_Chart")
+        st.plotly_chart(fig, use_container_width=False, key="Cost_Breakdown_Chart")
