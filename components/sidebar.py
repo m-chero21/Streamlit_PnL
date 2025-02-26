@@ -143,6 +143,7 @@ def sidebar_gross(df2, cost):
             filtered_df = filtered_df[filtered_df["Crop Type"] == selected_value_chain]
 
 
+
         # Sidebar Area Selector
         area_unit = st.selectbox("Area Unit:", ["Hectares", "Acres"], index=0)
         # Acre conversion
