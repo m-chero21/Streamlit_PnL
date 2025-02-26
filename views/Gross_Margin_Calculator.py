@@ -196,7 +196,7 @@ def margin():
 
     st.markdown(
         """
-        <div class="cost-breakdown-title">Results Summary</div>
+        <div class="cost-breakdown-title">Results - Summary</div>
         """,
         unsafe_allow_html=True
     )
