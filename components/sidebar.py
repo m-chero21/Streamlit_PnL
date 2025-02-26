@@ -149,7 +149,7 @@ def sidebar_gross(df2, cost):
         acre_to_hectare = 2.47105  
 
         # Aggregate Metrics
-        total_production = filtered_c_df["Production (Tonnes)"].sum()
+        total_production = filtered_df["Production (Tonnes)"].sum()
         total_area = filtered_df["Area (Ha)"].sum()
         yield_kg = (total_production * 1000) / total_area 
 
