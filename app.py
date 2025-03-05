@@ -21,7 +21,7 @@ def switch_page(page_name):
 
 
 LOGO_PATH = "assets/images/logos/SAFIC - Light.png"
-st.image(LOGO_PATH, use_container_width=False)
+st.sidebar.image(LOGO_PATH, use_container_width=False)
 # Navigation Bar using Buttons (with icons)
 col1, col2 = st.columns([1, 1])
 

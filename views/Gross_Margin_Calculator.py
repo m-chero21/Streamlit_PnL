@@ -137,7 +137,7 @@ def margin():
         total_costs_display = cost_df["Cost Per Unit"].sum()
 
         # Print the total costs
-        st.write(f"##### 💰 The total costs are **{currency} {total_costs_display:,.2f}**")
+        st.write(f"###### 💰 The total costs are **{currency} {total_costs_display:,.2f}**")
     # Update the dataframe directly with edited values
     if response['data'] is not None:
         # Update cost_df directly with the edited table
@@ -162,17 +162,7 @@ def margin():
     st.markdown('</div>', unsafe_allow_html=True)
 
     #_________________________________________________________________________________________________
-            
-    # Display the Updated Cost Breakdown Table
 
-    # table_style = """
-    # <div class="custom-table-container">
-    #     {table_html}
-    # </div>
-    # """
-    
-    # table_html = cost_df.to_html(index=False, escape=False)
-    # st.markdown(table_style.format(table_html=table_html), unsafe_allow_html=True)
 
 
     gross_output, net_output, gross_margin, real_g_margin = calculate_gross_margin(cost_df, yield_kg, farmgate_price, loss_percentage, own_consumption_percentage)
